@@ -1,0 +1,61 @@
+{
+  "_from": "cm-chessboard",
+  "_id": "cm-chessboard@3.3.9",
+  "_inBundle": false,
+  "_integrity": "sha512-ffCKvd3mUo2qUpCly1lI5vJPvg6Gew+KxsSmuDN6eALTtWSXdvJljIrABleVZdf2c6QryRRDb1/yLDrpxDqc9w==",
+  "_location": "/cm-chessboard",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "cm-chessboard",
+    "name": "cm-chessboard",
+    "escapedName": "cm-chessboard",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cm-chessboard/-/cm-chessboard-3.3.9.tgz",
+  "_shasum": "53c4479ead2f8f02f88613e25582ecdf5906da82",
+  "_spec": "cm-chessboard",
+  "_where": "C:\\wamp64\\www\\t1",
+  "author": {
+    "name": "Stefan Haack",
+    "url": "http://www.shaack.com"
+  },
+  "browser": "./src/cm-chessboard/Chessboard.js",
+  "bugs": {
+    "url": "https://github.com/shaack/cm-chessboard/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {},
+  "deprecated": false,
+  "description": "A lightweight, ES6 module based, responsive, SVG chessboard with almost no external dependencies.",
+  "devDependencies": {
+    "browser-es-module-loader": "^0.4.1",
+    "svjs-test": "^1.3.5"
+  },
+  "homepage": "https://github.com/shaack/cm-chessboard#readme",
+  "keywords": [
+    "chess",
+    "chessboard",
+    "SVG",
+    "ES6",
+    "ECMAScript 6",
+    "svjs"
+  ],
+  "license": "MIT",
+  "name": "cm-chessboard",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shaack/cm-chessboard.git"
+  },
+  "scripts": {
+    "test": "tput setaf 4;echo 'Run test/index.html in your browser for unit testing.'; echo ''; exit 0"
+  },
+  "version": "3.3.9"
+}

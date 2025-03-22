@@ -1,0 +1,434 @@
+<%- include('../../share/superheader') -%>
+    <%- include('../../component/mainnav') -%>
+        <% let template="lichess" %>
+
+            <script src="/public/js/chess.js"></script>
+            <link rel="stylesheet" href="/public/components/bk-chessboard/css/bk-board.css" />
+            <script src="/public/components/bk-chessboard/js/bk-board-class.js"></script>
+            <script src="/public/js/gauge.js"></script>
+            <script src="/public/components/bk-pgn/pgn.js">
+            </script>
+
+            <style>
+                .searach-lable {
+                    top: -20px !important;
+                    opacity: 100 !important;
+                }
+            </style>
+            <div class="row container-fluid dir-ltr mt-4 mx-auto" style="margin-right: 0px;margin-left: 0px;">
+                <div class="wg-box mx-auto w-75">
+                    <div class="row wg-inner container-fluid mx-auto">
+                        <div class="row mt-4 mx-auto">
+                            <div class="col-lg-12 mb-4">
+                                <h1>Advanced Search</h1>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="whitePlayers">
+                                    <label for="whitePlayersName" class="fs-4 bg-white ms-2 searach-lable">White</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="blackPlayers">
+                                    <label for="blackPlayers" class="fs-4 bg-white ms-2 searach-lable">Black</label>
+                                </div>
+
+                            </div>
+                            <div class="col-lg-12 mt-2 ">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="dontSetColor">
+                                    <label class="form-check-label" for="dontSetColor" style="font-size: smaller;">
+                                        Don't mention player color
+                                        <span class="text-danger">
+                                            (if activated the color of the players will not be considerd in the search)
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- <div class="col-lg-12  my-3 mt-4">
+                                <div class="form-floating">
+                                    <select class="form-select px-4" id="result">
+                                        <option value="all">All </option>
+                                        <option value="white">1 - 0 </option>
+                                        <option value="black">0 - 1 </option>
+                                        <option value="draw">1/2 - 1/2 </option>
+                                    </select>
+                                    <label for="whitePlayersName" class="fs-4 bg-white ms-2 searach-lable">Result
+                                    </label>
+                                </div>
+                            </div> -->
+                            <div class="col-lg-12  my-3 mt-4">
+                                <div class="form-floating">
+                                    <select class="form-select px-4" id="endType">
+                                        <option value="all">All </option>
+                                        <option value="white">Mate </option>
+                                        <option value="black">Resign</option>
+                                        <option value="draw">Stalemate</option>
+                                        <option value="draw">Clock flag</option>
+                                        <option value="draw">Variant end</option>
+                                    </select>
+                                    <label for="whitePlayersName" class="fs-4 bg-white ms-2 searach-lable">Result
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 my-3">
+                                <div class="mt-3 mx-auto">
+                                    <span class="fs-5" style="">
+                                        Rating:
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 my-3">
+                                <div class="form-floating">
+                                    <!-- <input type="number" class="form-control" id="startRating">
+                                    <label for="startRating" class="fs-4 bg-white ms-2 searach-lable">From</label> -->
+                                    <select class="form-select px-4" id="startRating">
+                                        <option value="all">All </option>
+                                        <option value="500">500</option>
+                                        <option value="600">600</option>
+                                        <option value="500">700</option>
+                                        <option value="600">800</option>
+                                        <option value="500">900</option>
+                                        <option value="600">1000</option>
+                                        <option value="1100">1100</option>
+                                        <option value="1200">1200</option>
+                                        <option value="1300">1300</option>
+                                        <option value="1400">1400</option>
+                                        <option value="1500">1500</option>
+                                        <option value="1600">1600</option>
+                                        <option value="1700">1700</option>
+                                        <option value="1800">1800</option>
+                                        <option value="1900">1900</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2100">2100</option>
+                                        <option value="2200">2200</option>
+                                        <option value="2300">2300</option>
+                                        <option value="2400">2400</option>
+                                        <option value="2500">2500</option>
+                                        <option value="2600">2600</option>
+                                        <option value="2700">2700</option>
+                                        <option value="2800">2800</option>
+                                        <option value="2900">2900</option>
+                                        <option value="3000">3000</option>
+                                    </select>
+                                    <label for="startRating" class="fs-4 bg-white ms-2 searach-lable">from
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 my-3">
+                                <div class="form-floating">
+                                    <!-- <input type="number" class="form-control" id="startRating">
+                                                                    <label for="startRating" class="fs-4 bg-white ms-2 searach-lable">From</label> -->
+                                    <select class="form-select px-4" id="endRating">
+                                        <option value="all">All </option>
+                                        <option value="500">500</option>
+                                        <option value="600">600</option>
+                                        <option value="500">700</option>
+                                        <option value="600">800</option>
+                                        <option value="500">900</option>
+                                        <option value="600">1000</option>
+                                        <option value="1100">1100</option>
+                                        <option value="1200">1200</option>
+                                        <option value="1300">1300</option>
+                                        <option value="1400">1400</option>
+                                        <option value="1500">1500</option>
+                                        <option value="1600">1600</option>
+                                        <option value="1700">1700</option>
+                                        <option value="1800">1800</option>
+                                        <option value="1900">1900</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2100">2100</option>
+                                        <option value="2200">2200</option>
+                                        <option value="2300">2300</option>
+                                        <option value="2400">2400</option>
+                                        <option value="2500">2500</option>
+                                        <option value="2600">2600</option>
+                                        <option value="2700">2700</option>
+                                        <option value="2800">2800</option>
+                                        <option value="2900">2900</option>
+                                        <option value="3000">3000</option>
+                                    </select>
+                                    <label for="endRating" class="fs-4 bg-white ms-2 searach-lable">from
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12  my-3">
+                                <div class="form-floating">
+                                    <select class="form-select px-4" id="opponent">
+                                        <option value="all">All </option>
+                                        <option value="human">Human</option>
+                                        <option value="computer">Computer </option>
+                                    </select>
+                                    <label for="whitePlayersName" class="fs-4 bg-white ms-2 searach-lable">Opponent
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12  my-3">
+                                <div class="form-floating">
+                                    <select class="form-select px-4" id="variant">
+                                        <option value="all">All </option>
+                                        <option value="bullet">Bullet</option>
+                                        <option value="blitz">Blitz </option>
+                                        <option value="rapid">Rapid</option>
+                                        <option value="classic">Clasical </option>
+                                    </select>
+                                    <label for="whitePlayersName" class="fs-4 bg-white ms-2 searach-lable">Variant
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12  my-3">
+                                <div class="form-floating">
+                                    <select class="form-select px-4" id="mode">
+                                        <option value="all">All </option>
+                                        <option value="rated">Rated</option>
+                                        <option value="casual">Casual </option>
+                                    </select>
+                                    <label for="whitePlayersName" class="fs-4 bg-white ms-2 searach-lable">Mode
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- <div class="mb-3 row">
+                            <label for="players" class="col-sm-2 col-form-label">Players</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="players">
+                            </div>
+                        </div>
+                        <div class="mb-3 row ">
+                            <label for="players" class="col-sm-2 col-form-label">Opponent </label>
+                            <div class="col-sm-10">
+                                <select class="form-select">
+                                    <option value="0">All </option>
+                                    <option value="0">Human Opponent </option>
+                                    <option value="1">Computer Opponent </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row ">
+                            <label for="players" class="col-sm-2 col-form-label">AvrageRating:</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="avrageRating">
+                            </div>
+                            <label for="players" class="col-sm-1 col-form-label text-center">To:</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="players">
+                            </div> 
+                    </div> -->
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-primary w-50 mb-4" onclick="searchInGames()">Search</button>
+                    </div>
+
+                </div>
+
+                <div id="gameCounter" class="wg-box  mx-auto w-75 d-none border"
+                    style="background-color: rgb(214, 212, 212);margin: -7px ;">
+                    <div class="wg-inner">
+                        <span id="gameCount"></span><span> gams found</span>
+                    </div>
+                </div>
+                <div class="row container-fluid dir-ltr mt-4  mx-auto "
+                    style="margin-right: 0px;margin-left: 0px;width: 85%;" id="gamesPart">
+
+                </div>
+
+            </div>
+            <script>
+                let searchGames = {
+                    gmsPart: document.getElementById('gamesPart'),
+                    dontSetColor: document.getElementById('dontSetColor'),
+                    gameCounterPart: document.getElementById('gameCounter'),
+                    gameCountPart: document.getElementById('gameCount'),
+                    searchInGames: () => {
+                        let data = {};
+                        data.whitePlayers = document.getElementById('whitePlayers').value.split(',');
+                        data.blackPlayers = document.getElementById('blackPlayers').value.split(',');
+                        data.setColor = true;
+                        if (searchGames.dontSetColor.checked) data.setColor = false;
+                        // data.result = document.getElementById('result').value;
+                        data.startRating = document.getElementById('startRating').value;
+                        data.endRating = document.getElementById('endRating').value;
+                        data.opponent = document.getElementById('opponent').value;
+                        data.variant = document.getElementById('variant').value;
+                        data.mode = document.getElementById('mode').value;
+
+                        console.log('', data);
+                        // data.setBW 
+                        // data.players = document.getElementById('players').value.split(',');
+                        // // data.avrageRating = []; 
+                        // data.avrageRating = document.getElementById('avrageRating').value;
+                        socket.emit("searchInGames", data, searchGames.processGames)
+                    },
+                    processGames: (games) => {
+                        console.log('games', games);
+                        searchGames.gmsPart.innerHtml = "";
+                        searchGames.gmsPart.innerText = "";
+                        if (games.length < 1) {
+                            searchGames.gameCounterPart.classList.add('d-none');
+                        }
+                        else {
+                            searchGames.gameCounterPart.classList.remove('d-none');
+                            searchGames.gameCountPart.innerText = games.length + ' '
+                        }
+
+                        games.forEach(g => {
+                            searchGames.creatGameParts(g)
+                        });
+
+                    },
+                    creatGameParts: (game) => {
+                        let parentDiv = document.createElement('div');
+                        searchGames.gmsPart.append(parentDiv);
+                        parentDiv.classList.add('wg-box', 'row',);
+
+                        let boardPart = document.createElement('div');
+                        boardPart.classList.add('col-lg-3', 'p-2');
+                        parentDiv.append(boardPart);
+
+                        let boardPlace = document.createElement('div');
+                        boardPart.append(boardPlace);
+
+
+                        boardPlace.id = game._id;
+                        searchGames.setPosition(boardPlace.id, game);
+                        boardPlace.classList.add('pointer')
+                        boardPlace.addEventListener('click', function () {
+                            window.location.href = '/game/play/' + boardPlace.id;
+                        })
+                        // boardPart.style.cssText = '';
+
+                        let textPart = document.createElement('div');
+                        parentDiv.append(textPart);
+                        textPart.classList.add('col-lg-9');
+                        searchGames.setTextPart1(textPart, game);
+                        textPart.innerHTML += '<hr>';
+                        searchGames.setTextPart2(textPart, game);
+                        textPart.innerHTML += '<hr>';
+                        searchGames.setTextPart3(textPart, game)
+                        // boardPart.id = game._id;
+                        // searchGames.setPosition(boardPart.id);
+
+                    },
+                    setPosition: (id, game) => {
+
+                        let moves = game.pgn.split('--');
+                        let chess = new Chess();
+                        moves.forEach(m => {
+                            if (m) {
+                                let mObj = JSON.parse(m);
+                                chess.move(mObj)
+                            }
+                        });
+                        let fen = chess.fen();
+                        var bd1 = new bkGraphicalBoard.BkBoard(id, {
+                            imgSrc: '/public/components/bk-chessboard/pices/'
+                        });
+                        bd1.creat();
+                        bd1.setPosition(fen);
+
+                    },
+                    setTextPart1: (parent, game) => {
+                        let textPart1 = document.createElement('div');
+                        parent.append(textPart1);
+                        textPart1.classList.add('p-3', 'pb-1')
+                        textPart1.append(timeControllLogo.creatGameTimeLogo(game, 50));
+                        let span = document.createElement('span');
+                        textPart1.append(span);
+                        let timeParts = sbkTimer.getTimeParts(game.primeryTime / 1000);
+                        // let timePartStr = '';
+                        // if(timeParts.hours>0){
+                        //     timePartStr = '';
+                        // }
+
+                        span.classList.add('ms-4')
+                        span.style.fontSize = '30px';
+                        let rated = game.rated ? 'Rated' : 'UnRated'
+                        span.innerText = timeParts.stringify + '+' + game.timeIncresment + 's - ' + timeControllLogo.gameTimeControll(game) + ' - ' + rated;
+
+                        let startTime = new Date(game.acceptedTime);
+                        textPart1 = document.createElement('div');
+                        parent.append(textPart1);
+                        textPart1.classList.add('p-1', 'pb-1')
+                        textPart1.innerText = startTime.toUTCString();
+                        console.log('', startTime.toUTCString());
+
+                        // let
+                    },
+                    setTextPart2: (parent, game) => {
+
+                        let textPart2 = document.createElement('div');
+                        textPart2.classList.add('fs-2')
+                        parent.append(textPart2);
+                        textPart2.classList.add('p-2', 'd-flex', 'justify-content-center')
+
+                        setSide('white');
+
+                        let swardPart = document.createElement('div');
+                        textPart2.append(swardPart);
+                        // swardPart.innerHTML = '<i class="fas fa-swords"></i>';
+                        swardPart.innerHTML = '<img src="/public/img/challenge1.jpg" style="height:110px;margin-top:-30px">';
+                        swardPart.classList.add('m-4')
+
+                        setSide('black');
+
+                        function setSide(side) {
+                            let part = document.createElement('div');
+                            textPart2.append(part);
+                            let userName = document.createElement('div');
+                            userName.innerText = game[side + 'UserName'];
+                            part.append(userName)
+
+                            let userResult = document.createElement('div');
+                            userResult.innerText = game[side + 'Result'];
+                            userResult.classList.add('text-center')
+                            part.append(userResult)
+                        }
+
+                    },
+                    setTextPart3: (parent, game) => {
+                        let textPart1 = document.createElement('div');
+                        parent.append(textPart1);
+                        textPart1.classList.add('p-1')
+                        let span = document.createElement('span');
+                        textPart1.append(span);
+                        let timeParts = sbkTimer.getTimeParts(game.primeryTime / 1000);
+                        span.classList.add('ms-4')
+                        span.style.fontSize = '17px';
+                        let moves = game.pgn.split('--');
+                        let chess = new Chess();
+                        let i = 0;
+                        let moveCounter = 1;
+                        let textMove = '';
+                        moves.forEach(m => {
+
+                            if (m) {
+                                if (i > 6) {
+                                    if (i % 2 == 0) {
+                                        moveCounter++;
+                                    }
+                                    return;
+                                }
+                                let mObj = JSON.parse(m);
+                                let m1 = chess.move(mObj);
+                                if (i % 2 == 0) {
+                                    textMove += moveCounter + '. ';
+                                    moveCounter++;
+                                }
+                                textMove += ' ' + m1.san + ' ';
+                                i++;
+                            }
+                        });
+                        span.innerText = textMove + ' ... ' + moveCounter + ' Moves';
+                        // let
+                    },
+
+                }
+
+                function searchInGames() {
+                    searchGames.searchInGames();
+                }
+            </script>
+
+            <%- include('../../share/superfooter') -%>

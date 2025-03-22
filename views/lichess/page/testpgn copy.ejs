@@ -1,0 +1,288 @@
+<%- include('../share/superheader') -%>
+    <%- include('../component/mainnav') -%>
+        <script>
+            let pgn1 = "1. e4 e5 (1... g6 2. f3 f6 (2... h6)) 2. f3 f6 (2... h6 3. h4) (2... c6) (2... a6) 3. h3 (3. a3) ";
+            // let pgn1 = "1. e4 e5  (1... a3)";
+            // let pgn1 = "1. e4 e5 (2... e6) (2... c6 3. d4)";
+            console.log(pgn1);
+
+            class Move {
+                constructor(word) {
+                    this.word = word;
+                    this.fen = 'fen';
+                    this.ans = [];
+                    this.san = null;
+                    this.number = 0;
+                    this.side = null;
+                    this.parentMove = null;
+                    this.varIndex = 0;
+                    this.moveIndex = 0;
+                }
+                setMoveNum() {
+                    if (this.side == 'b') {
+                        this.number = this.parentMove.number;
+                    } else {
+                        this.number = this.parentMove.number + 1;
+                    }
+                }
+                setMoveSide() {
+                    this.side = this.parentMove.side == 'w' ? 'b' : 'w';
+                }
+                isMove() {
+                    if (!this.word.includes('.') && this.word.length > 1) {
+                        this.san = this.word.replace(')', '');
+                        return true;
+                    }
+                    return false
+                }
+                getStrNumMove() {
+                    if (this.side == 'w') {
+                        if (!this.isMoveFirstChiled()) {
+                            return '(' + this.number + '.'; //)
+                        }
+                        return this.number + '. ';
+                    }
+
+                    if (this.side == 'b' && !this.isMoveFirstChiled()) {
+                        return '(' + this.number + '... ' //)
+                    }
+
+                    return '';
+                }
+                isMoveFirstChiled() {
+                    if (this.parentMove.ans.length > 1 && this.parentMove.ans[0].san != this.san) return false;
+                    return true;
+                }
+                toString() {
+                    let str = this.getStrNumMove();
+                    str += this.san;
+                    // last chiled and not mainLine
+                    // if (!this.ans[0] ) {
+                    //     str += ')';
+                    // }
+                    // // str += " ";
+                    // console.log(str);
+                    return str;
+
+                }
+
+                static areSameMove(mv1, mv2) {
+                    if (mv1 == mv2 && mv1.san == mv2.san && mv1.number == mv2.number && mv1.parentMove == mv2.parentMove && mv1.ans == mv2.ans && mv1.ans.length == mv2.ans.length) return true;
+                    return false;
+                }
+            }
+            class Pgn {
+                constructor(pgn) {
+                        this.pgn = pgn;
+                        this.pgnStringArray = pgn.split(' ');
+                        this.preFirstMove = new Move('');
+                        this.header = 'header';
+                        this.allMoves = [];
+                        this.setPrefirstMove();
+                        this.moveMatris = [];
+                    }
+                    // claculate from pgn
+                getPrefirstMoveNum() {
+                    return 0;
+                }
+                getPreFirstMoveSide() {
+                    return 'b';
+                }
+                setPrefirstMove() {
+                    this.preFirstMove.number = this.getPrefirstMoveNum();
+                    this.preFirstMove.side = this.getPreFirstMoveSide();
+                }
+
+                exVariants() {
+
+                    let pg = this.pgn;
+                    let vars = [];
+                    while (pg.includes(')')) {
+                        let lIndex = pg.indexOf(')');
+                        let sub = pg.substring(0, lIndex);
+                        let fIndex = sub.lastIndexOf("(");
+                        sub = this.removeLastMove(sub);
+                        let ForRemove = pg.substring(fIndex, lIndex + 1);
+
+                        pg = pg.replace(ForRemove, '');
+                        vars.push(sub);
+                    }
+                    vars.push(pg);
+
+                    let nVars = [];
+                    vars.forEach(v => {
+                        let words = v.split(' ');
+                        let oneVar = [];
+                        words.forEach(w => {
+                            let mv = new Move(w);
+                            if (mv.isMove()) {
+                                oneVar.push(mv);
+                            }
+                        });
+                        nVars.push(oneVar);
+                    });
+                    nVars = nVars.reverse();
+                    return nVars;
+
+                }
+                removeLastMove(subPg) {
+                    let parts = subPg.split(' ');
+                    let flag = false;
+                    for (let i = parts.length - 1; i > 0; i--) {
+                        if (parts[i].includes("(")) {
+                            flag = true;
+                        }
+                        if (parts[i].includes(")")) {
+                            flag = false;
+                        }
+                        let move = new Move((parts[i]));
+                        if (flag && move.isMove()) {
+                            parts[i] = "";
+                            flag = false;
+                        }
+                    }
+                    return parts.join(" ", parts);
+                }
+                convertToDistinctArr() {
+                    let vars = this.exVariants();
+
+                    function creatSameMoves(curentVar, preVar) {
+                        let minIndex = curentVar.length < preVar.length ? curentVar.length : preVar.length;
+                        for (let i = 0; i < minIndex; i++) {
+                            if (curentVar[i].san == preVar[i].san) {
+                                curentVar[i] = preVar[i];
+                            } else {
+                                return;
+                            }
+                        }
+                    }
+                    for (let i = 1; i < vars.length; i++) {
+                        const variant = vars[i];
+                        creatSameMoves(variant, vars[i - 1])
+                    }
+                    this.moveMatris = vars;
+                    this.allMoves = this.allMoves.concat(...vars);
+                    this.allMoves = [...new Set(this.allMoves)];
+
+                    return vars;
+                }
+
+                convertToMoves() {
+                    this.convertToDistinctArr();
+                    //set firstParent
+                    this.moveMatris[0][0].parentMove = this.preFirstMove;
+                    this.preFirstMove.ans.push(this.moveMatris[0][0]);
+                    this.setAllParentsAndChildren();
+                    this.reArengeChildren();
+                }
+
+                reArengeChildren() {
+                    for (let i = 0; i < this.allMoves.length; i++) {
+                        const move = this.allMoves[i];
+                        move.setMoveSide(); // should say befor num
+                        move.setMoveNum();
+
+                        let shifted = move.ans.shift()
+                        move.ans = move.ans.reverse();
+                        move.ans.unshift(shifted);
+                    }
+                }
+                setAllParentsAndChildren() {
+                    for (let i = 0; i < this.moveMatris.length; i++) {
+                        let variant = this.moveMatris[i];
+                        this.setVariantParent(variant);
+                        this.setVariantChildren(variant)
+                    }
+                }
+                setVariantParent(variant) {
+                    for (let i = 0; i < variant.length; i++) {
+                        const move = variant[i];
+                        if (!move.parentMove) {
+                            move.parentMove = variant[i - 1]
+                        }
+                        if (i + 1 < variant.length) {
+                            this.setChildren(move, variant[i + 1])
+                        }
+                    }
+                }
+                setVariantChildren(variant) {
+                    for (let i = 0; i < variant.length; i++) {
+                        const move = variant[i];
+                        if (i + 1 < variant.length) {
+                            this.setChildren(move, variant[i + 1])
+                        }
+                    }
+                }
+                setChildren(move, child) {
+                    for (let i = 0; i < move.ans.length; i++) {
+                        if (move.ans[i].san == child.san) return;
+                    }
+                    move.ans.push(child);
+                }
+                isNumber(word) {
+                    if (word.includes('.')) return true;
+                    return false
+                }
+                toString() {
+                    // ma
+                    let str = "";
+                    this.allMoves.forEach(al => {
+                        str += al.toString() + ' ';
+                    });
+                    return str.trim();;
+                }
+                matrisToArr() {
+
+                    // console.log('',);
+                    let temp = this.moveMatris[0].slice();
+                    // let temp = [];
+
+
+                    for (let i = 1; i < this.moveMatris.length; i++) {
+
+                        let subVariant = getNewMoveList(this.moveMatris[i], this.moveMatris[i - 1]);
+
+                        let position = getParentIndex(subVariant.reverse());
+                        temp.splice(position + 1, 0, ...subVariant);
+                    }
+                    this.allMoves = temp;
+                    console.log('pgnLine', temp);
+
+
+                    function getNewMoveList(curentVar, preVar) {
+
+                        let subVar = [];
+                        for (let i = curentVar.length - 1; i > -1; i--) {
+
+                            if (i > preVar.length || !Move.areSameMove(curentVar[i], preVar[i])) {
+                                subVar.push(curentVar[i]);
+                                continue;
+                            }
+                            return subVar;
+
+                        }
+                        return subVar;
+                    }
+
+                    function getParentIndex(subVar) {
+                        for (let i = 0; i < temp.length; i++) {
+                            if (Move.areSameMove(subVar[0].parentMove, temp[i].parentMove)) {
+                                return i;
+                            }
+                        }
+                        return 0;
+                    }
+
+                }
+
+            }
+            let pgn = new Pgn(pgn1);
+            //  pgn.exComplexVar1();
+            // pgn.creatPgn();
+            // pgn.convertToDistinctArr();
+            // pgn.exVariants1();
+            pgn.convertToMoves();
+            pgn.matrisToArr()
+            console.log(pgn.toString());
+        </script>
+        <%- include('../share/superfooter') -%>

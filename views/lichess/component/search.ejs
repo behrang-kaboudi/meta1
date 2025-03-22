@@ -1,0 +1,149 @@
+<!-- <a class="ml-2 mr-2" href="#searchForm" onclick="" data-target="#searchForm" data-toggle="collapse">
+    <i class="fa fa-search text-secondary"></i>
+</a> -->
+<style>
+    #searchDiv {
+        width: 350px;
+    }
+
+    @media (max-width: 576px) {
+        #searchDiv {
+            width: 100%;
+            left: 0px;
+        }
+    }
+</style>
+<div class="d-flex  align-items-center" id="searchParent">
+    <i class="fas fa-search mx-2 fs-4"></i>
+    <input id="searchForm" onclick="display.show('searchDiv')" class="form-control me-2 dir-ltr" autocomplete="off"
+        type="search" placeholder="Users" aria-label="Search" />
+    <!-- <input  id="searchForm"  onclick="display.show('searchDiv')"  class="collapse fade form-control border-0 bg-light dir-ltr" list="datalistOptions" autocomplete="off" placeholder="Type to display..."> -->
+
+    <div id="searchDiv" class="position-absolute bg-light mt-4" style="z-index: 100;top:30px">
+        <div id="searchData" class="dir-ltr">
+            <!-- <input readonly  class=" form-control border-0 bg-light dir-ltr" placeholder="users..." > -->
+            <!-- <div class="mx-3 pointer" onmouseover="display.show('behrangVar1')" onmouseout="display.hide('behrangVar1')" >
+                <i class="fa fa-toggle-off " style=""></i> behrang
+            </div> -->
+        </div>
+    </div>
+</div>
+<div id="sampleSearchData" class="d-none">
+    <div id="sampleSearch" class="bg-light" style="border: 1px solid">
+        <div class="mx-2 h5" style="width: 100%">
+            <i class="fa fa-toggle-off"></i>
+            <span id="searchUserName"> behrang2 </span>
+        </div>
+        <div class="mx-2 my-1 d-flex justify-content-between">
+            <span>
+                <i class="fas fa-space-shuttle"></i> <span id="bullet"> 0000 </span>
+            </span>
+            <span> <i class="fas fa-fire"></i> <span id="blitz"> 0000 </span> </span>
+            <span>
+                <i class="fas fa-rabbit"></i> <span id="rapid"> 0000 </span>
+            </span>
+            <span>
+                <i class="fas fa-turtle"></i> <span id="classic"> 0000 </span>
+            </span>
+        </div>
+        <!-- <div class="mx-2 my-1 d-flex justify-content-between">
+      <span> <i class="fas fa-flag"></i> 0000 </span>
+      <span> <i class="fas fa-flag"></i> 0000 </span>
+      <span> <i class="fas fa-flag"></i> 0000 </span>
+      <span> <i class="fas fa-flag"></i> 0000 </span>
+    </div> -->
+        <div class="py-1 d-flex justify-content-between" style="border-top: 1px solid; background-color: darkgray">
+            <span class="flex-fill text-center pointer" style="border-right: 1px solid">
+                <i class="fas fa-photo-video"></i>
+            </span>
+            <span class="flex-fill text-center pointer" style="border-right: 1px solid">
+                <i class="far fa-comments"></i>
+            </span>
+            <span id="chalengeReq" class="flex-fill text-center pointer creatChalenge" style="border-right: 1px solid">
+                <i class="far fa-swords"></i>
+            </span>
+            <span class="flex-fill text-center pointer">
+                <i class="fal fa-thumbs-up"></i> follow
+            </span>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#searchForm').on('input', function () {
+            document.getElementById('searchData').innerHTML = '';
+            let oppUserName = document.getElementById('searchForm').value;
+            oppUserName = oppUserName.toLowerCase();
+            if (oppUserName.length > 1) {
+                socket.emit('search', oppUserName, (ans) => {
+                    document.getElementById('searchData').innerText = '';
+                    ans.forEach((user) => {
+                        search.setSearchUser(user);
+                    });
+                });
+            }
+        });
+    });
+    let search = {
+        selectedUserForChalenge: '',
+        userName: userName,
+        setSearchUser: function (user) {
+            if (user.userName == search.userName) return;
+            let pre = document.getElementById('sampleSearch');
+            let newClone = pre.cloneNode(true);
+            pre.id = user.userName;
+            let userName = document.getElementById('searchUserName');
+            userName.id = 'searchUserName' + user.userName;
+            userName.innerText = user.userName;
+
+            let bullet = document.getElementById('bullet');
+            bullet.id = 'bullet' + user.userName;
+            bullet.innerText = user.bullet;
+            let blitz = document.getElementById('blitz');
+            blitz.id = 'blitz' + user.userName;
+            blitz.innerText = user.blitz;
+            let rapid = document.getElementById('rapid');
+            rapid.id = 'rapid' + user.userName;
+            rapid.innerText = user.rapid;
+            let classic = document.getElementById('classic');
+            classic.id = 'classic' + user.userName;
+            classic.innerText = user.classic;
+
+            let chalenge = document.getElementById('chalengeReq');
+            chalenge.id = 'chalengeReqTo' + user.userName;
+            chalenge.addEventListener('click', showCreatChalenge);
+            document.getElementById('sampleSearchData').appendChild(newClone);
+            document.getElementById('searchData').appendChild(pre);
+        },
+    };
+
+    function showCreatChalenge(e) {
+        if (!userName) {
+            return;
+        }
+
+        /// todo creat chaleng only for logins
+        let el = (document.getElementById('searchData').innerHTML = '');
+
+        let id = e.target.id;
+        if (!id) {
+            id = e.target.parentElement.id;
+        }
+
+        search.selectedUserForChalenge = id.split('To')[1];
+        document.getElementById('selectedUserForChalenge').innerText =
+            search.selectedUserForChalenge;
+        //  $("#creatGame").show();
+        // console.log(document.getElementById('exampleModal'));
+
+        creatChalengeModal.show();
+    }
+
+    window.addEventListener('click', (e) => {
+        let el = document.getElementById('searchParent');
+        if (!el.contains(e.target)) {
+            display.hide('searchDiv');
+        }
+    });
+</script>

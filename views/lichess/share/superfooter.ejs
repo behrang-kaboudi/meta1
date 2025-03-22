@@ -1,0 +1,14 @@
+<script>
+     socket = io();
+     $(document).ready(function () {
+          socket.on('goToPlayPage', function (page) {
+               window.location.href = page;
+          });
+     });
+    
+     
+</script>
+
+</body>
+
+</html>

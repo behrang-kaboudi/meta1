@@ -1,0 +1,58 @@
+<div class="wg-box overflow-auto">
+    <div class="wg-title h5">
+        My Games
+    </div>
+    <div class="wg-inner">
+        <div id="mySwissGames">
+
+        </div>
+    </div>
+</div>
+<script>
+    var mySwissGames = {
+        redirctNewGame: (games) => {
+            if (!games || games.length == 0) return;
+            for (let i = 0; i < games.length; i++) {
+                const gm = games[i];
+                if (gm.blackResult === null) {
+                    if (gm.acceptedTime - Date.now() > 30000) return;
+                    window.location.href = window.location.origin + '/game/play/' + gm._id;
+                }
+            }
+        },
+        setgames: (games) => {
+            // let games = tourData.selfGames;
+            if (!games || games.length == 0) return;
+            let rounds = games.length;
+            // mySwissGames.redirctNewGame(games);
+           
+            // if (rounds == 0) return;
+
+            let parent = document.getElementById('mySwissGames');
+            parent.innerHTML = '';
+            let table = `<table class="table"> <thead><tr><th scope="col">#</th><th scope="col">white</th><th scope="col">black</th><th scope="col">result</th></tr></thead><tbody>`;
+            // let selfData = tourData.standings.find((p) => p.userName == userName);
+            games.reverse();
+            for (let i = 0; i < rounds; i++) {
+                let gm = games[i];
+                // let gmId = selfData.gameIds[rounds - i - 1];
+                if (!gm) {
+                    table += `<tr><th scope="row">${rounds-i}</th><td  scope="col">${userName}</td><td scope="col">bye</td><td scope="col"> +   &nbsp   -</td></tr>`;
+
+                } else {
+                    if (gm.whiteResult === null) {
+                        gm.whiteResult = gm.blackResult = "**"
+                    }
+                    table += `<tr><th scope="row">${rounds-i}</th><td  scope="col"><a href="/game/play/${gm._id}" >${gm.whiteUserName}</a></td><td scope="col"><a href="/game/play/${gm._id}" >${gm.blackUserName}</a></td><td scope="col"> ${gm.whiteResult + ' - ' + gm.blackResult}</td></tr>`;
+                }
+            }
+            table += '</tbody></table>';
+            parent.innerHTML = table;
+
+        }
+    };
+    registerEmmit("swiss", "myGames", ()=>{return {id: tourId}}, mySwissGames.setgames);
+    // setInterval(() => {
+    //     registerEmmit("swiss", "myGames", ()=>{return {id: tourId}}, mySwissGames.setgames);
+    // }, 10000);
+</script>

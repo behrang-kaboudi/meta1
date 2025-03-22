@@ -1,0 +1,66 @@
+<%- include('../share/superheader') -%>
+    <%- include('../component/mainnav') -%>
+        <script src="/js/chess.js"></script>
+        <link rel="stylesheet" href="/components/bk-chessboard/css/bk-board.css" />
+        <script src="/components/bk-chessboard/js/bk-board-class.js"></script>
+        <!-- <script src="/components/bk-chessboard/js/bk-board-consts.js"></script> -->
+        <div class="d-flex">
+            <div class="w-25">
+                <div class="board " id="board" style=""></div>
+
+            </div>
+            <div class="w-25">
+                <div class=" " id="" style="background-color: brown;"></div>
+                <div>
+                </div>
+            </div>
+            <div class="w-25">
+                <div class="board " id="board1" style=""></div>
+
+            </div>
+        </div>
+        <script>
+            var bd1 = new BkBoard('board', {
+                imgSrc: './components/bk-chessboard/pices/'
+            });
+            bd1.creat();
+            // bd2.settings.fen = '8/k3P3/8/5K2/8/8/8/8 w - - 0 1';
+            // bd1.creatBoard();
+            // bd1.setPosition('8/k3P3/8/5K2/8/8/8/8 w - - 0 1');
+            // // bd2.clearPosition();
+            var bd2 = new BkBoard('board1', {
+                imgSrc: '/components/bk-chessboard/pices/'
+            });
+            // bd2.settings.fen = '8/k3P3/8/5K2/8/8/8/8 w - - 0 1';
+
+            bd2.settings.direction = 'b'
+            bd2.creat();
+            // bd2.setPosition('8/k3P3/3p4/5K2/8/8/8/8 w - - 0 1');
+            // // bd1.flip();
+            bd2.settings.canMove = true;
+            bd1.settings.canMove = true;
+            bd1.settings.arrow = true;
+            bd1.settings.setMask = true;
+            bd2.settings.setMask = true;
+            bd1.setPice('bk', 12);
+            bd1.setPice('bk', 42);
+            bd1.setPice('bk', 32);
+            bd1.setPice('bk', 52);
+            bd2.setPice('bn', 45);
+            // bd2.settings.engine = 'chess';
+        </script>
+        <div class="d-flex">
+            <div class="w-25">
+
+            </div>
+            <div class="w-25">
+                <div>
+                    sdf
+                    <input type="button" onclick="bd1.flip()" value="bd1">
+                    <input type="button" onclick="bd2.flip()" value="bd2">
+                </div>
+            </div>
+            <div class="w-25">
+            </div>
+
+            <%- include('../share/superfooter') -%>

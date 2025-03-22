@@ -1,0 +1,248 @@
+<style>
+  .dropdown-toggle::after {
+    display: none;
+  }
+</style>
+<%- include('../component/creatFriendlyGameModal') -%>
+  <%- include('../component/creatGameModal2') -%>
+    <div class="d-flex align-items-lg-center justify-content-between dir-ltr mt-3">
+      <div class="d-flex align-items-lg-center">
+        <div>
+          <a class=" order-lg-1 order-sm-5 d-none d-lg-flex ps-4 pe-2" href="/"
+            style="font-weight: 550; font-size: x-large; direction: ltr">
+            <span>
+              <img src="/public/lichess/img/MetaMind-Logo-1.png" alt="" style="width: 40px;margin-top: -5px;">
+            </span>
+            <span class="mx-1 text-danger">
+              Meta
+            </span>
+            <span class="text-dark"> Mind </span>
+          </a>
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-light ms-2  me-1 ">
+          <button class="order-lg-4 order-sm-1 navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+
+          </button>
+
+          <div class="collapse navbar-collapse order-lg-3 order-sm-5" id="navbarSupportedContent">
+            <style>
+              .navbar-nav a {
+                text-align: center;
+                margin-top: 5px;
+                margin-bottom: 2px;
+              }
+            </style>
+
+            <ul class="navbar-nav mb-2 mb-lg-0">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <%- user.trans('Play') %>
+                </a>
+                <div class="dropdown-menu text-right" aria-labelledby="navbarDropdown">
+                  <span class="dropdown-item pointer" href="" onclick="creatOpenChalenge()">
+                    <%- user.trans('Create a Game') %>
+                  </span>
+                  <!-- <div class="dropdown-divider"></div> -->
+
+                  <!-- <a class="dropdown-item" href="#">
+                    <%- user.trans('Arena Tournaments') %>
+                  </a> -->
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/swiss/tournaments/">
+                    <%- user.trans('Swiss Tournaments') %>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/simull/main">
+                    <%- user.trans('Simultaneous') %>
+                  </a>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <%- user.trans('Puzzle') %>
+                </a>
+                <div class="dropdown-menu text-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="/puzzle/training">
+                    <%- user.trans('Puzzles') %>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">
+                    <%- user.trans('DashBoard') %>
+                  </a>
+                  <!-- <div class="dropdown-divider"></div> -->
+                  <!-- <a class="dropdown-item" href="#">طوفان پازل</a> -->
+                </div>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <%- user.trans('Learn') %>
+                </a>
+
+                <div class="dropdown-menu text-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#">
+                    <%- user.trans('Basics') %>
+                  </a>
+                  <!-- <div class="dropdown-divider"></div> -->
+                  <!-- <a class="dropdown-item" href="#">شبکه یار مهربان</a> -->
+                  <!-- <div class="dropdown-divider"></div> -->
+
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">
+                    <%- user.trans('Practice') %>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">
+                    <%- user.trans('Co-ordinate') %>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">
+                    <%- user.trans('Coaches') %>
+                  </a>
+                  <!-- <div class="dropdown-divider"></div> -->
+                  <!-- <a class="dropdown-item" href="#">مربی ها</a> -->
+                </div>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <%- user.trans('Videos') %>
+                </a>
+
+                <!-- <div class="dropdown-menu text-right" aria-labelledby="navbarDropdown"> -->
+                <!-- <a class="dropdown-item" href="#">شبکه یار مهربان</a> -->
+                <!-- <div class="dropdown-divider"></div> -->
+                <!-- <a class="dropdown-item" href="#">بازی های در جریان</a> -->
+                <!-- <div class="dropdown-divider"></div> -->
+                <!-- <a class="dropdown-item" href="#">استریم کنندگان</a> -->
+                <!-- <div class="dropdown-divider"></div> -->
+                <!-- <a class="dropdown-item" href="#">شبکه های دیگر</a> -->
+                <!-- <div class="dropdown-divider"></div> -->
+                <!-- <a class="dropdown-item" href="#">مخزن ویدیو ها</a> -->
+                <!-- </div> -->
+              </li>
+
+              <!-- <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  انجمن
+                </a>
+                <div class="dropdown-menu text-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#">بازیکنان</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">تیم ها</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">انجمن</a>
+                </div>
+              </li> -->
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <%- user.trans('Tools') %>
+                </a>
+                <div class="dropdown-menu text-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="/tool/analysis">
+                    <%- user.trans('Analyze') %>
+                  </a>
+                  <!-- <div class="dropdown-divider"></div> -->
+                  <!-- <a class="dropdown-item" href="#">شروع بازی ها</a> -->
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/tool/editor">
+                    <%- user.trans('Board') %>
+                  </a>
+                  <!-- <div class="dropdown-divider"></div> -->
+                  <!-- <a class="dropdown-item" href="#">بارگذاری بازی </a> -->
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/tool/search">
+                    <%- user.trans('Advance search') %>
+                  </a>
+                </div>
+              </li>
+
+              <!-- <li class="nav-item">
+                    <a class="nav-link" href="#">لینک</a>
+                </li> -->
+
+
+
+
+            </ul>
+
+
+          </div>
+
+
+
+          <!-- <a class="ml-2 mr-2" href="/user-panel"><i class="fa fa-cog text-secondary"></i></a> -->
+
+          <!-- <input id="searchForm" type="search" class="collapse fade form-control border-0 bg-light dir-ltr" placeholder="search" /> -->
+
+
+
+
+        </nav>
+      </div>
+
+      <div class="d-flex align-items-lg-center justify-content-end dir-ltr position-relative mt-2 pt-1">
+        <div class="">
+          <a href="/" class=" fas fa-home fs-4 text-dark mx-2"></a>
+        </div>
+
+        <div class=" pointer" onclick="creatFriendlyChalenge()">
+          <i class="fas fa-search mx-2 fs-4 text-dark"></i>
+        </div>
+        <!-- سثشقزا -->
+        <div class="mx-3 ms-2">
+          <%- include("./chalengeReqs") -%>
+        </div>
+
+        <div>
+          <i class="fas fa-bell fs-4 text-dark"></i>
+        </div>
+
+        <div class=" d-flex  px-1 fs-5 pe-4 ms-3">
+          <% if(!user.login) { %>
+            <a class="text-primary mx-2" href="/user/login">
+              <%- user.trans('Login') %>
+            </a>
+            <a class="text-primary mx-2" href="/user/register">
+              <%- user.trans('Register') %>
+            </a>
+            <% } else{ %>
+              <a class="text-primary mx-2" href="/user/logout">
+                <i class="fas fa-power-off fs-6"></i>
+              </a>
+              <a class="text-primary mx-2" href="/user/profile">
+                <%- user.dbProps.userName %>
+              </a>
+              <% } %>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center justify-content-center ">
+      <hr class="" style="height: 1px; color: rgb(189, 3, 3);opacity: 1; width: 90%;margin-bottom: 18px;">
+    </div>
+    <script>
+      function creatFriendlyChalenge() {
+        let modal = new bootstrap.Modal(document.getElementById('creatFrieandlyChalenge'), {
+          keyboard: false
+        })
+        modal.show();
+      }
+      function creatOpenChalenge() {
+        let modal = new bootstrap.Modal(document.getElementById('creatOpenChalenge'), {
+          keyboard: false
+        })
+        modal.show();
+      }
+    </script>
+
+    <%- include('./creatGameModal') -%>

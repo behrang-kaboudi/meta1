@@ -1,0 +1,57 @@
+<div class="wg-box dir-ltr ">
+    <div class="wg-title text-center fs-3 fw-bolder">
+        Ready Paleyers
+    </div>
+    <div class="wg-inner w-100 fs-5 d-flex flex-column overflow-scroll" id="onlinePlayers" style="max-height: 500px; ">
+
+    </div>
+</div>
+<script>
+    let onlineUsersComp = {
+        users: [],
+        setUsers: () => {
+            let parent = document.getElementById('onlinePlayers');
+            parent.innerHTML = '';
+            onlineUsersComp.users.forEach((u) => {
+                    if (u.userName == userName) return;
+                    let tag = `<span my-1><i class="fas fa-circle text-success mx-2" ></i> ${u.userName} </span>`;
+                    parent.innerHTML += tag;
+                })
+                // console.log(onlineUsersComp.users);
+        }
+    };
+    $(document).ready(function() {
+        function getUsers() {
+            socket.emit('onlineUsers', {}, (users) => {
+                onlineUsersComp.users = users;
+                onlineUsersComp.setUsers();
+            })
+        }
+        getUsers();
+        socket.io.on("reconnect", (attempt) => {
+            getUsers();
+        });
+        socket.on('playerOnline', (user) => {
+            if (user.online) {
+                let inArr = onlineUsersComp.users.some((el) => {
+                    return el.userName == user.userName;
+                });
+
+                if (!inArr) {
+
+                    onlineUsersComp.users.push(user);
+                    onlineUsersComp.setUsers();
+                }
+            } else {
+                let newUsers = onlineUsersComp.users.filter((u) => {
+                    if (u.userName != user.userName) {
+                        return true
+                    };
+                    return false;
+                })
+                onlineUsersComp.users = newUsers;
+                onlineUsersComp.setUsers();
+            }
+        })
+    })
+</script>

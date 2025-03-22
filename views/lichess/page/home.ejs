@@ -1,0 +1,195 @@
+<%- include('../share/superheader') -%>
+
+<%- include('../component/mainnav') -%>
+<script src="/public/js/chess.js"></script>
+<link rel="stylesheet" href="/public/components/bk-chessboard/css/bk-board.css" />
+<script src="/public/components/bk-chessboard/js/bk-board-class.js"></script>
+<script src="https://player.twitch.tv/js/embed/v1.js"></script>
+
+<style>
+  .btnCreate {
+    border-width: 4.99px;
+    border-color: rgb(235, 235, 235);
+    border-style: solid;
+    border-radius: 4px;
+    background-color: rgb(235, 235, 235);
+    box-shadow: 0px 2px 2px 0px rgba(35, 31, 32, 0.75);
+    width: 90%;
+    height: 3.7vw;
+  }
+
+
+
+  .btn-text {
+    font-size: 0.95rem;
+    font-family: "Arial";
+    color: rgb(64, 61, 51);
+    text-align: center;
+
+  }
+
+
+
+  .middle-content {
+    background: url('/public/lichess/img/bghome.jpeg') no-repeat center;
+    background-size: cover;
+    width: 100%;
+    height: 550px;
+    /* opacity: 0.5    ; */
+  }
+
+  .home-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  @media (min-width: 576px) {}
+
+  @media (max-width: 768px) {
+    .middle-content {
+      background: url('/public/lichess/img/bghome.jpeg') no-repeat center;
+      background-size: cover;
+      width: 100%;
+      height: 550px;
+      /* opacity: 0.5    ; */
+    }
+
+    .home-logo {
+      width: 100px;
+      height: 100px;
+    }
+
+    .btnCreate {
+      height: 40px;
+    }
+
+  }
+
+  @media (min-width: 992px) {
+    .middle-content {
+      background: url('/public/lichess/img/bghome.jpeg') no-repeat center;
+      background-size: cover;
+      width: 97%;
+      height: 650px;
+      /* opacity: 0.5    ; */
+    }
+  }
+</style>
+<% let template="lichess" %>
+
+<div class="row container-fluid justify-content-center  mt-2 mx-auto" style="height: 550px;">
+
+  <div class="col-lg-3  text-center p-0 pt-2">
+    <button onclick="userObjectUt.toLogin()" class="btnCreate btn-text mt-4 " type="button" data-bs-toggle="modal" data-bs-target="#creatOpenChalenge" style="font-size: 15px;font-weight: 540;">
+      <%- user.trans('CREATE A GAME') %>
+    </button>
+    <button onclick="userObjectUt.toLogin()" class="btnCreate btn-text mt-3" type="button" data-bs-toggle="modal" data-bs-target="#creatFrieandlyChalenge" style="font-size: 15px;font-weight: 540;">
+      <%- user.trans('PLAY WITH A FRIEND') %>
+    </button>
+    <!-- <button class="btnCreate btn-text"
+                        style="width: 90%; height: 45px;box-shadow: 3px 3px 5px rgb(110, 110, 110);">
+                        <%- user.trans('') %>
+                    </button> -->
+    <button onclick="userObjectUt.toLogin()" class="btnCreate btn-text mt-3" style="font-size: 15px;font-weight: 540;">
+      <%- user.trans('PLAY WITH THE COMPUTER') %>
+    </button>
+    <div class="mx-3 mt-4 pt-4" style="margin-top: 15px;">
+      <%- include('../component/puzzleOfDay') -%>
+      <!-- <img src="/public/lichess/img//Puzzle.png" class="mx-auto mt-4" style="width: 90%;"> -->
+    </div>
+
+
+  </div>
+  <div class="col-lg-6 dir-ltr">
+    <div>
+      <%- include('../component/homeLobby/topMenu') -%>
+    </div>
+    <div class="row mt-1 px-0">
+      <%- include('../component/homeLobby/quickPairing') -%>
+      <%- include('../component/homeLobby/lobby') -%>
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="d-flex align-items-end p-2 dir-ltr">
+          <img class="" src="/public/lichess/img/RPawn1.png" style="width: 11px; height: 14px;margin-right: 5px;" />
+          <img class="" src="/public/lichess/img/RPawn1.png" style="width: 13px; height: 17px;margin-right: 5px;" />
+          <img class="" src="/public/lichess/img/RPawn1.png" style="width: 15px; height: 21px;" />
+        </div>
+        <!-- <div class="d-flex justify-content-between " style="font-size: 13px;"> -->
+        <a class="mt-3" href="" id="nb_connected_players" style="font-size: 15px;">
+          <%- user.trans('Players Online') %>
+          <strong data-count="50269">304</strong>
+        </a>
+        <a class="mt-3" href="" id="nb_connected_players" style="font-size: 15px;">
+          <%- user.trans('Games In Play') %>
+          <strong data-count="120841">114</strong>
+        </a>
+        <!-- </div> -->
+
+        <div class="d-flex align-items-end p-2 dir-ltr">
+          <img class="" src="/public/lichess/img/RPawn1.png" style="width: 15px; height: 21px;margin-right: 5px;" />
+          <img class="" src="/public/lichess/img/RPawn1.png" style="width: 13px; height: 17px;margin-right: 5px;" />
+          <img class="" src="/public/lichess/img/RPawn1.png" style="width: 11px; height: 14px;" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="col-lg-3 dir-ltr p-0">
+    <div class="d-flex align-items-center mt-2 ms-1 px-2">
+      <i class="fas fa-signal-stream me-1"></i>
+      <span class="" style="font-size: 13px;margin-top: 3px;">
+        Live Stream
+      </span>
+
+    </div>
+
+
+    <div id="twitch-embed-parent" style="margin:0px;padding: 0px;">
+      <div id="twitch-embed" style="margin:0px;padding: 0px;width: 100%;" class="ratio ratio-16x9">
+        <!-- <iframe class="ratio ratio-16x9 " src="https://player.twitch.tv/?channel=gmhikaru&parent=play.pmchess.com" frameborder="0" allowfullscreen="true" scrolling="no" style="--bs-aspect-ratio: 50%;"></iframe> -->
+        <!-- <iframe src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe> -->
+      </div>
+      <script type="text/javascript">
+        $(document).ready(function() {
+          new Twitch.Player("twitch-embed", {
+            width: 320,
+            height: 200,
+            autoplay: false,
+            channel: "gmhikaru"
+          });
+        })
+      </script>
+    </div>
+    <!-- <img class="w-100" src="/public/lichess/img/LiveStream.png" /> -->
+    <div class="d-flex justify-content-end ">
+      <span class=" me-2 " style="font-size: 13px;margin-top: 3px;color: rgb(242, 101, 34);margin-top: 0px;">
+        More Live Stream >>
+      </span>
+
+    </div>
+    <div class="px-2" style="margin-top: -2px;">
+      <%- include('../component/topLiveGame') -%>
+    </div>
+
+  </div>
+  <!-- 
+                <div class="middle-content border-secondary border-4 rounded-3 position-relative">
+                    <img class="position-absolute top-0 end-0 m-4 home-logo" src="/public/lichess/img/bg.png" />
+                    <div class="position-absolute bottom-50 end-50 my-5 d-none d-lg-flex" style="width: 50%">
+                        <img class="" src="/public/lichess/img/hometext.png"
+                            style="width: 330px; height: 200px; margin-right: 180px" />
+                    </div>
+
+
+                </div>
+
+               
+                <div class="about-side row">
+                    <a class="text-center" href=" " class="blue">Copyright &#169; PMChess 2021</a>
+                </div> -->
+</div>
+
+
+<style>
+
+</style>
+<%- include('../share/superfooter') -%>

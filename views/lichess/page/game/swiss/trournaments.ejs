@@ -1,0 +1,176 @@
+<%- include('../../../share/superheader') -%>
+<%- include("../../../component/mainnav") -%>
+
+<style>
+  .tournament-parts {
+    border-width: 4.167px;
+    border-color: rgb(190, 188, 177);
+    border-style: solid;
+    background-color: rgb(217, 215, 201);
+    box-shadow: 0px 7px 7px 0px rgba(0, 0, 0, 0.75);
+    width: 100%;
+    padding: 8px 0px 5px 10px;
+  }
+
+  #mainDiv {
+    width: 100%;
+  }
+
+  @media screen and (min-width: 768px) {
+    #mainDiv {
+      width: 80%;
+    }
+  }
+</style>
+
+<div class="dir-ltr -fluid d-flex ">
+  <div id="mainDiv" class="container mt-1 mt-lg-3 p-0">
+    <div class="mt-0 mt-lg-2 mb-2 d-flex  flex-column flex-lg-row align-items-center justify-content-lg-between">
+      <%- ejsDesign.pageHeaderTitle(user.trans('Swiss tournaments')) %>
+      <%- ejsDesign.btnLink(user.trans('Want to hold a tournament'),'primary') %>
+    </div>
+    <div class="mt-4">
+      <%- ejsDesign.partHeader(user.trans('Your participated tournaments'),'') %>
+    </div>
+    <div id="mainDiv-myOpens" class="container mt-2 p-0 ">
+    </div>
+    <div class="mt-5">
+      <%- ejsDesign.partHeader(user.trans('Ongoing Tournaments')) %>
+    </div>
+    <div id="mainDiv-onGoing" class="container mt-2  p-0">
+    </div>
+    <div class="mt-5">
+      <%- ejsDesign.partHeader(user.trans('Upcoming tournaments')) %>
+    </div>
+    <div id="mainDiv-upComing" class="container mt-2  p-0">
+
+    </div>
+    <div class="mt-5">
+      <%- ejsDesign.partHeader(user.trans('ّFinished tournaments')) %>
+    </div>
+    <div id="mainDiv-finished" class="container mt-2  p-0">
+
+    </div>
+
+  </div>
+</div>
+<div id="myDiv2">
+
+</div>
+<div id="myDiv3">
+</div>
+<script type="module">
+  import {
+    List
+  } from "/public/components/siteReact/swiss/tourList.js";
+  let myOpens = SbkC.render({
+    class: List,
+    parent: document.getElementById('mainDiv-myOpens'),
+    data: {
+      server: {
+        root: 'swiss',
+        fName: 'myOpens',
+        req: true,
+      }
+    }
+  })
+  let onGoing = SbkC.render({
+    class: List,
+    parent: document.getElementById('mainDiv-onGoing'),
+    data: {
+      server: {
+        root: 'swiss',
+        fName: 'onGoing',
+        req: true,
+      }
+    }
+  })
+  let upComing = SbkC.render({
+    class: List,
+    parent: document.getElementById('mainDiv-upComing'),
+    data: {
+      server: {
+        root: 'swiss',
+        fName: 'upComing',
+        req: true,
+      }
+    }
+  })
+  let finished = SbkC.render({
+    class: List,
+    parent: document.getElementById('mainDiv-finished'),
+    data: {
+      server: {
+        root: 'swiss',
+        fName: 'finished',
+        req: true,
+      }
+    }
+  })
+  // // let myOpens = new Test();
+  // $(() => {
+  //     socketIoFuncs.emit(
+  //         'swiss',
+  //         'join',
+  //         { room: 'myOpens' } ,
+  //         () => {
+  //             socketIoFuncs.emit('swiss', 'myOpens', null, (data) => {  
+  //                 myOpens.updateNewData(data) 
+  //             });
+  //         }
+  //     )
+
+
+  // })
+  // $(() => {
+
+  //     socketIoFuncs.emit(
+  //         'swiss',
+  //         'join',
+  //         () => { return { room: 'onGoing' } },
+  //         () => {
+  //             socketIoFuncs.emit('swiss', 'onGoing', null, (data) => {  onGoing.updateNewData(data) });
+  //         }
+  //     )
+
+  // })
+
+  $(() => {
+    // socket.io.on('reconnect', function() {
+    //   for (const key in SbkC.serverRomes) {
+    //     // console.log('keys', SbkC.serverRomes[key]);
+    //     socket.emit('joinRoom', {
+    //       root: 'swiss'
+    //     });
+    //   }
+    // });
+    // socketIoFuncs.emit(
+    //   'swiss',
+    //   'join',
+    //   () => {
+    //     return {
+    //       room: 'upComing'
+    //     }
+    //   },
+    //   () => {
+    //     socketIoFuncs.emit('swiss', 'upComing', null, (data) => {
+    //       upComing.updateNewData(data)
+    //     });
+    //   }
+    // )
+    // socket.on('swiss-created', (data) => {
+    //   upComing.newTour(data.tour)
+    // });
+    // socket.on('swiss-registered', (data) => {
+    //   if (data.tour.players.includes(userName)) {
+    //     upComing.removeTour(data.tour)
+    //   } else {
+    //     upComing.tourData(data.tour)
+    //   }
+    // });
+  })
+</script>
+
+
+
+<%- include("../../../share/superfooter") -%>

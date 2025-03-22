@@ -1,0 +1,63 @@
+<div class="wg-box dir-ltr ">
+    <div class="wg-title text-center fs-4 fw-bolder">
+        Live Games
+    </div>
+    <div class="wg-inner w-100 fs-5 d-flex flex-column" id="liveGames" style="height: 500px;">
+
+    </div>
+</div>
+<script>
+    let liveGamesComp = {
+        games: [],
+        setGames: () => {
+            let parent = document.getElementById('liveGames');
+            parent.innerHTML = '';
+            liveGamesComp.games.forEach((u) => {
+                if (u.blackUserName == userName || u.whiteUserName == userName) return;
+                let tag = `<a href="/public/game/play/${u._id}" target="_blank" my-1>${u.whiteUserName + '(' + u.whiteRate +')'} -  ${u.blackUserName + '(' + u.blackRate +')'}</a><hr>`;
+                parent.innerHTML += tag;
+            })
+            liveGamesComp.setSelfLiveGames();
+            // console.log(onlineUsersComp.users);
+        },
+        setSelfLiveGames: () => {
+            let parent = document.getElementById('selfLiveGames');
+            parent.innerHTML = '';
+            liveGamesComp.games.forEach((u) => {
+                    if (u.blackUserName == userName || u.whiteUserName == userName) {
+                        let tag = `<a href="/public/game/play/${u._id}" target="_blank" my-1>${u.whiteUserName + '(' + u.whiteRate +')'} -  ${u.blackUserName + '(' + u.blackRate +')'}</a><hr>`;
+                        parent.innerHTML += tag;
+                    }
+                })
+                // console.log(onlineUsersComp.users);
+        }
+    };
+    $(document).ready(function() {
+        liveGamesComp.getLiveGames = function() {
+            socket.emit('liveGames', {}, (games) => {
+                liveGamesComp.games = games;
+                liveGamesComp.setGames();
+            })
+        }
+        liveGamesComp.getLiveGames();
+        socket.io.on("reconnect", (attempt) => {
+            liveGamesComp.getLiveGames();
+
+        });
+
+        socket.on('newGameCreated', (game) => {
+            liveGamesComp.games.push(game);
+            liveGamesComp.setGames();
+        });
+        socket.on('gameFinished', (game) => {
+            // liveGamesComp.games.push(game);
+            let games = liveGamesComp.games.filter((g) => {
+
+                return g._id != game._id;
+            });
+            liveGamesComp.games = games;
+            liveGamesComp.setGames();
+        });
+
+    })
+</script>

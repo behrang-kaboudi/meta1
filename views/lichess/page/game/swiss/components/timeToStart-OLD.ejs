@@ -1,0 +1,61 @@
+<span class="fs-5">
+    <span id="nextRoundTimeText">
+</span>
+
+
+<span id="nextRoundTime">
+</span>
+
+
+
+<!-- <div class="wg-inner">
+        <div id="">
+
+        </div>
+    </div>
+    <div class="wg-footer text-center">
+
+    </div> -->
+
+<script>
+    var swissNextRoundTime = {
+        timerHolder: null,
+        remainingTime: 0,
+        showTime: function() {
+            let parts = sbkTimer.getTimeParts(swissNextRoundTime.remainingTime);
+            let time = "";
+            time += parts.hours + ":" + parts.mins + ":" + parts.secs;
+            document.getElementById('nextRoundTime').innerText = 'Starts In ' +time;
+        },
+        interval: () => {
+            clearInterval(swissNextRoundTime.timerHolder);
+            swissNextRoundTime.timerHolder = setInterval(() => {
+                swissNextRoundTime.remainingTime -= 1;
+                if (swissNextRoundTime.remainingTime < 0) {
+                    swissNextRoundTime.remainingTime = 0;
+                }
+                swissNextRoundTime.showTime();
+            }, 1000);
+        },
+        setTime: (time) => {
+            clearInterval(swissNextRoundTime.timerHolder);
+            if (time.status == 'finished') {
+                document.getElementById('nextRoundTime').innerHTML = 'finished';
+                document.getElementById('nextRoundTimeText').innerHTML = '';
+                return;
+            }
+            if (time.status == 'closed') {
+                document.getElementById('nextRoundTime').innerHTML = ' Rd    ' + time.data;
+                document.getElementById('nextRoundTimeText').innerHTML = ' In Progress';
+                return;
+            }
+            swissNextRoundTime.remainingTime = Number(time.data) ;
+            swissNextRoundTime.remainingTime  = swissNextRoundTime.remainingTime/1000;
+            swissNextRoundTime.remainingTime = parseInt(swissNextRoundTime.remainingTime)
+            swissNextRoundTime.interval();
+
+        }
+        
+    }
+    registerEmmit("swiss", "timeToStart", ()=>{return {id: tourId}}, swissNextRoundTime.setTime);
+</script>

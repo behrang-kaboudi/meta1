@@ -1,0 +1,443 @@
+<%- include('../../share/superheader') -%> <%-
+include('../../component/mainnav') -%>
+<audio class="d-none" id="moveSound" controls>
+  <source src="/sound/move.m4a" type="audio/ogg" />
+</audio>
+<link rel="stylesheet" href="/components/bk-chessboard/css/bk-board.css" />
+<script src="/components/bk-chessboard/js/bk-board.js"></script>
+<script src="/components/bk-chessboard/js/bk-board-consts.js"></script>
+<script src="/js/chess.js"></script>
+<div class="container-fluid">
+  <div
+    onclick="display.hide('bgAll');display.hide('promotionB');display.hide('promotionW');"
+    id="bgAll"
+    class="position-fixed row d-none"
+    style="
+      background-color: rgba(20, 20, 20, 0.479);
+      width: 100%;
+      height: 100%;
+      top: 0px;
+      z-index: 50;
+    "
+  ></div>
+  <div class="row mt-3">
+    <div class="order-sm-2 order-lg-2 col-lg-6 col-md-5 align-items-center">
+      <br />
+      <br />
+      <div class="" style="width: 100%">
+        <button id="resign" onclick="resign()" class="btn-danger p-2 rounded-2">
+          واگذار کردن
+        </button>
+        <button
+          id="offerDraw"
+          onclick="offerDraw()"
+          class="btn-primary p-2 rounded-2"
+        >
+          پیشنهاد تساوی
+        </button>
+        <button
+          id="acceptDraw"
+          onclick="acceptDraw()"
+          class="btn-success p-2 rounded-2 d-none"
+        >
+          قبول پیشنهاد تساوی
+        </button>
+      </div>
+
+      <div class="dir-ltr">
+        <span id="result" class="h2">------</span>
+      </div>
+
+      <br />
+      <br />
+      <img src="/img/samp1.png" width="70%" />
+    </div>
+    <div class="order-sm-1 order-lg-2 col-lg-5 col-md-7">
+      <div
+        style="z-index: 150; margin-top: 10px"
+        class="text-center d-flex justify-content-center w-100"
+        style="width: 100%"
+      >
+        <div
+          id="promotionB"
+          class="picPromotion py-12 d-flex d-none z-index: 300"
+        >
+          <img
+            onclick="doPromotion('n')"
+            src="/components/bk-chessboard/pices/bn.svg"
+            class="bg-light mx-1 rounded-2"
+            style="width: 14%; border: 1px solid; z-index: 999"
+          />
+          <img
+            onclick="doPromotion('b')"
+            src="/components/bk-chessboard/pices/bb.svg"
+            class="bg-light mx-1 rounded-2"
+            style="width: 14%; border: 1px solid; z-index: 999"
+          />
+          <img
+            onclick="doPromotion('r')"
+            src="/components/bk-chessboard/pices/br.svg"
+            class="bg-light mx-1 rounded-2"
+            style="width: 14%; border: 1px solid; z-index: 999"
+          />
+          <img
+            onclick="doPromotion('q')"
+            src="/components/bk-chessboard/pices/bq.svg"
+            class="bg-light mx-1 rounded-2"
+            style="width: 14%; border: 1px solid; z-index: 999"
+          />
+        </div>
+        <div
+          id="promotionW"
+          class="picPromotion justify-content-center py-12 d-flex d-none"
+          style="width: 100%"
+        >
+          <img
+            onclick="doPromotion('n')"
+            src="/components/bk-chessboard/pices/wn.svg"
+            class="bg-light mx-1 rounded-2"
+            style="width: 14%; border: 1px solid; z-index: 999"
+          />
+          <img
+            onclick="doPromotion('b')"
+            src="/components/bk-chessboard/pices/wb.svg"
+            class="bg-light mx-1 rounded-2"
+            style="width: 14%; border: 1px solid; z-index: 999"
+          />
+          <img
+            onclick="doPromotion('r')"
+            src="/components/bk-chessboard/pices/wr.svg"
+            class="bg-light mx-1 rounded-2"
+            style="width: 14%; border: 1px solid; z-index: 999"
+          />
+          <img
+            onclick="doPromotion('q')"
+            src="/components/bk-chessboard/pices/wq.svg"
+            class="bg-light mx-1 rounded-2"
+            style="width: 14%; border: 1px solid; z-index: 999"
+          />
+        </div>
+      </div>
+
+      <style>
+        #wTime,
+        #wTime * {
+          background-color: white;
+          color: black;
+          font-size: xx-large;
+        }
+        #bTime,
+        #bTime * {
+          background-color: black;
+          color: white;
+          font-size: xx-large;
+        }
+      </style>
+      <div>
+        <div class="d-flex justify-content-between align-items-center">
+          <div id="upTime"></div>
+          <div class="dir-ltr r ms-2 h5">
+            <i class="fa fa-toggle-off"></i>
+            <span id="upName"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="board" id="board"></div>
+      <div class="d-flex justify-content-between align-items-center">
+        <div id="downTime"></div>
+        <div class="dir-ltr ms-2 h5">
+          <i class="fa fa-toggle-off"></i>
+          <span id="downName"></span>
+        </div>
+      </div>
+    </div>
+    <div class="order-sm-3 order-lg-3 col-lg-1 col-md-12"></div>
+  </div>
+</div>
+<div id="timeSample" class="d-none">
+  <div id="Time" class="btn btn-light dir-ltr">
+    <span id="Min" class=""> 3 </span>
+    <span> : </span>
+    <span>
+      <span id="BigSec"> 0 </span>
+      <span id="SmallSec"> 0 </span>
+    </span>
+  </div>
+</div>
+<div id="gameId" class="d-none"><%=gameId %></div>
+<script>
+  let gameId = document.getElementById('gameId').innerText.trim();
+  let connectionCount = 0;
+  let timerBlack, timerWhite;
+  let playSide = 'w';
+  let oppSide = 'b';
+  let lastMove = {flags: '', promotion: ''};
+  let game; //= JSON.parse(gameJson);
+  let chess = new Chess();
+  let bd2 = new BkBoard('board', {imgSrc: '/components/bk-chessboard/pices/'});
+  bd2.creatBoard();
+  // setBoard();
+
+  function setBoard() {
+    if (!game) {
+      playSide = 'b';
+      oppSide = 'w';
+      bd2.filipSide('b');
+      bd2.settings.sideToMove = 'b';
+      setTimes('b', 'downTime');
+      document.getElementById('downName').innerText = game.blackUserName;
+      setTimes('w', 'upTime');
+      document.getElementById('upName').innerText = game.whiteUserName;
+    }
+    if (game.blackUserName == userName) {
+      playSide = 'b';
+      oppSide = 'w';
+      bd2.filipSide('b');
+      bd2.settings.sideToMove = 'b';
+      setTimes('b', 'downTime');
+      document.getElementById('downName').innerText = game.blackUserName;
+      setTimes('w', 'upTime');
+      document.getElementById('upName').innerText = game.whiteUserName;
+    } else {
+      bd2.filipSide('w');
+      bd2.settings.sideToMove = 'w';
+      setTimes('b', 'upTime');
+      document.getElementById('upName').innerText = game.blackUserName;
+      setTimes('w', 'downTime');
+      document.getElementById('downName').innerText = game.whiteUserName;
+      bd2.settings.canMove = true;
+    }
+  }
+
+  function setTimes(side, place) {
+    let mainNode = document.getElementById('Time');
+    let copyNode = mainNode.cloneNode(true);
+    mainNode.id = side + mainNode.id;
+    let min = document.getElementById('Min');
+    min.id = side + min.id;
+    min.innerText = game.gameTimeMins;
+    min.classList.add(side + 'time');
+    let bigSec = document.getElementById('BigSec');
+    bigSec.id = side + bigSec.id;
+    bigSec.innerText = parseInt(game.gameTimeSecs / 10);
+    bigSec.classList.add(side + 'time');
+    let smallSec = document.getElementById('SmallSec');
+    smallSec.id = side + smallSec.id;
+    smallSec.innerText = game.gameTimeSecs % 10;
+    smallSec.classList.add(side + 'time');
+    document.getElementById('timeSample').appendChild(copyNode);
+    document.getElementById(place).appendChild(mainNode);
+    // userName.innerText = chaleng.requsterUserName;
+  }
+  socket.emit('joinGameRome', gameId, (ans) => {});
+  bd2.Funcs.getSqs = getSqs;
+  function getSqs(moveObj) {
+    lastMove = moveObj;
+    lastMove.userName = userName;
+    lastMove.gameId = game._id;
+  }
+  bd2.Funcs.isCorrectMove = isCorrectMove;
+  function isCorrectMove(moveObj) {
+    let move = chess.move(lastMove);
+    if (!move) {
+      let moves = chess.moves({verbose: true});
+      for (let index = 0; index < moves.length; index++) {
+        const move = moves[index];
+        if (move.from == lastMove.from && move.to == lastMove.to) {
+          lastMove.type = 'promotion';
+
+          display.show('bgAll');
+          display.show('promotion' + playSide.toUpperCase());
+          return false;
+        }
+      }
+      return move;
+    }
+    if (move.flags == 'e' || move.flags == 'q' || move.flags == 'k') {
+      lastMove.flags = move.flags;
+      // bd2.clearPosition();
+      bd2.settings.fen = chess.fen();
+
+      bd2.creatBoard();
+      afterMove();
+      return;
+    }
+
+    return move;
+    // bd2.settings.canMove = false;
+  }
+
+  function doPromotion(pice) {
+    lastMove.promotion = pice;
+    lastMove.flags = 'p';
+    let m = chess.move(lastMove);
+    bd2.settings.fen = chess.fen();
+    display.hide('bgAll');
+    display.hide('promotionW');
+    display.hide('promotionB');
+    bd2.creatBoard();
+    afterMove();
+  }
+
+  bd2.Funcs.moveEnd = afterMove;
+  function afterMove() {
+    bd2.settings.canMove = false;
+    socket.emit('gameMove', lastMove, (ans) => {});
+  }
+
+  socket.on('oppMove', function (obj) {
+    clearInterval(timer.timerWhite);
+    clearInterval(timer.timerBlack);
+    game = obj.game;
+
+    timer.showTime(obj.game.blackRemainingTime, 'b');
+    timer.showTime(obj.game.whiteRemainingTime, 'w');
+    display.hide('acceptDraw');
+    var vid = document.getElementById('moveSound');
+    vid.play();
+    if (userName != obj.move.userName) {
+      bd2.settings.canMove = true;
+      if ('flags' in obj.move) {
+        if (
+          obj.move.flags == 'e' ||
+          obj.move.flags == 'q' ||
+          obj.move.flags == 'k' ||
+          obj.move.flags == 'p'
+        ) {
+          chess.move(obj.move);
+          bd2.settings.fen = chess.fen();
+          bd2.creatBoard();
+          return;
+        }
+      } else {
+        bd2.doMove(obj.move.from, obj.move.to);
+        chess.move(obj.move);
+      }
+    }
+    if (isEndGame(game)) return;
+    let sideToMove = game.blackUserName == obj.move.userName ? 'w' : 'b';
+    if (sideToMove == 'b') {
+      timer.timerBlack = setInterval(timer.intervalFunc('b'), 1000);
+      clearInterval(timer.timerWhite);
+    } else {
+      timer.timerWhite = setInterval(timer.intervalFunc('w'), 1000);
+      clearInterval(timer.timerBlack);
+    }
+  });
+
+  socket.on('newGameData', function (obj) {
+    clearInterval(timer.timerWhite);
+    clearInterval(timer.timerBlack);
+    game = obj.game;
+    if (connectionCount == 0) setBoard();
+    connectionCount++;
+    timer.showTime(game.blackRemainingTime, 'b');
+    timer.showTime(game.whiteRemainingTime, 'w');
+    updateEngine(game);
+
+    bd2.settings.fen = chess.fen();
+    bd2.creatBoard();
+    if (isEndGame(game)) return;
+    console.log('end');
+    bd2.settings.canMove = false;
+    userName == game.blackUserName
+      ? (bd2.settings.sideToMove = 'b')
+      : (bd2.settings.sideToMove = 'w');
+    let sideToMove = chess.turn();
+    if (sideToMove == 'b') {
+      bd2.settings.canMove = true;
+      timer.timerBlack = setInterval(timer.intervalFunc('b'), 1000);
+      clearInterval(timer.timerWhite);
+    } else {
+      bd2.settings.canMove = true;
+      timer.timerWhite = setInterval(timer.intervalFunc('w'), 1000);
+      clearInterval(timer.timerBlack);
+    }
+  });
+  let timer = {
+    timerBlack: null,
+    timerWhite: null,
+    intervalFunc: function (side) {
+      let s = side == 'w' ? 'white' : 'black';
+
+      return function () {
+        game[s + 'RemainingTime'] -= 1000;
+        if (game[s + 'RemainingTime'] < 1) {
+          clearInterval(timer.timerWhite);
+          clearInterval(timer.timerBlack);
+          socket.emit('joinGameRome', gameId, (ans) => {});
+          return;
+        }
+        timer.showTime(game[s + 'RemainingTime'], side);
+      };
+    },
+    showTime: function (time, side) {
+      console.log(time);
+      if (time < 0) {
+        time = 0;
+        // clearInterval(timer.timerWhite);
+        // clearInterval(timer.timerBlack);
+
+        // return;
+      }
+      var parts = this.getTimeParts(time);
+      document.getElementById(side + 'Min').innerText = parts[0];
+      document.getElementById(side + 'BigSec').innerText = parts[1];
+      document.getElementById(side + 'SmallSec').innerText = parts[2];
+    },
+    getTimeParts: function (tim) {
+      tim = Math.floor(tim / 1000);
+      var parts = [];
+      parts[0] = Math.floor(tim / 60);
+      var s = tim % 60;
+      parts[1] = Math.floor(s / 10);
+      parts[2] = Math.floor(s % 10);
+      return parts;
+    },
+  };
+  function updateEngine(game) {
+    let gmMoves = game.pgn.trim().split('--');
+    chess = new Chess(game.startPosition);
+    for (let i = 0; i < gmMoves.length; i++) {
+      let mv = gmMoves[i];
+      if (mv) {
+        mv = JSON.parse(mv);
+        chess.move(mv);
+      }
+    }
+  }
+  function resign() {
+    socket.emit('resign', game._id, (ans) => {});
+  }
+  function offerDraw() {
+    socket.emit('offerDraw', {game, userName}, (ans) => {});
+  }
+  socket.on('offerDraw', function (obj) {
+    console.log(obj);
+    if (userName != obj.userName) {
+      // let acceptDraw = document.getElementById();
+      // console.log(acceptDraw);
+      display.show('acceptDraw');
+    }
+  });
+  function acceptDraw() {
+    socket.emit('acceptDraw', game._id, (ans) => {});
+  }
+  function isEndGame(game) {
+    if (game.result.trim()) {
+      console.log();
+      clearInterval(timer.timerWhite);
+      clearInterval(timer.timerBlack);
+      bd2.canMove = false;
+      bd2.sideToMove = false;
+      document.getElementById('result').innerText = game.result;
+      document.getElementById('resign').disabled = true;
+      document.getElementById('offerDraw').disabled = true;
+      document.getElementById('acceptDraw').disabled = true;
+      return true;
+    }
+    return false;
+  }
+</script>
+<%- include('../../share/superfooter') -%>

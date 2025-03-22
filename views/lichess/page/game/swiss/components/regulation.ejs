@@ -1,0 +1,47 @@
+<div class="wg-box">
+    <!-- <div class="wg-title h3">
+        
+    </div> -->
+    <div class="wg-inner">
+        <a href='/swiss/tournaments/regulation/<%-tournament._id%>'> REGULATION </a>
+
+    </div>
+    <div class="wg-footer text-center">
+        <% if( tournament.status != 'open'){ %>
+            <button class="btn btn-danger">CLOSED</button>
+
+            <%} else if(!registerd){ %>
+                <button id="registerSwiss" class="btn btn-success" onclick="registerInTournament('<%-tournament._id%>')">Register</button>
+                <% }else{ %>
+                    <button id="unRegister" class="btn btn-danger">You Registerd Before</button>
+                    <% } %>
+    </div>
+</div>
+<script>
+    let registerSwiss={
+        controls:{
+            register : document.getElementById('registerSwiss'),
+            unReg : document.getElementById('unRegister'),
+        },
+
+    }
+    function registerInTournament(id) {
+        registerSwiss.controls.register.disabled = true;
+        registerEmmit("swiss", "register", ()=>{return {id}}, function name(data) {
+            if(!data.status ) {
+                window.location.href =data.data;
+                return;
+            }
+            location.reload();
+        });
+        // let obj = {
+        //     tournamentId: id
+        // }
+        // sendJSON(obj, '/swiss/register/', ok);
+        
+        // location.reload();
+        // function ok(res) {
+        //     // window.location.href = window.location.href;
+        // }
+    }
+</script>

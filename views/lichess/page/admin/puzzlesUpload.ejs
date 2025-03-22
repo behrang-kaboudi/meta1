@@ -1,0 +1,47 @@
+<%- include('../../share/superheader') -%>
+    <%-
+include('../../component/mainnav') -%>
+
+        <div class="container-fluid mt-4">
+            <style>
+                .wg-inner {
+                    min-height: 600px;
+                }
+            </style>
+            <div class="row">
+                <div class="text-right col-md-4 col-lg-3">
+                    <div class="wg-box">
+                        <div class="wg-title h4">منو</div>
+                        <div class="wg-inner h6">
+                            <%-
+include('../../component/adminMenu') -%>
+                        </div>
+                        <div class="wg-footer">
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="text-right col-md-8 col-lg-9">
+                    <div class="wg-box">
+                        <div class="wg-title h4">بارگذاری مسایل</div>
+                        <div class="wg-inner">
+                            <form action="/admin/puzzlesUpload" method="post" enctype="multipart/form-data">
+                                <!-- <input type="file" name="pgn"><br>
+                                <input type="submit"> -->
+                                <div class="mb-3">
+                                    <label for="pgn" class="form-label">فایل مسایل را انتخاب کنید.</label>
+                                    <input class="form-control" type="file" id="pgn" name="pgn">
+                                </div>
+                                <input type="submit" class="btn btn-success">
+                            </form>
+                        </div>
+                        <div class="wg-footer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../../share/superfooter') -%>

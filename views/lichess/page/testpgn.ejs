@@ -1,0 +1,620 @@
+<%- include('../share/superheader') -%>
+    <%- include('../component/mainnav') -%>
+        <script>
+            async function require(address) {
+                console.log('', 'cals');
+                let moduleText = "";
+                let module = {
+                    exports: null
+                }
+                await socket.emit('staticFile', {
+                    address
+                }, function(data) {
+                    console.log('xx', data);
+                    moduleText = data.text;
+                    let F1 = new Function('module', moduleText);
+                    F1(module);
+                    return module.exports;
+                })
+                await socket.on('staticFile', function(data) {
+                    console.log('sas', data);
+                    moduleText = data
+                })
+                return moduleText;
+
+
+            }
+            let module = {
+                exports: {}
+            };
+        </script>
+        <script type="module">
+            import {t4} from "/pgn/index.js"; console.log('as',);
+        </script>
+        <script>
+            // let pgn100 = null;
+            $(document).ready(async function(params) {
+                    let pgn = await require('pgn/index.js');
+                    console.log('pgn', pgn);
+                    // console.log('par1', pgn100);
+
+                })
+                // requirejs(["pgn/index"], function() {
+
+            //     pgn = module;
+            //     // console.log('par', t3, module);
+            //     // test100();
+            //     //This function is called when scripts/helper/util.js is loaded.
+            //     //If util.js calls define(), then this function is not fired until
+            //     //util's dependencies have loaded, and the util argument will hold
+            //     //the module value for "helper/util".
+            // });
+            // requirejs(["pgn/index"], function() {
+            //     pgn = module.exports;
+            //     console.log('par', module);
+            //     test100();
+            //     //This function is called when scripts/helper/util.js is loaded.
+            //     //If util.js calls define(), then this function is not fired until
+            //     //util's dependencies have loaded, and the util argument will hold
+            //     //the module value for "helper/util".
+            // });
+            // // console.log('testMoudle', test100());
+            //             let pgn1 = `[Event "?"]
+            // [Site "?"]
+            // [Date "????.??.??"]
+            // [Round "?"]
+            // [White "Enter New Game"]
+            // [Black "?"]
+            // [Result "*"]
+            // [PlyCount "4"]
+
+            // {testsaa} 376. e4 ({test} 1. d4 g6 2. h4 a5 {adasad} 3. a3 ({test2} 3. c4 d6))
+            // 1... e5 2. Nf3 {sasasdvafgaf} d6 (2... h6 3. a3 b6 4. c3 g6 (4... d6 {saadasd}
+            // 5. h4 f6)) (2... b6 {asdaas} 3. b3) *
+
+
+            // `;
+            let pgn1 = "1... e4 2. e5 ";
+            // let pgn1 = "1. e4 e5 (2... e6) (2... c6 3. d4)";
+            console.log(pgn2);
+
+            class Comment {
+                constructor(text, index) {
+                    this.comment = text;
+                    this.index = index
+                }
+                static commentWord = 'commmmm-';
+                static exComents(strPgn) {
+                    let comments = [];
+                    let commentCounter = 0;
+                    while (strPgn.includes('}')) {
+                        let openIndex = strPgn.indexOf('{');
+                        let closeIndex = strPgn.indexOf('}');
+                        let comment = strPgn.substring(openIndex, closeIndex + 1);
+                        comments.push(new Comment(comment, commentCounter));
+                        strPgn = strPgn.replace(comment, " " + Comment.commentWord + commentCounter + " ");
+                        commentCounter++;
+                    }
+                    return {
+                        strPgn,
+                        comments
+                    };
+                }
+                static arrToString(arr) {
+                    let str = '';
+                    arr.forEach(comment => {
+                        str += comment.comment;
+                    });
+                    return str;
+                }
+            }
+            class Variant {
+                constructor() {
+                    this.moves = [];
+                }
+
+                setChildren() {
+
+                    for (let i = 0; i < this.moves.length; i++) {
+                        this._setChildren(this.moves[i], this.moves[i + 1])
+                    }
+                    this._setChildren(this.moves[0].parentMove, this.moves[0])
+                }
+                _setChildren(move, child) {
+                    if (!move.ans[0]) {
+                        move.ans.push(child);
+                        return;
+                    }
+                    for (let i = 0; i < move.ans.length; i++) {
+                        if (!move.ans[i]) {
+                            console.log(move, this);
+                        }
+                        if (move.ans[i].san == child.san) return;
+                    }
+                    move.ans.push(child);
+                }
+                toPartString() {
+                    let str = [];
+                    for (let i = this.moves.length - 1; i > -1; i--) {
+                        const move = this.moves[i];
+                        if (move.parentMove.ans.length > 1 && move.parentMove.ans[0].san == move.san) {
+                            for (let i = 0; i < move.parentMove.ans.length - 1; i++) {
+                                str.push('xxxx')
+                            }
+                        }
+
+                        str.push(move.toString());
+                        if (move.parentMove.ans[0].san != move.san) break;
+                    }
+                    str.reverse();
+                    return str.join(' ');
+                }
+            }
+            class Move {
+                constructor(word) {
+                    this.word = word;
+                    this.fen = 'fen';
+                    this.number = 0;
+                    this.side = null;
+                    this.parentMove = null;
+                    this.varIndex = 0;
+                    this.moveIndex = 0;
+                    this.preComments = [];
+                    this.afterComments = [];
+                    this.ans = [];
+                    this.san = word;
+                    this.signs = []
+                }
+                static isMove(word) {
+                    if (word.search(/\d(?=.)/) > -1) {
+                        return false;
+                    }
+                    if (word.includes(Comment.commentWord) || word.includes('$')) return false;
+                    if (word.length < 2) return false;
+                    return true;
+                }
+                static areSameMove(mv1, mv2) {
+                    if (mv1.san == mv2.san && mv1.number == mv2.number && mv1.ans.length == mv2.ans.length) {
+
+                        if (mv1.parentMove.san == mv2.parentMove.san && mv1.parentMove.ans.length == mv2.parentMove.ans.length)
+                            return true;
+                    }
+
+                    return false;
+                }
+                setMoveNum() {
+                    if (this.side == 'b') {
+                        this.number = this.parentMove.number;
+                    } else {
+                        this.number = this.parentMove.number + 1;
+                    }
+                }
+                setMoveSide() {
+                    this.side = this.parentMove.side == 'w' ? 'b' : 'w';
+                }
+
+                getStrNumMove() {
+                    if (this.side == 'w') {
+                        return this.number + '. ';
+                    }
+
+                    if (this.side == 'b') {
+                        if (!this.isMoveFirstChiled()) return this.number + '... ';
+                        return ''
+                    }
+
+                }
+                isMoveFirstChiled() {
+                    if (this.parentMove.ans.length > 1 && this.parentMove.ans[0].san != this.san) return false;
+                    return true;
+                }
+                toString() {
+                    let str = "";
+                    if (this.preComments[0]) {
+                        str += Comment.arrToString(this.preComments) + ' ';
+                    }
+                    str += this.getStrNumMove();
+                    str += this.san;
+
+                    if (this.afterComments[0]) {
+                        str += ' ' + Comment.arrToString(this.afterComments);
+                    }
+                    return str;
+
+                }
+
+
+            }
+            class Pgn {
+                constructor(pgn) {
+                    this.strPgn = pgn;
+                    this.comments = [];
+                    this.preFirstMove = new Move('');
+                    this.header = {};
+                    this.firstMoveNum = 1;
+                    this.firstMoveColor = 'w';
+                    this.allMoves = [];
+                    this.varMatris = [];
+                }
+                static setFreshString(str) {
+                    let fresh = str.replace(/\n+|\r+/g, ' ');
+                    fresh = fresh.replace(/\s+/g, ' ');
+                    fresh = fresh.trim();
+                    return fresh
+                }
+                creat() {
+                    console.log(this.strPgn);
+                    this.creatComentArray();
+                    this.setHeader();
+                    this.strPgn = Pgn.setFreshString(this.strPgn);
+                    this.setFirstMoveNumberAndColor();
+                    this.exVariants();
+                }
+                creatComentArray() {
+                    let exObj = Comment.exComents(this.strPgn);
+                    this.comments = exObj.comments;
+                    this.strPgn = exObj.strPgn;
+                }
+                setHeader() {
+                    while (this.strPgn.includes(']')) {
+                        let openIndex = this.strPgn.indexOf('[');
+                        let closeIndex = this.strPgn.indexOf(']');
+                        let headerTopic = this.strPgn.substring(openIndex, closeIndex + 1);
+
+                        this.strPgn = this.strPgn.replace(headerTopic, "");
+                        headerTopic = headerTopic.replace(/\[|\]/g, "");
+                        let headerTopicPrats = headerTopic.split('"');
+                        this.header[headerTopicPrats[0]] = headerTopicPrats[1];
+                    }
+                }
+
+                setFirstMoveNumberAndColor() {
+                    let parts = this.strPgn.split(' ');
+                    for (let i = 0; i < parts.length; i++) {
+                        const word = parts[i];
+                        if (word.search(/\d(?=.)/) > -1) {
+                            this.firstMoveNum = word.substring(0, word.indexOf('.'));
+                            this.firstMoveNum = parseInt(this.firstMoveNum);
+                            if (word.includes('..')) this.firstMoveColor = 'b';
+                            break;
+                        }
+                    }
+                }
+                exComplexStringVariants() {
+                    function removeLastMove(subPg) {
+                        let parts = subPg.split(' ');
+                        let flag = false;
+                        for (let i = parts.length - 1; i > 0; i--) {
+                            let word = parts[i];
+                            if (word.includes("(")) {
+                                flag = true;
+                            }
+                            if (word.includes(")")) {
+                                flag = false;
+                            }
+                            if (flag && (Move.isMove(word) || word.includes(Comment.commentWord))) {
+                                parts[i] = "";
+                                flag = false;
+                            }
+                        }
+                        return parts.join(" ", parts);
+                    }
+                    let complexStringVariants = [];
+                    while (this.strPgn.includes('(')) {
+                        let lIndex = this.strPgn.indexOf(')');
+                        let sub = this.strPgn.substring(0, lIndex);
+                        let fIndex = sub.lastIndexOf("(");
+                        sub = removeLastMove(sub);
+                        let ForRemove = this.strPgn.substring(fIndex, lIndex + 1);
+                        this.strPgn = this.strPgn.replace(ForRemove, '');
+                        complexStringVariants.push(Pgn.setFreshString(sub).split(' '));
+                    }
+                    complexStringVariants.push(Pgn.setFreshString(this.strPgn).split(' '));
+                    return (complexStringVariants.reverse());
+                }
+
+                exVariants() {
+                    let complexStringVariants = this.exComplexStringVariants();
+                    let oneVar = this.exOneVariant(complexStringVariants[0])
+                    complexStringVariants.forEach(v => {
+                        this.varMatris.push(this.exOneVariant(v));
+                    });
+                    this.convertToDistinctArr();
+                    this.CompletMoveData();
+                    console.log('', this.varMatris);
+
+                }
+                exOneVariant(complexVar) {
+                    let oneVar = new Variant();
+                    let moveNumber = this.firstMoveNum;
+                    let moveIndex = 0;
+                    let preMoveComments = [];
+                    let afterMoveComments = [];
+                    let signs = [];
+                    for (let i = 0; i < complexVar.length; i++) {
+                        const word = complexVar[i];
+                        if (word.includes(Comment.commentWord)) {
+                            let commentNumber = word.split('-')[1];
+                            let comment = this.comments.find(com => com.index == commentNumber);
+                            // test: set FirstMove pre comment
+                            if (moveIndex == 0 || (i > 0 && complexVar[i - 1].includes('('))) {
+                                preMoveComments.push(comment)
+                            } else {
+                                afterMoveComments.push(comment);
+                            }
+                        }
+                        if (word.includes('$')) {
+                            signs.push(word);
+                        }
+                        if (Move.isMove(word)) {
+                            // set movecoments be for creating next move
+                            if (afterMoveComments.length > 0) {
+                                oneVar.moves[moveIndex - 1].afterComments = afterMoveComments;
+                                afterMoveComments = [];
+                            }
+                            if (moveIndex > 0) {
+                                oneVar.moves[moveIndex - 1].signs = signs;
+                                signs = [];
+                            }
+
+                            let mv = new Move(word);
+                            mv.preComments = preMoveComments;
+                            preMoveComments = [];
+                            oneVar.moves.push(mv);
+                            moveIndex++;
+                        }
+                    }
+                    return oneVar;
+                }
+
+                convertToDistinctArr() {
+                    let vars = this.varMatris;
+
+                    function creatSameMoves(curentVar, preVar) {
+                        let minIndex = curentVar.moves.length < preVar.moves.length ? curentVar.moves.length : preVar.moves.length;
+                        for (let i = 0; i < minIndex; i++) {
+                            if (curentVar.moves[i].san == preVar.moves[i].san) {
+                                curentVar.moves[i] = preVar.moves[i];
+                            } else {
+                                return;
+                            }
+                        }
+                    }
+                    for (let i = 1; i < vars.length; i++) {
+                        this.allMoves = this.allMoves.concat(...vars[i].moves);
+                        creatSameMoves(vars[i], vars[i - 1])
+
+                    }
+                    this.allMoves = this.allMoves.concat(...vars[0].moves);
+
+                }
+
+
+                CompletMoveData() {
+                    this.setAllParentsAndChildren();
+                    this.setMoveNumColor();
+                    this.reArengeChildren();
+                }
+                setMoveNumColor() {
+                    this.varMatris.forEach(variant => {
+                        let side = this.firstMoveColor;
+                        let num = this.firstMoveNum;
+                        variant.moves.forEach(mv => {
+                            mv.number = num;
+                            mv.side = side;
+                            if (side == 'b') {
+                                num++;
+                                side = 'w';
+                            } else {
+                                side = 'b'
+                            }
+                        });
+                    });
+                }
+                reArengeChildren() {
+                    this.creatDistinctAllMoves();
+                    console.log('', this.allMoves);
+                    for (let i = 0; i < this.allMoves.length; i++) {
+                        const move = this.allMoves[i];
+
+                        let shifted = move.ans.shift()
+                        move.ans = move.ans.reverse();
+                        move.ans.unshift(shifted);
+                    }
+                }
+                creatDistinctAllMoves() {
+                    let newArr = [];
+                    this.varMatris.forEach(variant => {
+                        variant.moves.forEach(move => {
+                            let f = newArr.find(m2 => Move.areSameMove(m2, move))
+                            if (!f) newArr.push(move)
+                        });
+                    });
+                    this.allMoves = newArr;
+                }
+                setAllParentsAndChildren() {
+                    for (let i = 0; i < this.varMatris.length; i++) {
+                        let variant = this.varMatris[i];
+                        this.setParent(variant);
+                        variant.setChildren();
+                    }
+                }
+                setParent(variant) {
+                    for (let i = 1; i < variant.moves.length; i++) {
+                        variant.moves[i].parentMove = variant.moves[i - 1]
+                    }
+                    variant.moves[0].parentMove = this.preFirstMove;
+                }
+
+                setPrefirstMove() {
+                    // claculate from pgn
+                    function getPrefirstMoveNum() {
+                        return 0;
+                    }
+
+                    function getPreFirstMoveSide() {
+                        return 'b';
+                    }
+                    this.preFirstMove.number = getPrefirstMoveNum();
+                    this.preFirstMove.side = getPreFirstMoveSide();
+                }
+                toString() {
+                    let str = '';
+                    this.varMatris.forEach(variant => {
+                        if (str == '') {
+                            str = variant.toPartString();
+                            return;
+                        }
+                        let mainSub = '(' + variant.toPartString() + ')';
+                        if (str.includes('xxxx')) {
+                            let index = str.lastIndexOf('xxxx');
+                            let sub1 = str.substring(0, index);
+                            let sub2 = str.substring(index + 4);
+                            str = sub1 + mainSub + sub2
+                        }
+
+                    });
+                    return str
+                }
+
+
+
+
+            }
+
+            // 
+
+
+            //  pgn.exComplexVar1();
+            // pgn.creatPgn();
+            // pgn.convertToDistinctArr();
+            // pgn.exVariants1();
+            // pgn.convertToMoves();
+            // pgn.matrisToArr()
+            // console.log(pgn.toString());
+            // console.log('matris', pgn.moveMatris);
+            var pgn2 = `[Event "San Diego"]
+[Site "?"]
+[Date "2014.??.??"]
+[Round "?"]
+[White "Kaidanov, G."]
+[Black "Gareev, T."]
+[Result "0-1"]
+[ECO "B00"]
+[Annotator "Cyrus Lakdawala"]
+[PlyCount "54"]
+[EventDate "2014.??.??"]
+[SourceTitle "1...b6 Move By Move"]
+[Source "Everyman Chess"]
+[SourceDate "2014.11.01"]
+[SourceVersionDate "2014.11.01"]
+[SourceQuality "1"]
+
+1. Nf3 ({Compare our position to this line of the Nimzo-Larsen Attack:} 1. b3
+e5 2. Bb2 Nc6 3. e3 Nf6 4. Bb5 Bd6 {. Believe it or not, this is fast becoming
+one of Black's most popular responses to the Nimzo-Larsen, and it is played at
+the very highest levels.}) 1... b6 2. e4 Bb7 3. Nc3 e6 4. Bd3 $5 {A move based
+on the philosophy: never fight an enemy in the manner of his or her preference.
+QUESTION: What the hey!? Why did White block his own d-pawn? ANSWER: This is
+yet another familiar theme from 1 b3 (please don't make me beg you to order my
+Nimzo-Larsen Attack book). White plans include e5, followed by Be4, and 0-0,
+Re1, Bf1 and d4 in a single move, rather than having wasted a move with an
+earlier d3.} g5 $5 {A new move. QUESTION: Is this a typo? ANSWER: Fantasy
+despises practical advice. It isn't a typo. After viewing this move, some of
+us may be tempted to clean our glasses and Kindle viewers may be adjusting
+their screens. Gareev takes advantage of White's artificial last move with one
+of equal or greater artificiality. The point is White is denied d3 or d4, at
+least for a while, so Black seizes a disruption opportunity from the flank. In
+my Nimzo-Larsen Attack book there are a huge number of games where White
+tosses in g4. So I ask: why not ...g5 as Black in the Owen's?} ({Instead, after
+} 4... Nf6 5. O-O ({the immediate} 5. e5 $5 {is also very playable}) 5... Be7
+6. e5 Nd5 7. Re1 O-O 8. Ne4 (8. Nxd5 Bxd5 9. Be4 Bxe4 10. Rxe4 d5 {is also
+fine for Black}) 8... d6 {, Black equalized, A.Jansson-R.Bergstrom, Stockholm
+2012.}) 5. O-O Bg7 6. Bc4 $5 {Clearing the path for d4 and possibly provoking .
+..d5.} ({Note that the autopilot} 6. Re1 $4 {hangs a piece to} g4 {, which
+leaves White’s f3-knight red-faced.}) 6... Nc6 {Discouraging d4.} ({QUESTION:
+Why not} 6... d5 {, gaining a tempo? ANSWER: Early confrontation at this stage
+can only bring danger to Black, who is underdeveloped. White gets a huge
+position after} 7. exd5 exd5 8. Re1+ Ne7 9. Bb3 h6 10. d4 O-O 11. h4 gxh4 12.
+Nxh4 {, when Qh5 is in the air and Black's damaged kingside ensures future
+instability for his king.}) 7. d3 (7. d4 $6 {isn't such a great idea, since it
+essentially agrees to swap a central d-pawn for Black's g-pawn, opening the
+g-file for Black's coming kingside play. We meet it with the undermining} g4 8.
+Nd2 Bxd4 9. Qxg4 Nf6 10. Qe2 Rg8 {(Black makes good use of the newly opened
+g-file)} 11. Nf3 Ng4 $1 12. Bf4 Bxc3 13. bxc3 Qf6 $1 14. Bxc7 Nce5 15. Nxe5
+Nxe5 16. Bd3 Rc8 17. Bxe5 Qxe5 18. c4 Rc5 {, when Black’s active pieces more
+than compensate for White’s rather useless extra pawn.}) 7... g4 {Gaining a
+tempo and seizing temporary control over d4 and e5. The g-pawn continues to
+apply oblique pressures to White's pieces.} 8. Ne1 {Kaidanov embarks upon a
+series of incomprehensible realignments. Now e1 turns out to be an awkward
+square for the knight, who has no place to go.} ({Better was} 8. Nd2 h5 {
+and, even here, I would take Black if given a choice.}) 8... h5 9. f3 {White
+naturally seeks to open the f-file, yet in doing so, he self-weakens key dark
+squares.} Nh6 ({Black can also play} 9... Qe7 {and dare White to capture the
+g-pawn:} 10. fxg4 $2 {is met by} hxg4 11. Qxg4 Bd4+ 12. Kh1 Nf6 13. Qe2 Be5 14.
+Bf4 Bxf4 15. Rxf4 Nh5 {(threatening the rook and also a big fork on g3)} 16.
+Rf3 Nd4 {. Black wins the exchange and may later continue to attack down the
+open h- and g-files.}) 10. Ne2 {An attempt to regain control over d4.} Ne5 {
+Gaining a tempo on White's c4-bishop and preparing to transfer the knight over
+to the kingside in preparation for an attack.} 11. Bb3 Ng6 ({Or} 11... gxf3 $1
+{, and if} 12. Nxf3 $6 Nxf3+ 13. Rxf3 {, then} f5 $1 {leaves Black in control.}
+) 12. c3 f5 $1 {A Nimzowitsch-approved central undermining. White's pieces are
+so passively placed, that they can do nothing to punish Black's king, who
+continues to loiter in the centre, as if he owns the place.} 13. Nf4 Nxf4 14.
+Bxf4 e5 $1 {Seizing more dark squares.} 15. Bxh6 $5 {Kaidanov is anxious to
+eliminate potential attackers. In doing so, he weakens his dark squares
+further by leaving Black with an unopposed dark-squared bishop.} ({He may have
+not liked the look of} 15. Bd2 Qe7 16. Qe2 O-O-O {, when Black’s attack is
+obviously quicker than White’s on the queenside.}) 15... Bxh6 16. Nc2 Qg5 {
+There is something sinister in the queen's demeanour, which arouses the white
+king's suspicions.} 17. fxg4 {EXERCISE (planning): Find Black's best
+continuation of his attack. ANSWER: Close the f-file, White's only source of
+counterplay. Black soon gets two open kingside files down which to pursue his
+kingside attacking ambitions.} f4 $1 {Gareev alertly adds a necessary addendum.
+Sometimes it's best to proceed with calculated slowness to further exasperate
+the defender.} (17... fxe4 {is met by} 18. Rf5 $1 Qg7 19. Bf7+ Ke7 20. Bxh5 {
+(threat: Rh7+)} Raf8 21. dxe4 Bxe4 22. Rxf8 Rxf8 23. Qe2 Qf6 24. Nd4 d6 25. Re1
+Bd3 26. Nf5+ $1 Qxf5 27. gxf5 Bxe2 28. Rxe2 Rxf5 29. Bf3 {, when White is just
+fine in the ending.}) 18. gxh5 Bf8 $1 {Rerouting the bishop to a superior
+diagonal and clearing the path for ...Rxh5.} 19. Ne1 $1 {Adding a much-needed
+defender to the kingside.} Rxh5 20. Nf3 Qg6 21. Qe2 O-O-O 22. Bd5 $2 {This
+loses time.} ({He had to try the central counter} 22. d4 $1 Kb8 $1 23. Nxe5
+Rxe5 $1 24. dxe5 Bc5+ 25. Kh1 Rh8 26. h3 Bxe4 {, after which White is forced
+to return the material with} 27. Rf3 Qf5 28. Kh2 Bxf3 29. Qxf3 Qxe5 30. Rd1 Bd6
+{, when he has reasonable chances to save the game.}) 22... c6 23. Bb3 Ba6 $1 {
+Preventing d4.} 24. Bc4 {White’s game continues to degrade with languid
+inevitability.} ({Admittedly, the line} 24. Kh1 Bc5 25. h3 Rdh8 {isn’t very
+tempting, but this is the best White had.}) 24... Bxc4 25. dxc4 Bc5+ {The
+bishop, who begins to assert his authority on the g1-a7 diagonal, drops a
+noose over the white king's head and leads him at a stumbling trot.} 26. Kh1 {
+EXERCISE (combination alert): White's king hides under his bed, a beginner's
+error, since that is the first place the black attackers search. Malevolent
+faces circle and feint, before the actual attack. Black to play and force the
+win. ANSWER: Annihilation of defensive barrier.} Rxh2+ $3 {The defence
+submerges under the sheer weight in numbers of attackers. This also a prelude
+to a pretty future queen sacrifice.} 27. Nxh2 ({Or} 27. Kxh2 Qh5+ {and mate
+next move.}) 27... Rh8 ({QUESTION: Why did White resign after} 27... Rh8 {- ?}
+{but it seems that White is winning here if he finds} 28. Rf3 {, which negates
+...Rxh2+ themes. ANSWER: A skilled liar always adds a few drops of truth to
+further disguise the lie. When we sense the presence of a combination, yet
+miss it, we feel an indefinable unease, as if wondrous things are happening
+somewhere else, where we are not invited. In this position, Black can force
+mate. In fact, let's do another exercise here: EXERCISE (combination alert):
+The white king's gripping fear is revealed to all, mainly through the nervous
+gurgling of his royal bowels. Black to play and force mate in four moves:
+ANSWER: Queen sacrifice:} ({It's clear to me that} 28. g4 {loses to the en
+passant capture} fxg3 {;} (28... Z0)) 28... Qg3 $1 {(this is the beautiful
+point of Gareev's 26th move; White's king is in entombed)} 29. Rxg3 fxg3 {
+and there is nothing to be done about the coming mate on h2. SUMMARY: This
+game shows the scope of creativity which 1...b6 offers us.}) 0-1
+
+`
+            let pgn = new Pgn(pgn1);
+            pgn.creat();
+
+
+            console.log('', pgn.toString());
+            // let pgn = new Pgn(pgn2);
+            // pgn.creat();
+        </script>
+        <%- include('../share/superfooter') -%>

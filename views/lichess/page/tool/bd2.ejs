@@ -1,0 +1,327 @@
+<%- include('../../share/superheader') -%>
+    <%- include('../../component/mainnav') -%>
+        <% let template="lichess" %>
+            <link rel="stylesheet" href="/public/components/bk-chessboard/css/bk-board.css" />
+            <script src="/public/components/bk-chessboard/js/bk-board.js"></script>
+            <script src="/public/components/bk-chessboard/js/bk-board-consts.js"></script>
+            <div class="mt-1">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-2 order-lg-1 order-4"></div>
+                        <div class="col-lg-3 order-lg-3 order-2">
+                            <div class="ms-auto text-left" style="direction: ltr;">
+                                <div class="mt-4">
+                                    <input type="text" class="form-control" placeholder="Editor" disabled />
+                                </div>
+                                <div class=" card mt-4 shadow">
+                                    <div class="m-2">
+                                        <select class="form-control" id="sel1">
+                                            <option>
+                                                <%- user.trans('White Turn ') %>
+                                            </option>
+                                            <option> 
+                                                <%- user.trans(' Black Turn ') %>
+                                            </option>
+                                        </select>
+                                        <div class="mt-3 text-right">
+                                            <label for="usr" class="text-right">   
+                                                <%- user.trans(' Castling') %>
+                                                    </label>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-check">
+                                                                <label class="form-check-label" for="check1">
+                                                                    <%- user.trans('White') %>
+                                                                </label>
+                                                                <label class="form-check-label mr-5 ml-1" for="check1">
+                                                                    o-o
+                                                                </label>
+                                                                <input type="checkbox" class="form-check-input"
+                                                                    id="check1" name="option1" value="something" />
+                                                                <label class="form-check-label mr-5 ml-1" for="check1">
+                                                                    o-o-o
+                                                                </label>
+                                                                <input type="checkbox" class="form-check-input"
+                                                                    id="check1" name="option1" value="something" />
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <label class="form-check-label" for="check1">
+                                                                    <%- user.trans('Black') %>
+                                                                </label>
+                                                                <label class="form-check-label mr-5 ml-1" for="check1">
+                                                                    o-o
+                                                                </label>
+                                                                <input type="checkbox" class="form-check-input"
+                                                                    id="check1" name="option1" value="something" />
+                                                                <label class="form-check-label mr-5 ml-1" for="check1">
+                                                                    o-o-o
+                                                                </label>
+                                                                <input type="checkbox" class="form-check-input"
+                                                                    id="check1" name="option1" value="something" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-5">
+                                <input type="text" class="form-control" placeholder="Tools" disabled />
+                            </div>
+                            <div class="mt-3 d-flex align-items-start flex-column">
+                                <style>
+                                    .variants {
+                                        box-sizing: inherit;
+                                        font-family: ' Roboto', Sans-Serif;
+                                        font-weight: 350;
+                                        border-radius: 3px;
+                                        cursor: pointer;
+                                        /* width: 100%; */
+                                    }
+
+                                    .variants:hover {
+                                        background-color: #c1c2c5;
+                                    }
+                                </style>
+
+                                <a class="variants btn text-right text-primary" onclick="bd2.clearPosition() ">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> <%- user.trans(' Clear Board ') %>
+                                </a>
+                                <a class="variants btn text-right text-primary"
+                                    onclick="bd2.setPosition(bkChessBoardConsts.startFen) ">
+                                    <i class="fas fa-recycle"></i> <%- user.trans(' StartPositions ') %>
+                                </a>
+                                <a class="variants btn text-right text-primary" onclick="bd2.flipBoard()">
+                                    <i class="fas fa-sync"></i> <%- user.trans(' Rotate Board ') %>
+                                </a>
+                                <a class="variants btn text-right text-primary"
+                                    onclick="bd2.clearArrows();bd2.removeMasks()">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> <%- user.trans(' Clear Signs ') %>
+                                </a>
+                                <a class="variants btn text-right text-primary">
+                                    <i class="fas fa-sync fa-microscope"></i> <%- user.trans(' Analyze Position ') %>
+                                </a>
+                                <!-- <a class="variants btn text-right text-primary">
+                                    <i class="fas fa-forward"></i> ادامه بازی از پوزیسیون
+                                </a> -->
+                                <a class="variants btn text-right text-primary">
+                                    <i class="fas fa-book"></i> <%- user.trans(' Study ') %>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 order-lg-3 order-1" id="board-part">
+                        <div class="ms-auto">
+                            <style>
+                                .pice-frame * {
+                                    display: -webkit-box;
+                                    display: -ms-flexbox;
+                                    display: flex;
+                                    -webkit-box-align: center;
+                                    -ms-flex-align: center;
+                                    align-items: center;
+                                    -webkit-box-pack: center;
+                                    -ms-flex-pack: center;
+                                    justify-content: center;
+                                    min-height: 100%;
+                                }
+
+                                .pice-frame {
+                                    margin: 0;
+                                    padding: 0;
+                                    border-radius: 3px;
+                                    background: #b3b3b3;
+                                    -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3) inset;
+                                    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3) inset;
+                                }
+
+                                .pice-frame>div {
+                                    width: 12.5%;
+                                }
+
+                                .object:hover {
+                                    background-color: rgba(5, 57, 87, 0.3);
+                                }
+
+                                .one-pice:hover,
+                                .object:hover {
+                                    background-color: rgba(5, 57, 87, 0.3);
+                                }
+
+                                .selected-pice {
+                                    background-color: rgba(14, 135, 204, 0.3);
+                                }
+
+                                .board-part:hover {
+                                    background-color: #00ff00;
+                                }
+                            </style>
+                            <div class="my-1 d-flex pice-frame">
+                                <div class="p-1 flex-fill object">
+                                    <img src="/public/img/trash.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/bp.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/bn.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/bb.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/br.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/bq.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/bk.svg" />
+                                </div>
+                                <div class="p-1 flex-fill object">
+                                    <img src="/public/img/pointer.svg" />
+                                </div>
+                            </div>
+                            <div>
+                                <div class="board" id="board"></div>
+                                <script>
+                                    function preperBoardForSetting(pice) {
+                                        bd2.settings.canMove = false;
+                                        bd2.settings.setPosition = true;
+                                        bd2.arrow.canCreatArrow = false;
+                                        bd2.settings.piceForInsert = pice;
+                                        bd2.settings.click = true;
+                                        bd2.settings.clickFunc = setFen;
+                                    }
+
+                                    function setFen() {
+                                        document.getElementById(' basicFen').value = bd2.getFen();
+                                        document.getElementById('basicFen').disabled = false;
+                                    } function
+                                        preperBoardForMove() {
+                                            bd2.arrow.canCreatArrow = false; bd2.settings.canMove = true;
+                                        bd2.settings.setPosition = false; bd2.settings.click = false;
+                                        bd2.settings.moveEndFunc = setFen;
+                                    } function preperBoardForArrow() {
+                                        bd2.settings.setMask = true; bd2.arrow.canCreatArrow = true;
+                                        bd2.settings.canMove = false; bd2.settings.setPosition = false; //
+                                        bd2.settings.click = true;
+                                    } let bd2 = new BkBoard('board', {
+                                        imgSrc: '/public/components/bk-chessboard/pices/',
+                                    }); // bd2.initial();
+                                    bd2.creatBoard(); // // bd2.setPice("a1","wq"); //
+                                    bd2.setPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+                                    bd2.settings.setMask = true; // bd2.getFen(); // bd2.arrow.canCreatArrow=false;
+                                    bd2.settings.canMove = true; // bd.settings.sideToMove="w" ; //
+                                    bd2.settings.setPosition = false; // bd2.settings.click=false; //
+                                    bd2.settings.moveEndFunc = setFen; // bd2.canCreatArrow=true; //
+                                    bd2.doMove('a1', 'g8'); //console.log(); // bkBoard(); </script>
+                            </div>
+                            <div class="my-1 d-flex pice-frame">
+                                <div class="p-1 flex-fill object">
+                                    <img src="/public/img/trash.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/wp.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/wn.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/wb.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/wr.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/wq.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img src="/public/components/bk-chessboard/pices/wk.svg" />
+                                </div>
+                                <div class="p-1 flex-fill one-pice">
+                                    <img width="100%" src="/public/img/arrow.svg" />
+                                </div>
+                            </div>
+                            <div style="direction: ltr" class="mt-4">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon3">FEN</span>
+                                    <input placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" type="text"
+                                        class="form-control" id="basicFen" aria-describedby="basic-addon3" />
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon3">URL</span>
+                                    <input placeholder="tool/editor" type="text" class="form-control" id="basfen"
+                                        aria-describedby="basic-addon3" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div lass="col-lg-2 order-lg-4 order-3"></div>
+                </div>
+            </div>
+            </div>
+            <div>
+                <script>
+                    let cursor = 'pointer';
+                    $('.pice-frame .flex-fill').on('mousedown', function (e) {
+                        e.preventDefault();
+                        cursor = $('img', this).attr('src');
+                        setCoursor();
+                        $('.pice-frame .flex-fill').removeClass('selected-pice');
+                        $(this).addClass('selected-pice');
+                    });
+
+                    function setCoursor() {
+                        let cursorPosition = ' 25 25';
+                        // document.body.style.cursor='default';
+                        if (cursor.indexOf('pointer') > 0) {
+                            cursor = 'pointer';
+                            $('#board-part').css({
+                                cursor: cursor
+                            });
+                            $('*', '#board').css({
+                                cursor: cursor
+                            });
+
+                            preperBoardForMove();
+                        } else if (cursor.indexOf('arrow') > 0) {
+                            cursor = 'crosshair';
+                            $('#board-part').css({
+                                cursor: cursor
+                            });
+                            $('*', '#board').css({
+                                cursor: cursor
+                            });
+
+                            preperBoardForArrow();
+                        } else if (cursor.indexOf('trash') > 0) {
+                            cursor = 'not-allowed';
+                            $('#board-part').css({
+                                cursor: cursor
+                            });
+                            $('*', '#board').css({
+                                cursor: cursor
+                            });
+
+                            let pice = cursor.split('/');
+                            pice = pice[pice.length - 1];
+                            pice = pice.split('.')[0];
+                            preperBoardForSetting('');
+                        } else {
+                            $('#board-part').css({
+                                cursor: 'url(' + cursor + ') ' + cursorPosition + ', auto',
+                            });
+                            $('*', '#board').css({
+                                cursor: 'url(' + cursor + ') ' + cursorPosition + ', auto',
+                            });
+                            let pice = cursor.split('/');
+                            pice = pice[pice.length - 1];
+                            pice = pice.split('.')[0];
+                            preperBoardForSetting(pice);
+                        }
+                    }
+                </script>
+
+                <%- include('../../share/superfooter') -%>
+            </div>

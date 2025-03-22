@@ -1,0 +1,192 @@
+<!-- Modal -->
+<div class="modal fade dir-ltr" id="creatOpenChalenge" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="creatOpenChalengeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+                <div class="h4">
+                    <%- user.trans('CREAT A GAME') %>
+                </div>
+                <div class="row justify-content-between mt-4">
+                    <label for="staticEmail" class="col-sm-3 col-form-label">
+                        <%- user.trans('Variant') %>
+                    </label>
+                    <div class="col-sm-9">
+                        <select class="form-select" aria-label="Default select example" id="creatGameModelFree">
+                            <option selected>
+                                <%- user.trans('Standard') %>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row justify-content-between mt-4">
+                    <label for="staticEmail" class="col-sm-3 col-form-label">
+                        <%- user.trans('Time Control') %>
+                    </label>
+                    <div class="col-sm-9">
+                        <select class="form-select" aria-label="Default select example" id="creatGameModelFree">
+                            <option selected>
+                                <%- user.trans('Real Time') %>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row justify-content-between mt-4">
+                    <label for="staticEmail" class="col-sm-3 col-form-label">
+                        <%- user.trans('Time per side') %>
+                    </label>
+                    <div class="col-sm-4">
+                        <select class="form-select" aria-label="Default select example" id="creatOpenGame_gameTimeMins">
+                            <!-- <option selected>Open this select menu</option> -->
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="5">5</option>
+                            <option value="7">7</option>
+                            <option value="10">10</option>
+                            <option value="12">12</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="25">25</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="60">60</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-1"> </div>
+                    <div class="col-sm-4">
+                        <select class="form-select" aria-label="Default select example" id="creatOpenGame_gameTimeSecs">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="5">5</option>
+                            <option value="7">7</option>
+                            <option value="10">10</option>
+                            <option value="12">12</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="25">25</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row justify-content-between mt-3">
+                    <label for="staticEmail" class="col-sm-5 col-form-label">
+                        <%- user.trans('Increment in seconds') %>
+                    </label>
+                    <div class="col-sm-7">
+                        <select class="form-select" aria-label="Default select example"
+                            id="creatOpenGame_timeIncresment">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="5">5</option>
+                            <option value="7">7</option>
+                            <option value="10">10</option>
+                            <option value="12">12</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="25">25</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row justify-content-between mt-3">
+                    <label for="staticEmail" class="col-sm-3 col-form-label">
+                        <%- user.trans('Mode') %>
+                    </label>
+                    <div class="col-sm-9">
+                        <select class="form-select" aria-label="Default select example" id="creatOpenGame_rated">
+                            <option value="1">
+                                <%- user.trans('Rated') %>
+                            </option>
+                            <option value="">
+                                <%- user.trans('Casual') %>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row justify-content-between mt-4">
+                    <label for="staticEmail" class="col-sm-4 col-form-label">
+                        <%- user.trans('Rating range from') %>
+                    </label>
+                    <div class="col-sm-8 d-flex justify-content-between align-items-center">
+                        <input class="form-control" type="number" value="1000">
+                        <span class="mx-2">To</span>
+                        <input class="form-control" type="number" value="3000">
+                    </div>
+                </div>
+                <div class="row justify-content-between mt-4 mb-3">
+                    <label for="staticEmail" class="col-sm-3 col-form-label">
+                        <%- user.trans('Color') %>
+                    </label>
+                    <div class="col-sm-9">
+                        <select class="form-select" aria-label="Default select example" id="creatOpenGame_color">
+                            <option value="w">
+                                <%- user.trans('White') %>
+                            </option>
+                            <option value="b">
+                                <%- user.trans('Black') %>
+                            </option>
+                            <option value="wb">
+                                <%- user.trans('Random') %>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button onclick="openChalengeCreator.create()" type="button" class="btn btn-primary w-50 fs-5 my-2"
+                    style="height: 3rem;">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    let openChalengeCreator = {
+        controls: {
+            mins: document.getElementById('creatOpenGame_gameTimeMins'),
+            secs: document.getElementById('creatOpenGame_gameTimeSecs'),
+            inc: document.getElementById('creatOpenGame_timeIncresment'),
+            rated: document.getElementById('creatOpenGame_rated'),
+            color: document.getElementById('creatOpenGame_color'),
+            modal: new bootstrap.Modal(document.getElementById('creatOpenChalenge'), {
+                keyboard: false
+            })
+        },
+        data: {},
+        create: function () {
+            openChalengeCreator.data.gameTimeMins = openChalengeCreator.controls.mins.value;
+            openChalengeCreator.data.gameTimeSecs = openChalengeCreator.controls.secs.value;
+            openChalengeCreator.data.timeIncresment = openChalengeCreator.controls.inc.value;
+            openChalengeCreator.data.rated = Boolean(openChalengeCreator.controls.rated.value);
+            openChalengeCreator.data.selectedColor = openChalengeCreator.controls.color.value;
+            openChalengeCreator.emit(openChalengeCreator.data);
+        },
+        emit: function (data) {
+            socket.emit('chalenge', { signal: 'create', chalenge: data }, (game) => {
+                openChalengeCreator.controls.modal.hide();
+                console.log('1', game);
+                if ('whiteUserName' in game) {
+                    window.location.href = "/game/play/" + game._id;
+                }
+                else {
+                    homeLobbyTopMenu.goToLobby();
+                }
+
+            });
+        }
+    }
+
+
+</script>

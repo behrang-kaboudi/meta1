@@ -1,0 +1,63 @@
+<div class="wg-box dir-ltr ">
+    <div class="wg-title text-center fs-4 fw-bolder">
+        On Play Games
+    </div>
+    <div class="wg-inner w-100 fs-5 d-flex flex-column" id="selfLiveGames" style="height: 500px;">
+
+    </div>
+</div>
+<script>
+    // ** for Now Updates From Live game components
+    let selfLiveGamesComp = {
+        games: [],
+        setGames: () => {
+            let parent = document.getElementById('selfLiveGames');
+            parent.innerHTML = '';
+
+            selfLiveGamesComp.games.forEach((u) => {
+
+                    if (u.blackUserName == userName || u.whiteUserName == userName) return;
+                    let tag = `<a href="/game/play/${u._id}" target="_blank" my-1>${u.whiteUserName + '(' + u.whiteRate +')'} -  ${u.blackUserName + '(' + u.blackRate +')'}</a><hr>`;
+                    parent.innerHTML += tag;
+                })
+                // console.log(onlineUsersComp.users);
+        },
+        getLiveGames: function() {
+            console.log('ass');
+
+            socket.emit('liveGames', {
+                userName
+            }, (games) => {
+                selfLiveGames.games = games;
+                console.log(games);
+
+                // selfLiveGames.setGames();
+            })
+        }
+    };
+    $(document).ready(function() {
+
+        // selfLiveGamesComp.getLiveGames();
+        // socket.io.on("reconnect", (attempt) => {
+        //     selfLiveGames.getLiveGames();
+
+        // });
+
+        // socket.on('newGameCreated', (game) => {
+        //     selfLiveGames.games.push(game);
+        //     selfLiveGames.setGames();
+        // });
+        // socket.on('gameFinished', (game) => {
+        //     // selfLiveGames.games.push(game);
+        //     let games = selfLiveGames.games.filter((g) => {
+
+        //         return g._id != game._id;
+        //     });
+        //     selfLiveGames.games = games;
+        //     selfLiveGames.setGames();
+
+
+        // });
+
+    })
+</script>

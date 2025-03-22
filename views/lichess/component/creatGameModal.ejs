@@ -1,0 +1,178 @@
+<!-- Modal -->
+<div class=" modal fade text-dark" id="creatGame" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <span class="bg-white rounded-circle  position-absolute top-0  start-0 
+            translate-middle">
+        <button type="button" class="btn-close p-2" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </span>
+      <h3 class="modal-title align-self-center mt-3 h3 ">
+        <!-- دعوت به بازی از: -->
+        <span id="selectedUserForChalenge">
+          behrang2
+        </span>
+        <i class="fa fa-toggle-off"></i>
+      </h3>
+
+      <div class="modal-body">
+        <div class=" h5 text-center" style=" width: 100%;">
+          <span class="p-1 ">
+            <!-- بازی استاندارد -->
+          </span>
+        </div>
+        <hr>
+        <div class=" h5 text-center" style=" width: 100%;">
+          <div>
+            <span class="  p-2  mx-3">
+              <!-- زمان بندی بازی به صورت استاندارد -->
+              <%- user.trans('Standard game timing') %>
+
+            </span>
+          </div>
+        </div>
+        <br>
+        <div class="container row text-center">
+          <div>
+            <label for="gameTimeMins" class="form-label">
+              <%- user.trans('Set Minutes') %>
+                <span id="gameTimeMinsCounter" class="mx-2">
+                  3
+                </span>
+            </label>
+            <input type="range" class="form-range  " value="3" min="0" max="180" id="gameTimeMins">
+          </div>
+          <div>
+            <label for="gameTimeSecs" class="form-label">
+              <%- user.trans('Set Seconds') %>
+                <span id="gameTimeSecsCounter" class="mx-2">
+                  0
+                </span>
+            </label>
+            <input type="range" class="form-range  " value="0" min="0" max="55" step="5" id="gameTimeSecs">
+          </div>
+          <div>
+            <label for="timeIncresment" class="form-label">
+              <%- user.trans('Set Fischer') %>
+                <span id="timeIncresmentCounter" class="mx-2">
+                  2
+                </span>
+            </label>
+            <input type="range" class="form-range  " value="2" min="0" max="60" id="timeIncresment">
+          </div>
+
+        </div>
+        <hr>
+        <div class=" h5 text-center" style=" width: 100%;">
+          <button id="setRatedGame" onclick="setRated(true)" type="button" class="btn  col-5 btn-success  mx-0">
+            <%- user.trans('Rated') %>
+          </button>
+          <button id="setUnRatedGame" onclick="setRated(false)" type="button" class="btn btn-secondary col-5 mx-0">
+            <%- user.trans('Not-Rated') %>
+          </button>
+        </div>
+        <br>
+        <div class=" h5 text-center" style=" width: 100%;">
+          <a onclick="creatChalenge('b')" data-dismiss="modal">
+            <img class="wg-box" src="/public/components/bk-chessboard/pices/bk.svg" style=" width: 20%;">
+          </a>
+          <a onclick="creatChalenge('wb')">
+            <img class="wg-box" src="/public/components/bk-chessboard/pices/wbk.svg" style=" width: 23%;padding: 5px;">
+          </a>
+          <a onclick="creatChalenge('w')">
+            <img class="wg-box" src="/public/components/bk-chessboard/pices/wk.svg" style=" width: 20%;">
+          </a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class=" h7 text-center" style=" width: 100%;">
+          <span class="  p-2  mx-3">
+            <!-- ریتینگ در زمانی انتخابی: 0 -->
+          </span>
+        </div>
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">ریتد</button> -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script>
+  let rated = true;
+  var creatChalengeModal = new bootstrap.Modal(document.getElementById('creatGame'), {
+    keyboard: false
+  })
+  let gameTimeMinsObj = document.getElementById('gameTimeMins');
+  gameTimeMinsObj.addEventListener("change", () => {
+    setRange(gameTimeMinsObj, "gameTimeMinsCounter")
+  })
+  gameTimeMinsObj.addEventListener("input", () => {
+    setRange(gameTimeMinsObj, "gameTimeMinsCounter")
+  })
+  let gameTimeSecsObj = document.getElementById('gameTimeSecs');
+  gameTimeSecsObj.addEventListener("change", () => {
+    setRange(gameTimeSecsObj, "gameTimeSecsCounter")
+  })
+  gameTimeSecsObj.addEventListener("input", () => {
+    setRange(gameTimeSecsObj, "gameTimeSecsCounter")
+  })
+  let timeIncresmentObj = document.getElementById('timeIncresment');
+  timeIncresmentObj.addEventListener("change", () => {
+    setRange(timeIncresmentObj, "timeIncresmentCounter")
+  })
+  timeIncresmentObj.addEventListener("input", () => {
+    setRange(timeIncresmentObj, "timeIncresmentCounter")
+  })
+
+  function setRange(obj, targetId) {
+    let target = document.getElementById(targetId);
+    target.innerText = obj.value;
+  }
+
+  function setRated(val) {
+    let btnRated = document.getElementById('setRatedGame');
+    let btnUnRated = document.getElementById('setUnRatedGame');
+    if (val) {
+      btnRated.classList.remove('btn-secondary');
+      btnUnRated.classList.remove('btn-success');
+      btnUnRated.classList.add('btn-secondary');
+      btnRated.classList.add('btn-success');
+      rated = true;
+    } else {
+      btnUnRated.classList.remove('btn-secondary');
+      btnRated.classList.remove('btn-success');
+      btnRated.classList.add('btn-secondary');
+      btnUnRated.classList.add('btn-success');
+      rated = false;
+    }
+  }
+
+  function creatChalenge(color) {
+    let gameTimeMins = gameTimeMinsObj.value;
+    let gameTimeSecs = gameTimeSecsObj.value;
+    let toalTime = gameTimeMins * 60 + gameTimeSecs;
+    if (toalTime < 45) {
+      // return
+    }
+    let timeIncresment = timeIncresmentObj.value;
+    let opponentUserName = search.selectedUserForChalenge;
+    let selectedColor = color;
+    let obj = {
+      gameTimeMins,
+      gameTimeSecs,
+      timeIncresment,
+      opponentUserName,
+      selectedColor,
+      rated
+    };
+    console.log('', obj);
+    socket.emit('chalenge', {
+      signal: 'create',
+      chalenge: obj
+    }, (game) => {
+      window.location.href = "/game/" + game._id;
+    });
+  }
+</script>

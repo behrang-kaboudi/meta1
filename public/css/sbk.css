@@ -1,0 +1,115 @@
+@font-face {
+    font-family: 'IRANSansWeb';
+    src: url('/public/fonts/persian/IRANSansWeb.eot?#iefix') format('embedded-opentype'), 
+    url('/public/fonts/persian/IRANSansWeb.woff2') format('woff2'), 
+    url('/public/fonts/persian/IRANSansWeb.woff') format('woff'),
+     url('/public/fonts/persian/IRANSansWeb.ttf') format('truetype'), 
+     url('/public/fonts/persian/IRANSansWeb.svg#svgFontName') format('svg');
+    /* Legacy iOS */
+}
+@font-face {
+    font-family: vazir;
+    src: url('/public/fonts/vazir/eot/Vazir.eot?#iefix') format('embedded-opentype'),
+      url('/public/fonts/vazir/woff2/Vazir.woff2') format('woff2'),
+      url('/public/fonts/vazir/woff/Vazir.woff') format('woff'),
+      url('/public/fonts/vazir/ttf/Vazir.ttf') format('truetype'),
+      url('/public/fonts/vazir/ttf/Vazir1.ttf') format('truetype');
+  }
+*{
+    color: #403d33;
+}
+
+body {
+    font-family: 'IRANSansWeb';
+    overflow-y: scroll;
+    background: #e8e6da;
+    /* background: #edebe9 linear-gradient(to bottom, #dbd7d1, #edebe9 116px) no-repeat; */
+    /* background-image: url("/lichess/img/bg3.jpg"); */
+    ;
+    color: #e8e6da ;
+    overflow-x: hidden;
+}
+a {
+    cursor: pointer;
+    text-decoration: none;
+}
+code {
+    direction: ltr;
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.dir-rtl {
+    direction: rtl !important;
+}
+
+.dir-rtl * {
+    direction: rtl !important;
+}
+
+.dir-ltr {
+    direction: ltr;
+}
+
+
+/* vidget */
+
+.wg-box .wg-title,
+.wg-box .wg-inner,
+.wg-box .wg-footer {
+    padding: 18px;
+}
+
+.wg-box {
+    margin: 10px;
+    background-color: #fff;
+    border-radius: 4px;
+    /* box-shadow: 0px 0px 10px 2px grey inset; */
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.15);
+}
+
+.wg-box .wg-title {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.wg-box .wg-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sbkc-fs-10 , sbkc-fs-10 *{
+    font-size: clamp(10px,1.3vw,12px);
+}
+.sbkc-fs-9 , .sbkc-fs-9 *{
+    font-size: clamp(11px,1.45vw,14px);
+}
+.sbkc-fs-8 , .sbkc-fs-8 *{
+    font-size: clamp(12px,1.6vw,16px);
+}
+.sbkc-fs-7 , .sbkc-fs-7 *{
+    font-size: clamp(13.5px,1.8vw,18.5px);
+}
+.sbkc-fs-6 , .sbkc-fs-6 *{
+    font-size: clamp(15px,2vw,21px);
+}
+.sbkc-fs-5 , .sbkc-fs-5 *{
+    font-size: clamp(17px,2.3vw,23px);
+}
+.sbkc-fs-4 , .sbkc-fs-4 *{
+    font-size: clamp(20px,2.5vw,25px);
+}
+.sbkc-fs-3 , .sbkc-fs-3 *{
+    font-size: clamp(24px,2.9vw,30px);
+}
+.sbkc-fs-2 , .sbkc-fs-2 *{
+    font-size: clamp(30px,3.5vw,37px);
+}
+.sbkc-fs-1 , .sbkc-fs-1 *{
+    font-size: clamp(38px,4.3vw,45px);
+}
+.sbkc-fs-0 , .sbkc-fs-0 *{
+    font-size: clamp(48px,5.3vw,55px);
+}
+
+/* Sizing */

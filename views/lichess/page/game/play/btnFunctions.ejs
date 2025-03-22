@@ -1,0 +1,75 @@
+<script>
+    function flip() {
+        players.viewSide = players.viewSide == 'w' ? 'b' : 'w';
+        setTable();
+    }
+    function setName(player, side) {
+        if (players.viewSide == 'w') {
+            if (side == 'b') {
+                parts.upName.innerText = player + ': ';
+            }
+            if (side == 'w') {
+                parts.downName.innerText = player + ': ';
+            }
+        }
+        if (players.viewSide == 'b') {
+            if (side == 'w') {
+                parts.upName.innerText = player + ': ';
+            }
+            if (side == 'b') {
+                parts.downName.innerText = player + ': ';
+            }
+        }
+    }
+
+    function areBtnsEnable() {
+        if (games.recived.result) return false;
+        if (userName == games.recived.blackUserName || userName == games.recived.whiteUserName) return true;
+
+        return false;
+    }
+
+    function resign() {
+        if (!areBtnsEnable()) return;
+        socket.emit('resign', games.recived._id, (ans) => { });
+    }
+
+    function offerDraw() {
+        if (!areBtnsEnable()) return;
+        // parts.whaitToAcceptDraw.classList.remove('d-none');
+        socket.emit('offerDraw', {
+            game: games.recived,
+            userName
+        }, (ans) => { });
+    }
+
+
+
+
+
+    function creatRematch() {
+        let gameTimeMins = games.recived.gameTimeMins;
+        let gameTimeSecs = games.recived.gameTimeSecs;
+        let timeIncresment = games.recived.gameTimeSecs;
+        let opponentUserName =
+            games.recived.blackUserName == userName ? games.recived.whiteUserName : games.recived.blackUserName;
+        let selectedColor = games.recived.blackUserName == userName ? 'w' : 'b';
+        let rated = games.recived.rated;
+        let obj = {
+            gameTimeMins,
+            gameTimeSecs,
+            timeIncresment,
+            opponentUserName,
+            selectedColor,
+            rated,
+        };
+
+        socket.emit('creatChalenge', obj, (ans) => {
+            window.location.href = '/game/' + ans._id;
+        });
+    }
+
+    function backToTournament() {
+        window.location.href = window.location.origin + '/swiss/tournament/' + games.recived.tournamentId;
+    }
+</script>

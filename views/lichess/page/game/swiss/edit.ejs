@@ -1,0 +1,55 @@
+<%- include('../../../share/superheader') -%>
+    <%- include("../../../component/mainnav") -%>
+        <div class="row container-fluid mt-4">
+            <div class="col-md-12">
+                <div class="wg-box">
+                    <div class="wg-title text-center h3">
+                        TOURNAMENTS
+                    </div>
+                    <div class="wg-inner dir-ltr">
+                        <%- swiss %>
+                    </div>
+                    <div>
+                        <button class="btn btn-success" onclick="putUsersIndb()">
+                            putUsersIndb
+                        </button>
+                    </div>
+                    <div class="my-3">
+                        <button class="btn btn-success" onclick="pair()">
+                            pair
+                        </button>
+                    </div>
+                    <div class="my-3">
+                        <button class="btn btn-success" onclick="undo()">
+                            undo
+                        </button>
+                    </div>
+                    <div class="my-3">
+                        <button class="btn btn-success" onclick="reset()">
+                            reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function putUsersIndb() {
+                    socket.emit('swiss', { signal: 'putUsersIndb', data: { id: "<%- swiss._id %>" } })
+                }
+                function pair() {
+                    socket.emit('swiss', { signal: 'pair', data: { id: "<%- swiss._id %>" } })
+                }
+                function creatGames() {
+                    socket.emit('swiss', { signal: 'creatGames', data: { id: "<%- swiss._id %>" } })
+                }
+                function undo() {
+                    socket.emit('swiss', { signal: 'undo', data: { id: "<%- swiss._id %>" } })
+                }
+                function reset() {
+                    socket.emit('swiss', { signal: 'reset', data: { id: "<%- swiss._id %>" } })
+                }
+
+            </script>
+        </div>
+
+
+        <%- include('../../../share/superfooter') -%>

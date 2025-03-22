@@ -1,0 +1,33 @@
+<script src="/public/components/bk-chessboard/js/bk-board-class.js"></script>
+
+<div class="row container-fluid dir-ltr my-4">
+    <% for(let i=0;i<simull.games.length;i++){ %>
+        <div class="col-lg-4" id="">
+            <div class="board border border-4" id="board<%=i%>"></div>
+        </div>
+        <% } %>
+</div>
+
+<script>
+    let simullCount = <%= simull.games.length %>;
+    let simullId = <%= simull._id %>;
+    $(document).ready(() => {
+            // console.log('', liveBoard);
+            <% for (let i = 0; i < simull.games.length; i++) { %>
+            liveBoard('<%=simull.games[i] %>', "board<%=i%>", function () {
+                socket.emit('newGameData', '<%=simull.games[i] %>', function () {
+                    for (let i = 0; i < array.length; i++) {
+                        const element = array[i];
+
+                    }
+
+                });
+                for (let i = 0; i < simullCount; i++) {
+                    document.getElementById("board" + i).classList.remove('border-danger');
+                }
+                document.getElementById("board<%=i%>").classList.add('border-danger');
+            });
+            <% } %>
+        })
+
+</script>

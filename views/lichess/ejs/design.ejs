@@ -1,0 +1,38 @@
+<% var comps = {
+    table:{},
+    design:{}
+};
+let cop2='copsssssssssssssssssssssssssssssssss2';
+function test(x) {
+    console.log('x',x);
+}
+%>
+<% comps.design.pageHeaderTitle = (title) => { 
+    let style= `
+        font-size: 108.333px;
+        font-family: "Calibri";
+        color: rgb(53, 51, 51);
+        line-height: 1.175;
+        text-align: center;
+        position: absolute;
+        left: 166px;
+        top: 324.354px;
+        z-index: 17;
+    `
+%>
+    <div style="display: block;">
+       kjkjjkkjjkhjkjkh
+    </div>
+<% } %>
+
+
+<% comps.design.simpleHeader = (value, name) => { %>
+    <div style="display: block;">
+        <input type="radio" id="<%= name %><%= value %>" class=""
+               name="<%= name %>" value="<%= value %>" required/>
+        <label for="<%= name %><%= value %>" class="">
+            <%= value %>
+        </label>
+    </div>
+<% } %>
+

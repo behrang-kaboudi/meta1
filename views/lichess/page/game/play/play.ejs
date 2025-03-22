@@ -1,0 +1,259 @@
+<%- include('../../../share/superheader') -%>
+  <%- include('../../../component/mainnav') -%>
+
+    <%- include('./playHTML') %>
+      <%- include('./globalVars.ejs') %>
+        <% if (locals.simull) {%>
+          <%- include('./components/simullLives') %>
+            <% } %>
+
+              <%- include('./btnFunctions') %>
+                <script>
+                  function initialPlay() {
+                    games.recived = games.pre = JSON.parse(document.getElementById('gameData').innerText.trim());
+                    players.mySide = players.viewSide = games.recived.blackUserName == userName ? 'b' : 'w';
+                    players.oppSide = games.recived.blackUserName == userName ? 'w' : 'b';
+                    engine = new Chess();
+                    (function setGBoard() {
+                      function afterMove() {
+                        bd2.settings.canMove = false;
+                        bd.moveObj.gameId = games.recived._id;
+                        socket.emit('gameMove', bd.moveObj, (ans) => {
+                          if (simul) {
+                            if (simul.auto) simul.next();
+                          }
+
+                        });
+                      }
+                      bd2.creatBoard();
+                      bd2.settings.engine = 'chess';
+                      bd2.Funcs.moveEnd = afterMove;
+                      bd2.settings.sideToMove = players.viewSide;
+                    }());
+                  }
+                  $(document).ready(function () {
+                    initialPlay();
+                    spg.initial();
+                    setTable();
+                    gameDataProcess();
+                    socket.io.on('reconnect', () => {
+                      if (games.recived.result != "" || games.recived.result) return;
+                      socket.emit('newGameData', games.recived._id);
+                      // if not turn get next
+                    })
+                    socket.on('gameData', function (obj) {
+                      if (simul) {
+                        if (!simul.canGoNext(games.recived, obj.game)) {
+                          return
+                        }
+                      }
+
+                      games.pre = games.recived;
+                      games.recived = obj.game;
+
+                      if (games.recived.tournamentType == 'swiss') {
+                        document.getElementById('rematch').classList.add('d-none');
+                      } else {
+                        document.getElementById('backToTournament').classList.add('d-none');
+                      }
+
+                      gameDataProcess();
+                    });
+                    socket.on('offerDraw', function (obj) {
+                      if (userName != obj.userName) {
+                        display.show('acceptDraw');
+                      }
+                    });
+                    socket.on("connect_error", (err) => {
+                      socket.emit('newGameData', games.recived._id);
+                    });
+                    socket.emit('newGameData', games.recived._id);
+                    sounds.playStart();
+                    if (simul) simul.next();
+                  });
+
+                  function setTable() {
+                    bd2.filipSide(players.viewSide);
+
+                    function setNames(LongUpSide, longDownSide) {
+                      if (games.recived.tournamentType == 'simull') {
+                        parts.downRating.classList.add('d-none');
+                        parts.downChangeRate.classList.add('d-none')
+                        parts.upRating.classList.add('d-none')
+                        parts.upChangeRate.classList.add('d-none')
+                      }
+                      parts.upName.innerText = games.recived[LongUpSide + 'UserName'] + ': ';
+                      parts.upRating.innerText = games.recived[LongUpSide + 'Rate'];
+                      parts.downName.innerText = games.recived[longDownSide + 'UserName'] + ': ';
+                      parts.downRating.innerText = games.recived[longDownSide + 'Rate'];
+                      if (games.recived.result) {
+                        let rtChanges = {
+                          blackRatingChange: games.recived.bRateChange,
+                          whiteRatingChange: games.recived.wRateChange
+                        }
+
+                        function creatRtChangeTag(rt) {
+                          if (!rt) return '';
+                          let tgClass = rt < 0 ? 'danger' : 'success';
+                          rt = rt < 0 ? rt : '+ ' + rt;
+                          let tag = `<span class='text-${tgClass}' > ${rt} </span>`;
+                          return tag;
+                        }
+                        parts.upChangeRate.innerHTML = creatRtChangeTag(rtChanges[LongUpSide + 'RatingChange']);
+                        parts.downChangeRate.innerHTML = creatRtChangeTag(rtChanges[longDownSide + 'RatingChange']);
+                      }
+                    }
+                    players.viewSide == 'b' ? setNames('white', 'black') : setNames('black', 'white');
+                    (function setTimesLocation() {
+                      if (players.viewSide == players.mySide) {
+                        parts.setTimes(players.mySide, 'downTime');
+                        parts.setTimes(players.oppSide, 'upTime');
+                      } else {
+                        parts.setTimes(players.mySide, 'upTime');
+                        parts.setTimes(players.oppSide, 'downTime');
+                      }
+
+                    })();
+                  }
+
+                  function gameDataProcess() {
+                    //
+                    setName(games.recived.whiteUserName, 'w');
+                    setName(games.recived.blackUserName, 'b');
+                    (function updateNames() {
+                      let gmMoves = games.recived.gmMoves;
+                      chess = new Chess(games.recived.startPosition);
+                      for (let i = 0; i < gmMoves.length; i++) {
+                        let mv = gmMoves[i];
+                        if (mv) {
+                          mv = JSON.parse(mv);
+                          engineLastMove = chess.move(mv);
+                        }
+                      }
+                    })();
+                    parts.result.innerText = '';
+                    clearInterval(timer.primeryTime);
+                    clearInterval(timer.timersInterval);
+                    clearInterval(timer.secsToStart);
+                    timer.setClockTime('w');
+                    timer.setClockTime('b');
+
+                    function displayTimeToStart() {
+                      if (games.recived.secsToStart > 0) {
+                        display.hide('priTimePart');
+                        timer.showTimeToStart();
+                        timer.secsToStart = setInterval(timer.showTimeToStart, 1000);
+                        return true;
+                      }
+                      display.hide('secsToStartPart');
+                      return false;
+                    };
+                    if (displayTimeToStart()) return;
+
+
+                    spg.setPgn(games.recived.gmMoves);
+
+                    bd2.settings.canMove = false;
+                    (function updateEngine() {
+                      let gmMoves = games.recived.gmMoves;
+                      chess = new Chess(games.recived.startPosition);
+                      for (let i = 0; i < gmMoves.length; i++) {
+                        let mv = gmMoves[i];
+                        if (mv) {
+                          mv = JSON.parse(mv);
+                          engineLastMove = chess.move(mv);
+                        }
+                      }
+                    })();
+
+                    (function updateGB() {
+                      bd2.settings.fen = chess.fen();
+                      bd2.creatBoard();
+                      (function setMask() {
+                        bd2.removeMasks();
+                        let move = games.recived.gmMoves[games.recived.gmMoves.length - 1];
+                        if (move) {
+                          move = JSON.parse(move);
+
+                          // bd2.setMask(move.from, 'move-mask');
+                          bd2.setMask(move.to, 'move-mask');
+
+                          function setCheck() {
+                            // let pices = chess.board();
+                            // 
+                            let turn = chess.turn();
+
+                            for (let i = 0; i < chess.SQUARES.length; i++) {
+                              const sq = chess.SQUARES[i];
+                              let pice = chess.get(sq)
+                              if (pice) {
+                                if (pice.color == turn && pice.type == 'k') {
+                                  bd2.setMask(sq, 'check-mask');
+                                  return
+                                }
+                              }
+
+                            }
+                          }
+                          if (chess.in_check()) {
+                            setCheck()
+                          }
+
+                        }
+                      })();
+                      (function setTurn() {
+                        if (
+                          (games.recived.sideToMove.side == 'w' && games.recived.whiteUserName == userName) ||
+                          (games.recived.sideToMove.side == 'b' && games.recived.blackUserName == userName)
+                        ) {
+                          bd2.settings.canMove = true;
+                        }
+                        if (games.recived.whiteResult || games.recived.blackResult || games.recived.result) {
+                          bd2.settings.canMove = false;
+                        }
+                      })();
+                    })();
+
+                    function isEndGame() {
+                      if (games.recived.result.trim()) {
+                        clearInterval(timer.primeryTime);
+                        clearInterval(timer.timersInterval);
+                        bd2.canMove = false;
+                        bd2.sideToMove = false;
+                        parts.result.innerText = games.recived.result;
+                        document.getElementById('resign').disabled = true;
+                        document.getElementById('offerDraw').disabled = true;
+                        document.getElementById('acceptDraw').disabled = true;
+                        display.hide('priTimePart');
+                        spg.canClick = true;
+                        // socket.emit('userPubData', games.recived.blackUserName, (ans) => {
+                        //     players.blackUser = ans;
+                        //     setTable();
+                        // });
+                        // socket.emit('userPubData', games.recived.whiteUserName, (ans) => {
+                        //     players.whiteUser = ans;
+                        //     setTable();
+                        // });
+                        sounds.playEnd();
+                        return true;
+                      }
+                      return false;
+                    }
+                    if (isEndGame()) return;
+
+                    (function setTimers() {
+
+                      if (games.recived.firstMove.isFirstMove && games.recived.tournamentType == 'friendly') {
+                        timer.showPrimeryTime();
+                        timer.primeryTime = setInterval(timer.showPrimeryTime, 1000);
+                      } else {
+                        display.hide('priTimePart');
+
+                        timer.startInterval(games.recived.sideToMove.side);
+                      }
+                    })();
+
+
+                  }
+                </script>
+                <%- include('../../../share/superfooter') -%>

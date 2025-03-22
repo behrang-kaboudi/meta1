@@ -1,0 +1,36 @@
+<button id="acceptDraw" onclick="acceptDraw()" class="btn-success p-1 my-1 rounded-2 d-none">
+    <%- user.trans('Accept Draw ') %>
+      </button>
+<button id="whaitToAcceptDraw" class="btn-warning p-1 my-1 rounded-2 d-none">
+    <%- user.trans(' Waiting for the approval of the draw offer') %>
+</button>
+<script>
+    let offerDrawObj = {
+        game: null,
+        acceptDraw: document.getElementById('acceptDraw'),
+        whaitToAcceptDraw: document.getElementById('whaitToAcceptDraw'),
+        showOfferDrow: function () {
+            if (!offerDrawObj.game.offerDrawBy) {
+                offerDrawObj.acceptDraw.classList.add('d-none');
+                offerDrawObj.whaitToAcceptDraw.classList.add('d-none');
+                return;
+            }
+            if (userName != offerDrawObj.game.offerDrawBy) {
+                offerDrawObj.acceptDraw.classList.remove('d-none');
+                return;
+            }
+            offerDrawObj.whaitToAcceptDraw.classList.remove('d-none');
+        }
+    }
+
+    function acceptDraw() {
+        if (!areBtnsEnable()) return;
+        socket.emit('acceptDraw', games.recived._id, (ans) => { });
+    }
+    $(document).ready(() => {
+        socket.on('gameData', function (obj) {
+            offerDrawObj.game = obj.game;
+            offerDrawObj.showOfferDrow();
+        });
+    })
+</script>

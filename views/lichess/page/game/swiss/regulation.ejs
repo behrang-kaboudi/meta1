@@ -1,0 +1,40 @@
+<%- include('../../../share/superheader') -%>
+    <%-include('../../../component/mainnav') -%>
+
+        <div class="row container-fluid dir-ltr">
+
+            <div class="wg-box">
+                <div class="wg-title h3">
+                    REGULATION
+                </div>
+                <div class="wg-inner">
+                    <%-tournament.regulation%>
+                </div>
+                <div class="wg-footer text-center">
+                    <% if( tournament.status != 'open'){ %>
+                        <button class="btn btn-danger">CLOSED</button>
+
+                        <%} else if(!registerd){ %>
+                            <button class="btn btn-success" onclick="registerInTournament('<%-tournament._id%>')">Register</button>
+                            <% }else{ %>
+                                <button class="btn btn-danger">You Registerd Before</button>
+                                <% } %>
+                </div>
+            </div>
+            <script>
+                function registerInTournament(id) {
+                    let obj = {
+                        tournamentId: id
+                    }
+                    sendJSON(obj, '/swiss/register/', ok);
+                    location.reload();
+
+                    function ok(res) {
+                        // window.location.href = window.location.href;
+                    }
+                }
+            </script>
+        </div>
+
+
+        <%- include('../../../share/superfooter') -%>

@@ -1,0 +1,50 @@
+<div class="">
+    <div class="wg-box">
+        <div class="wg-title h3">List</div>
+        <div class="wg-inner">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">title</th>
+                        <th scope="col">status</th>
+                        <!-- <th scope="col">Handle</th> -->
+                    </tr>
+                </thead>
+                <tbody id="swissTounumentList">
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <!-- <td>@mdo</td> -->
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let swissList = {
+        tblBody: document.getElementById('swissTounumentList'),
+    };
+    swissList.process = function (list) {
+        // swissList.tbl.creatInside(list)
+        swissList.tblBody.innerHTML = '';
+        for (let i = 0; i < list.length; i++) {
+            const tour = list[i];
+            let row = document.createElement('tr');
+            let inner = `<th scope="row">${i + 1}</th>`;
+            inner += ` <td><a href="/swiss/edit/${tour._id}">${tour.title}</a></td>`;
+            inner += ` <td>${tour.status}</td>`;
+            row.innerHTML = inner
+            swissList.tblBody.append(row)
+        }
+    }
+    registerEmmit('swiss', 'list', null, swissList.process, 'newSwissTour');
+
+
+
+
+</script>

@@ -1,0 +1,134 @@
+<div class="dir-rtl">
+    <div class="wg-box">
+        <div class="wg-title h3">ایجاد مسابقه سوئیسی</div>
+        <div class="wg-inner">
+            <div class=" mx-3 row">
+                <li id="formErrors" class="h6 d-none text-danger mb-3">
+                    تست
+                </li>
+            </div>
+            <div class="mb-3">
+                <label for="title" class="form-label fs-5 fw-bolder">عنوان مسابقه :</label>
+                <input type="text" class="form-control" id="title" placeholder="">
+            </div>
+            <div class="row">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="input-group mb-3 dir-ltr ">
+                            <input type="number" class="form-control" id="maxRound">
+                            <span class="input-group-text dir-rtl">ماکسیمم تعداد دور: </span>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="input-group mb-3 dir-ltr ">
+                            <input type="datetime-local" class="form-control" id="startTime">
+                            <span class="input-group-text dir-rtl"> زمان شروع
+                                <div class="col-3">
+                                </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="row col-lg-12">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-3 dir-ltr col-sm-6">
+                                        <span class="input-group-text dir-rtl">ثانیه</span>
+                                        <input type="number" class="form-control" id="gameDuration">
+
+                                        <span class="input-group-text dir-rtl">زمان بازی</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-3 dir-ltr col-sm-6">
+                                        <span class="input-group-text dir-rtl">ثانیه</span>
+                                        <input type="number" class="form-control" id="extraTime">
+                                        <span class="input-group-text dir-rtl">زمان فیشر بازی: </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row col-lg-12">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-3 dir-ltr col-sm-12">
+                                        <span class="input-group-text dir-rtl">دقیقه</span>
+                                        <input type="number" class="form-control" id="restTime">
+                                        <span class="input-group-text dir-rtl">زمان استراحت بین دورها
+                                            : </span>
+                                    </div>
+
+
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-3 dir-ltr ">
+                                        <input type="text" class="form-control" id="fee">
+                                        <span class="input-group-text dir-rtl">مبلغ ورودیه: </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <label class="form-label fs-5 fw-bolder">
+                            توضیحات و آیین نامه:
+                        </label>
+                        <textarea class="form-control" rows="15" id="regulation"></textarea>
+                    </div>
+                    <div class="wg-footer">
+                        <button class="btn btn-success w-100" onclick="submitForm()">
+                            ایجاد مسابقه
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitForm() {
+        let tournament = {};
+        tournament.title = document.getElementById('title').value;
+        tournament.maxRound = document.getElementById('maxRound').value;
+
+        tournament.fee = document.getElementById('fee').value;
+        tournament.gameDuration = document.getElementById('gameDuration').value;
+        tournament.extraTime = document.getElementById('extraTime').value;
+        tournament.restTime = document.getElementById('restTime').value;
+
+        tournament.startTime = document.getElementById('startTime').value;
+        var date = new Date(tournament.startTime);
+        tournament.startTime = date.getTime();
+        tournament.regulation = document.getElementById('regulation').value;
+        if (!hasErr(tournament)) {
+            socket.emit('swiss', { signal: 'create', data: tournament }, function (data) {
+                window.location.href = '/swiss/tournaments/';
+            })
+            // socket.emit('creatSwiss', tournament, function (data) {
+            //     // console.log(data);
+            //     window.location.href = '/swiss/tournaments/';
+            // })
+        }
+
+
+        function hasErr(tour) {
+            if (tour.title.length < 4) return setErr('title min length is 4.')
+            if (tour.maxRound < 2) return setErr('Max Round should be grater than 2.')
+            if (tour.startTime < 2) return setErr('Set start time')
+            if (!tour.fee) tour.fee = 0;
+            if (!tour.gameDuration) tour.gameDuration = 1;
+            if (!tour.extraTime) tour.extraTime = 0;
+            if (!tour.extraTime) tour.extraTime = 0;
+            return false;
+            // to do
+        }
+
+        function setErr(er) {
+            let erElement = document.getElementById('formErrors');
+            erElement.innerText = er;
+            erElement.classList.remove('d-none');
+            return true
+        }
+
+    }
+</script>

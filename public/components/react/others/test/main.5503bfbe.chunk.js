@@ -1,0 +1,2 @@
+(this.webpackJsonppmchess=this.webpackJsonppmchess||[]).push([[0],{9:function(e,r,t){"use strict";t.r(r);t(1);var n=t(3),s=t.n(n),c=t(0);var a=function(){return Object(c.jsx)("a",{className:"App-link",href:"https://reactjs.org",target:"_blank",rel:"noopener noreferrer",children:"Learn React"})};s.a.render(Object(c.jsx)(a,{}),document.getElementById("root"))}},[[9,1,2]]]);
+//# sourceMappingURL=main.5503bfbe.chunk.js.map

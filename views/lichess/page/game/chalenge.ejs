@@ -1,0 +1,55 @@
+<%- include('../../share/superheader') -%>
+  <%- include('../../component/mainnav') -%>
+    <div class="container">
+      <div class="container rounded-1 bg-white d" style="border: black solid 1px">
+        <div class="pt-5 pe-3 h4 w-100 text-center">
+          ....
+          <%- user.trans('WAITING') %>
+
+        </div>
+        <div class="container rounded-3 p-5 mt-5 d-flex justify-content-between align-center" style="
+        border: green solid 1px;
+        width: 85%;
+        background-color: rgb(211, 226, 187);
+      ">
+          <span class="h4">
+            <%- user.trans('Standard Game') %>
+          </span>
+          <span class="d-flex">
+            <span class="h3 mx-2 align-self-center">
+              <%= chalenge.timeIncresment + " + " + chalenge.gameTimeMins + ":" + chalenge.gameTimeSecs%>
+                <%= chalenge.rated ? ' Rated' : ' UnRated' %>
+                  <%= chalenge.gameTimeControll %>
+            </span>
+
+            <i class="fal fa-chess-board" style="font-size: 50px"></i>
+          </span>
+        </div>
+        <div class="container rounded-3 p-5 mt-3 d-flex justify-content-center" style="">
+          <span class="h3 mx-2 align-self-center">
+            <%= chalenge.opponentUserName%>
+          </span>
+          <i class="fa fa-toggle-off h5 align-self-center"></i>
+        </div>
+        <div class="container rounded-3 p-1 my-3 d-flex justify-content-center" style="">
+          <i class="fas fa-sync fa-spin" style="font-size: 100px; color: rgb(219, 219, 115)"></i>
+        </div>
+        <div class="container rounded-3 p-1 my-5 d-flex justify-content-center" style="">
+          <button onclick="cancelChalengeReq('<%=chalenge._id%>')" class="btn btn-danger px-4">
+            انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+    <script>
+      function cancelChalengeReq(id) {
+        socket.emit('chalenge', {
+          signal: 'cancel',
+          id
+        }, (ans) => {
+          window.location.replace('/');
+          // document.getElementById('searchData').innerText="";
+        });
+      }
+    </script>
+    <%- include('../../share/superfooter') -%>

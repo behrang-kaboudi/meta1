@@ -1,0 +1,57 @@
+<%- include('../../../share/superheader') -%>
+    <%- include('../../../component/mainnav') -%>
+
+        <div class="container-fluid mt-4">
+            <style>
+                .wg-inner {
+                    min-height: 600px;
+                }
+            </style>
+            <div class="row">
+                <div class="text-right col-md-4 col-lg-3">
+                    <div class="wg-box">
+                        <div class="wg-title h4">منو</div>
+                        <div class="wg-inner h6">
+                            <%- include('../../../component/adminMenu') -%>
+                        </div>
+                        <div class="wg-footer">
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-8 col-lg-9 dir-ltr">
+                    <ul class="nav nav-tabs px-4" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+                                data-bs-target="#creatSwiss" type="button" role="tab" aria-controls="home"
+                                aria-selected="true">Create</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
+                                type="button" role="tab" aria-controls="profile" aria-selected="false">List</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact"
+                                type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="creatSwiss" role="tabpanel"
+                            aria-labelledby="home-tab">
+                            <%- include('./create') -%>
+
+                        </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <%- include('./adminList') -%>
+                        </div>
+                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="text-right col-md-8 col-lg-9">
+
+                    <%- include('../../../share/superfooter') -%>

@@ -1,0 +1,201 @@
+<style>
+    .timeSets-main-part {
+        background-image: url("/public/lichess/img/LogoWaterMark.png");
+        width: 100%;
+        background-repeat: no-repeat;
+        background-size: 40vw;
+        background-position: center 0.4vw;
+        padding: 0px;
+    }
+
+    .timeSets-box {
+        border-width: 1.663px;
+        border-style: solid;
+        border-radius: 4px;
+        height: 8.6vw;
+        padding-top: 1.7vw;
+        width: 100%;
+        cursor: pointer;
+
+    }
+
+    .timeSets-box:hover {
+        background-color: rgba(250, 150, 0, 0.301);
+    }
+
+    .timeSets-box-dark {
+        border-color: rgb(198, 156, 109);
+        background-color: rgb(96, 57, 19, 20%);
+    }
+
+    .timeSets-box-light {
+        border-color: rgb(177, 175, 175);
+        background-color: rgb(255, 255, 255, 50%);
+    }
+
+    .timeSets-col {
+        padding-left: 1%;
+        padding-right: 1%;
+    }
+
+    .timeSets-text {
+        font-size: 2vw;
+        font-family: "Arial";
+        color: rgb(64, 61, 51);
+        line-height: 1.183;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .timeSets-box {
+            padding-top: 2.5vw;
+            height: 15.2vw;
+        }
+
+        .timeSets-text {
+            font-size: 4vw;
+
+        }
+    }
+
+    @media (min-width: 768px) {}
+</style>
+<div id="homePageQuickPairing" class="row mx-0 px-0 timeSets-main-part " style="">
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(1,0)" class="timeSets-box timeSets-box-light">
+            <div class="timeSets-text">
+                1 + 0
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Bullet') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(2,1)" class="timeSets-box timeSets-box-dark">
+            <div class="timeSets-text">
+                2 + 1
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Bullet') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(3,0)" class="timeSets-box timeSets-box-light ">
+            <div class="timeSets-text">
+                3 + 0
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Blitz') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(3,2)" class="timeSets-box  timeSets-box-dark mt-2">
+            <div class="timeSets-text">
+                3 + 2
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Blitz') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(5,0)" class="timeSets-box  timeSets-box-light mt-2">
+            <div class="timeSets-text">
+                5 + 0
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Blitz') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(5,3)" class="timeSets-box timeSets-box-dark  mt-2">
+            <div class="timeSets-text">
+                5 + 3
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Blitz') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(10,0)" class="timeSets-box timeSets-box-light  mt-2">
+            <div class="timeSets-text">
+                10 + 0
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Rapid') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(10,5)" class="timeSets-box timeSets-box-dark  mt-2">
+            <div class="timeSets-text">
+                10 + 5
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Rapid') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(15,10)" class="timeSets-box timeSets-box-light  mt-2">
+            <div class="timeSets-text">
+                15 + 10
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Rapid') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(30,0)" class="timeSets-box timeSets-box-dark  mt-2">
+            <div class="timeSets-text">
+                30 + 0
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Classical') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="quickChalenge(30,20)" class="timeSets-box timeSets-box-light  mt-2">
+            <div class="timeSets-text">
+                30 + 20
+            </div>
+            <div class="timeSets-text">
+                <%- user.trans('Classical') %>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 timeSets-col">
+        <div onclick="openChalengeCreator.controls.modal.show();" class="timeSets-box timeSets-box-dark  mt-2">
+            <!-- <div class="timeSets-text">
+                1 + 0
+            </div> -->
+            <div class="timeSets-text mt-3 fs-3">
+                <%- user.trans('Custom') %>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function quickChalenge(min, inc) {
+        if (!userName) {
+            window.location.href = '/user/login';
+            return;
+        }
+        let data = {
+            gameTimeMins: min,
+            gameTimeSecs: 0,
+            timeIncresment: inc,
+            rated: true,
+            selectedColor: 'wb'
+        }
+        openChalengeCreator.emit(data);
+    }
+</script>

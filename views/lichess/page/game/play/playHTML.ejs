@@ -1,0 +1,143 @@
+<audio class="d-none" id="moveSound" controls>
+  <source src="/public/sound/move.m4a" type="audio/ogg" />
+</audio>
+<audio class="d-none" id="startSound" controls>
+  <source src="/public/sound/start.wav" type="audio/ogg" />
+</audio>
+<audio class="d-none" id="endSound" controls>
+  <source src="/public/sound/end.wav" type="audio/ogg" />
+</audio>
+<link rel="stylesheet" href="/public/components/bk-chessboard/css/bk-board.css" />
+<script src="/public/components/bk-chessboard/js/bk-board.js"></script>
+<script src="/public/components/bk-chessboard/js/bk-board-consts.js"></script>
+<script src="/public/js/chess.js"></script>
+<script src="/public/components/pgn/spgn.js"></script>
+<link rel="stylesheet" href="/public/components/pgn/spgn.css" />
+<div class="container-fluid">
+  <div class="row  mt-3 ">
+    <div class="col-lg-4   order-2 order-md-1 align-items-center">
+      <br />
+      <br />
+      <div id="priTimePart" class="btn-warning p-2 rounded-2 mb-3" style="width: 100%">
+        <span>
+          <%- user.trans('Initial time to start ') %>
+          </span>
+
+        <span id="priTimeSide">--</span>
+        <span id="priTimeTime"> -- </span>
+        <span> <%- user.trans(' Seconds ') %> </span>
+      </div>
+      <div id="secsToStartPart" class="btn-warning p-2 rounded-2 mb-3 dir-ltr" style="width: 100%">
+        <span> Second to start the game: </span>
+        <span id="secsToStart"> -- </span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center px-4">
+        <div style="" class="h2">
+          <style>
+            .game-outer-signs {
+              font-size: x-large;
+            }
+
+            .game-outer-signs:hover {
+              cursor: pointer;
+            }
+
+            .game-outer-signs-resign:hover {
+              color: red;
+            }
+
+            .game-outer-signs-offerdraw:hover {
+              color: green;
+            }
+          </style>
+          <span id="resign" onclick="resign()" class="p-2 rounded-2 game-outer-signs game-outer-signs-resign">
+            <i class="far fa-flag" style=""></i>
+          </span>
+          <span id="offerDraw" onclick="offerDraw()" class="p-2 rounded-2 game-outer-signs m-1 game-outer-signs-offerdraw">
+            1/2
+          </span>
+        </div>
+
+        <div class="dir-ltr">
+          <span id="result" class="h3">------</span>
+        </div>
+      </div>
+      <%- include("./components/offerDraw") %>
+            <div id="pgnViwer" style="width: 100%; height: 300px" class="px-3"></div>
+            <br />
+            <div class="text-center" style="width: 100%">
+              <span onclick="flip()" class="p-2 rounded-2 pointer" style="font-size: x-large">
+                <i class="fas fa-sync fa-microscope"></i>
+              </span>
+
+              <span onclick="creatRematch()" class="p-2 rounded-2 pointer" style="font-size: x-large" id=' rematch'>
+            <i class="far fa-swords"></i>
+        </span>
+        <a onclick="backToTournament()" class="p-2 rounded-2 pointer" style="font-size: large" id='backToTournament'>
+          <!-- <i class="far fa-swords"></i> -->
+          Back To Tournament
+        </a>
+      </div>
+    </div>
+    <div class="col-lg-4  order-1  order-md-2">
+
+      <style>
+        #wTime,
+        #wTime * {
+          background-color: white;
+          color: black;
+          font-size: x-large;
+        }
+
+        #bTime,
+        #bTime * {
+          background-color: black;
+          color: white;
+          font-size: x-large;
+        }
+      </style>
+      <div>
+        <div class="d-flex justify-content-between align-items-center ">
+          <div id="upTime"></div>
+          <div class="dir-ltr r ms-2 h6">
+            <i class="fa fa-toggle-off"></i>
+            <span id="upName"></span>
+            <span id="upRating" class="mx-1"></span>
+            <span id="upChangeRate" class="mx-1 "></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="board" id="board"></div>
+      <div class="d-flex justify-content-between align-items-center my-2">
+        <div id="downTime"></div>
+        <div class="dir-ltr ms-2 h6">
+          <i class="fa fa-toggle-off"></i>
+          <span id="downName"></span>
+          <span id="downRating" class="mx-1"></span>
+          <span id="downChangeRate" class="mx-1 "></span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4  order-3 order-md-3">
+      <%- include('./components/chat') %>
+        <!-- <video autoplay></video> -->
+    </div>
+  </div>
+</div>
+<div id="timeSample" class="d-none">
+  <div id="Time" class="dir-ltr px-1 rounded-1">
+    <span id="Min" class=""> 3 </span>
+    <span> : </span>
+    <span>
+      <span id="BigSec"> 0 </span>
+      <span id="SmallSec"> 0 </span>
+    </span>
+  </div>
+</div>
+<div id="gameId" class="d-none">
+  <%=gameId %>
+</div>
+<div id="gameData" class="d-none">
+  <%-game %>
+</div>

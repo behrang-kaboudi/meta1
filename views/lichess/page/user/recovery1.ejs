@@ -1,0 +1,57 @@
+<%- include('../../share/superheader') -%> <%- include('../../component/mainnav') -%>
+
+    <div class="container">
+      <div class="row justify-content-center" style="direction:ltr">
+        <div class=" text-right col-md-6 col-lg-5">
+          <div class="wg-box">
+            <div class="wg-title h4">
+              <%- user.trans('Recover Password') %>:
+            </div>
+            <div class="wg-inner">
+              <div class="mb-3 mx-3 row">
+                <li id="formErrors" class="h6 d-none text-danger"></li>
+              </div>
+              <div class="mb-3 row">
+                <label for="email" class="form-label">
+                  <%- user.trans('Mail ') %>:
+            </label>
+            <div class="">
+              <input type="text" class="form-control dir-ltr" id="email" />
+            </div>
+          </div>
+
+          <button
+            onclick="submitForm()"
+            class="btn btn-primary mb-3"
+            style="width: 100%"
+          >
+            <%- user.trans(' Recover') %>:
+                    </button>
+              </div>
+              <div class="wg-footer">
+                <div class="mb-3 mx-4 " style="font-size: large">
+
+                  <a href="/user/login/"> <%- user.trans(' Login ') %></a>
+            <br>
+            <a href="/user/register/"> <%- user.trans(' Register ') %> </a><br>
+            <a>
+              <%- user.trans(' Login with Mail ') %>
+                        </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function submitForm() {
+    let email = document.getElementById(' email').value; let obj = { email, }; sendJSON(obj, '/user/recovery', ok);
+    function ok(res) { // console.log(resObj); // // // let resObj=JSON.parse(res);
+      console.log(resObj); if (!resObj.state) {
+        let erElement = document.getElementById('formErrors');
+        erElement.innerText = resObj.message; erElement.classList.remove('d-none');
+      } else { //
+        window.location.href = '/'; // window.location.replace(resObj.message); //
+        window.location.href = resObj.message; // // window.location.href="http://www.w3schools.com" ; } } }
+</script>
+                      <%- include('../../share/superfooter') -%>

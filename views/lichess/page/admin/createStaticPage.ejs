@@ -1,0 +1,133 @@
+<%- include('../../share/superheader') -%>
+    <%- include('../../component/mainnav') -%>
+        <!-- <script src="https://cdn.ckeditor.com/ckeditor5/29.2.0/classic/ckeditor.js"></script> -->
+        <script src="/public/components/ckeditor4/ckeditor.js"></script>
+        <div class="container-fluid mt-4">
+            <style>
+                .wg-inner {
+                    min-height: 600px;
+                }
+            </style>
+            <div class="row">
+                <div class="text-right col-md-4 col-lg-3">
+                    <div class="wg-box">
+                        <div class="wg-title h4">منو</div>
+                        <div class="wg-inner h6">
+                            <%- include('../../component/adminMenu') -%>
+                        </div>
+                        <div class="wg-footer">
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="dir-ltr col-md-8 col-lg-9">
+                    <div class="wg-box">
+                        <div class="wg-title h4 ">
+                            Craet Static Page
+                        </div>
+                        <div class="wg-inner">
+                            <!-- <form action="/admin/puzzlesUpload" method="post" enctype="multipart/form-data">
+                                 <input type="file" name="pgn"><br>
+                                <input type="submit">
+                            <div class="mb-3">
+                                <label for="pgn" class="form-label">فایل مسایل را انتخاب کنید.</label>
+                                <input class="form-control" type="file" id="pgn" name="pgn">
+                            </div>
+                            <input type="submit" class="btn btn-success">
+                            </form> -->
+                            <div class="mb-3">
+                                <label for="title" class="form-label fw-bold fs-4">Title:</label>
+                                <input type="text" class="form-control" id="title">
+                            </div>
+                            <div class="mt-4">
+                                <label for="editor" class="form-label fw-bold fs-4">Content:</label>
+                            </div>
+                            <div id="editor"></div>
+                            <div class="text-center mt-2">
+                                <button class="btn btn-primary text-center" onclick="submitData()">submit</button>
+                            </div>
+
+                        </div>
+                        <div class="wg-footer text-center">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            // CKEDITOR.editorConfig = function (config) {
+            //     config.language = 'es';
+            //     config.uiColor = '#F7B42C';
+            //     config.height = 300;
+            //     config.toolbarCanCollapse = true;
+            // };
+            let editor = CKEDITOR.replace('editor', {
+                uiColor: '#9AB8F3',
+                toolbar: [
+                    { name: 'document', groups: ['mode', 'document', 'doctools'], items: ['Source', '-', 'Print',] },
+                    { name: 'clipboard', groups: ['clipboard', 'undo'], items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord',] },
+                    { name: 'basicstyles', groups: ['basicstyles', 'cleanup'], items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
+                    { name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align', 'bidi'], items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl'] },
+                    { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
+                    { name: 'insert', items: ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe'] },
+                    { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+                    { name: 'colors', items: ['TextColor', 'BGColor'] },
+                    { name: 'tools', items: ['Maximize', 'ShowBlocks'] },
+                ]
+            });
+            // let editor = CKEDITOR.replace('editor', {
+            //     toolbar: [
+            //         { name: 'document', groups: ['mode', 'document', 'doctools'], items: ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates'] },
+            //         { name: 'clipboard', groups: ['clipboard', 'undo'], items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo'] },
+            //         { name: 'editing', groups: ['find', 'selection', 'spellchecker'], items: ['Find', 'Replace', '-', 'SelectAll', '-', 'Scayt'] },
+            //         { name: 'forms', items: ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'] },
+            //         '/',
+            //         { name: 'basicstyles', groups: ['basicstyles', 'cleanup'], items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
+            //         { name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align', 'bidi'], items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language'] },
+            //         { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
+            //         { name: 'insert', items: ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe'] },
+            //         '/',
+            //         { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+            //         { name: 'colors', items: ['TextColor', 'BGColor'] },
+            //         { name: 'tools', items: ['Maximize', 'ShowBlocks'] },
+            //         { name: 'others', items: ['-'] },
+            //         { name: 'about', items: ['About'] }
+            //     ]
+            // });
+            // let editor = CKEDITOR.replace('editor', {
+            //     uiColor: '#9AB8F3',
+            //     extraPlugins: 'embedbase',
+            //     extraPlugins: 'embed',
+            // });
+            // import ClassicEditor from '/public/components/ckeditor/ckeditor5-build-classic/build/ckeditor.js';
+            // import ImageInsert from '/public/components/ckeditor/ckeditor5-image/src/imageinsert.js';
+            // let editor = ClassicEditor.create(document.querySelector('#editor'), {
+            //     // ckfinder: {
+            //     //     uploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&responseType=json',
+            //     // },
+            //     toolbar: ['ImageInsert', 'imageUpload', '|', 'heading', '|', 'bold', 'italic', '|', 'undo', 'redo']
+            //     // plugins: [ImageInsert],
+            //     // toolbar: ['insertImage']
+            // })
+            //     .then(e => {
+            // editor.setData('<p>Some text.</p>');
+            //         editor = e;
+            //     })
+
+            function submitData() {
+                // console.log('', editor.getData());
+                let data = {
+                    content: editor.getData(),
+                    title: document.getElementById('title').value
+                }
+                console.log('', data);
+                socket.emit('creatStaticPage', data, function (ans) {
+                    // console.log('', ans);
+                    window.location.replace('/admin/staticPageList')
+                })
+            }
+        </script>
+
+        <%- include('../../share/superfooter') -%>

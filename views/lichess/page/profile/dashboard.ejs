@@ -1,0 +1,30 @@
+<%- include('../../share/superheader') -%>
+    <%-
+include('../../component/mainnav') -%>
+
+        <div class="container-fluid mt-4">
+            <style>
+                .wg-inner {
+                    min-height: 600px;
+                }
+            </style>
+            <div class="row">
+
+                <div class="text-right ">
+                    <div class="wg-box">
+                        <div class="wg-title h4">
+                            language
+                        </div>
+                        <div class="wg-inner">
+                            <%-
+include('../../component/language') -%>
+                        </div>
+                        <div class="wg-footer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../../share/superfooter') -%>

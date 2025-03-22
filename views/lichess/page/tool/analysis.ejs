@@ -1,0 +1,607 @@
+<%- include('../../share/superheader') -%>
+<%- include('../../component/mainnav') -%>
+<% let template="lichess" %>
+
+<script src="/public/js/chess.js"></script>
+<link rel="stylesheet" href="/public/components/bk-chessboard/css/bk-board.css" />
+<script src="/public/components/bk-chessboard/js/bk-board-class.js"></script>
+<script src="/public/js/gauge.js"></script>
+<script src="/public/components/bk-pgn/pgn.js">
+</script>
+
+<div class="mt-1">
+  <div class="container-fluid ">
+    <div class="row">
+      <!-- <div class="col-lg-1"></div> -->
+      <div class="col-lg-4 order-2 order-lg-1  dir-ltr">
+        <div id='analysePgnPart' class="" style="height: 500px;">
+          <div class="d-flex rounded-top align-items-center" style="height: 10%; background-color: #f1f0ef;">
+
+
+            <span id="cpAnalyse" class="fw-bold fs-4 mx-2" style="min-width: 10%;">0.0</span>
+
+            <span id="depthSpan" class=" fs-6 mx-2" style="min-width: 10%;"></span>
+            <!-- <div class="d-flex flex-column mx-2 ms-auto py-0"> -->
+            <span class="text-center pointer ms-auto me-3" onclick="addDepth(+1)">
+              <i class="fas fa-plus "></i>
+            </span>
+            <!-- <span class="text-center  p-0 pointer" onclick="addDepth(-1)">
+                                            <i class="fas fa-minus mt-0 py-0"></i>
+                                        </span> -->
+            <!-- </div> -->
+            <span class="" style="min-width: 10%;">Stockfish 12+ </span>
+            <span id="threat" class=" mx-1 me-3 fs-3 pointer d-none" onclick="showThreat()">
+              <i id="threatOn" class="fas fa-bullseye fs-4"></i>
+              <i id="threatOff" class="fas fa-bullseye fs-4  text-danger d-none"></i>
+              <!-- <i id="analyseOff" class="fa fa-toggle-off" aria-hidden="true"></i>
+                                        <i id="analyseOn"  class="fas fa-toggle-on text-success d-none"></i> -->
+            </span>
+            <span class=" mx-1 me-3 fs-3 pointer" onclick="togAnalyse()">
+              <i id="analyseOff" class="fa fa-toggle-off" aria-hidden="true"></i>
+              <i id="analyseOn" class="fas fa-toggle-on text-success d-none"></i>
+            </span>
+            <!-- <input type="text" class="form-control" placeholder="ویراشگر" disabled /> -->
+          </div>
+          <div id="analyseData" class="bg-light py-1 px-2 float-start fw-normal w-100" style="font-size: 14px; overflow-y: auto;height: 10%;">
+
+          </div>
+
+          <div id="pgnViwer" class="fw-bold py-1 px-2 float-start fw-normal w-100" style="font-size: 16px; background-color: #f1f0ef;height: 80%;; overflow-y: auto;">
+
+          </div>
+          <style>
+            .pgn-nav-icon {
+              cursor: pointer;
+              min-width: 20%;
+              text-align: center;
+              padding: 5px;
+            }
+
+            .pgn-nav-icon:hover {
+              background-color: #2fa535;
+            }
+          </style>
+          <div class="d-flex justify-content-between px-2 ">
+
+            <div class="d-flex justify-content-between py-1 px-2 " style="font-size: 26px;width: 20%;">
+
+              <span class="pgn-nav-icon rounded">
+                <i class="fas fa-book"></i>
+              </span>
+              <span class="pgn-nav-icon rounded">
+                <i class="fas fa-bullseye"></i>
+              </span>
+            </div>
+            <div class="d-flex justify-content-between py-1 px-2 " style="font-size: 26px;width: 65%;">
+              <span class="pgn-nav-icon rounded" onclick="getStartMove()">
+                <i class="far fa-arrow-circle-left"></i>
+              </span>
+              <span class="pgn-nav-icon rounded" onclick="getPreMove()">
+                <i class="far fa-chevron-circle-left"></i>
+              </span>
+              <span class="pgn-nav-icon rounded">
+                <i class="far fa-chevron-circle-right" onclick="getNextMove()"></i>
+              </span>
+              <span class="pgn-nav-icon rounded" onclick="getEndMove()">
+                <i class="far fa-arrow-circle-right"></i>
+              </span>
+              <span class="pgn-nav-icon rounded">
+                <i class="fas fa-bars"></i>
+              </span>
+            </div>
+
+          </div>
+          <!-- <div class="d-flex justify-content-between  px-2 ">
+
+                                    <div class="d-flex justify-content-between   px-2 " style="font-size: 26px;width: 65%;">
+                                        <span class="pgn-nav-icon rounded" onclick="getStartMove()">
+                                       <i class="far fa-arrow-circle-left"></i>
+                                    </span>
+                                        <span class="pgn-nav-icon rounded" onclick="getPreMove()">
+                                        <i class="far fa-chevron-circle-left"></i>
+                                    </span>
+                                        <span class="pgn-nav-icon rounded">
+                                        <i class="far fa-chevron-circle-right" onclick="getNextMove()"></i>
+                                    </span>
+                                        <span class="pgn-nav-icon rounded" onclick="getEndMove()">
+                                       <i class="far fa-arrow-circle-right"></i>
+                                    </span>
+                                        <span class="pgn-nav-icon rounded">
+                                      <i class="fas fa-bars"></i>
+                                    </span>
+                                    </div>
+
+                                </div> -->
+
+
+        </div>
+      </div>
+      <div class="col-lg-5 order-1 order-lg-2 " id="board-part">
+        <div class="ms-auto" style="width: 90%;">
+
+          <div class="d-flex">
+            <div id="gauge" style=""></div>
+            <div class="board" id="board"></div>
+
+          </div>
+
+          <div style="direction: ltr" class="mt-4">
+
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon3"> FEN</span>
+              <input placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" type="text" class="form-control" id="baseFen" style="font-size: 14px;" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 order-3 order-lg-3  dir-ltr">
+        <select class="form-select" aria-label="Default select example">
+          <option selected>Standard</option>
+          <!-- <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option> -->
+        </select>
+        <div class="container-fluid bg-light my-2">
+          <div class="d-flex justify-content-around">
+            <div class="d-flex flex-column text-center  my-3 pointer  w-50" onclick="flipBoard()">
+              <i class="fas fa-sync fs-1 my-1"></i>
+              <span>
+                Flip Board
+              </span>
+            </div>
+            <!-- <a href="/public/tool/editor" style="color: inherit;"> -->
+            <div class="d-flex flex-column text-center  my-3 pointer  w-50" onclick="goToEditor()">
+              <i class="fa fa-pencil my-1 fs-1" aria-hidden="true"></i>
+              <span>
+                Board Editor
+              </span>
+            </div>
+            <!-- </a> -->
+          </div>
+          <div class="d-flex justify-content-around">
+            <div class="d-flex flex-column text-center  my-3 pointer w-50" onclick="">
+              <i class="fas fa-swords-laser fs-1 my-1"></i>
+              <span>
+                Continue from here
+              </span>
+            </div>
+            <div class="d-flex flex-column text-center  my-3 pointer  w-50" onclick="">
+              <i class="fas fa-game-board-alt my-1 fs-1"></i>
+              <span>
+                Study
+              </span>
+            </div>
+          </div>
+          <hr>
+          <div class="my-2">
+            <div class="form-check form-switch dir-ltr px-0">
+              <label class="form-check-label float-start" for="bestMoveArrow">Best move
+                arrow</label>
+              <input class="form-check-input float-end" type="checkbox" id="bestMoveArrow" checked>
+            </div>
+          </div>
+          <div class="my-2">
+            <div class="form-check form-switch dir-ltr px-0">
+              <label class="form-check-label float-start" for="bestMoveArrow">Evaluation
+                gauge</label>
+              <input class="form-check-input float-end" type="checkbox" id="evaluationGauge" checked>
+            </div>
+          </div>
+          <div class="my-2">
+            <div class="form-check form-switch dir-ltr px-0">
+              <label class="form-check-label float-start" for="bestMoveArrow">Infinite
+                analysis</label>
+              <input class="form-check-input float-end" type="checkbox" id="infinit">
+            </div>
+          </div>
+          <div>
+            <label for="customRange2" class="form-label">CPUs: </label>
+            <label id="cpuCount">1</label>
+            <label>/5</label>
+          </div>
+          <input type="range" class="form-range" min="0" max="4" id="cpuRange" value="0">
+          <div>
+            <label for="customRange2" class="form-label">Memory:</label>
+            <label id="ramCount">128</label>
+            <label> MB</label>
+          </div>
+
+          <input type="range" class="form-range mb-2" min="0" max="3" id="ramRange" value="0">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <script src="/public/components/sf/src/stockfish.js"></script> -->
+<script>
+  let analyseBoardSettings = {
+    bestMoveArrow: true,
+    bestMoveArrowObj: {},
+    gauge: true,
+    depth: 17,
+    threat: false,
+    analyse: false,
+  }
+
+  function addDepth(num) {
+    analyseBoardSettings.depth += num;
+    startAnalyse();
+  }
+  // let analyse = false;
+  let analyseDataEl = document.getElementById('analyseData');
+
+  let currentMoveIndex = 0;
+  let currentVarIndex = 0;
+
+
+  let fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  // let fen = 'rnbqk2r/ppppbppp/5n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4';
+  // let fen = 'rnbq1rk1/1ppp1pPp/5n2/2b1p3/2B1P3/5N2/PpPP1PP1/RNBQ1RK1 b - - 0 9';
+  // let fen = 'rnbqkbnr/2ppppp1/pp5p/8/4PP2/5N1P/PPPP2P1/RNBQKB1R b KQkq - 0 4';
+  // let fen = '6k1/3R4/6K1/8/8/8/8/8 w - - 0 1';
+  // let fen = '2k5/1pp2pp1/pbP1p2p/4P3/P3NPP1/3QPK2/6P1/6q1 w - - 0 35'
+  var bd1 = new bkGraphicalBoard.BkBoard('board', {
+    imgSrc: '/public/components/bk-chessboard/pices/'
+  });
+
+  bd1.settings.arrow = true;
+  bd1.settings.setMask = true;
+  bd1.settings.chessEngine = new Chess();
+  bd1.creat();
+  bd1.setPosition(fen);
+  let height = document.getElementById('board').offsetHeight;
+  // console.log('', height);
+  var gauge = new Gauge('gauge', height);
+  bd1.settings.canMove = true;
+
+
+  function creatFirstPgn(fen) {
+    let eng = new Chess(fen);
+    let pgStr = eng.pgn();
+    let pg = new pgn.Pgn(pgStr);
+    // pg.creat();
+    return pg;
+  }
+
+
+  let pg = creatFirstPgn(fen);
+
+
+  pg.toHtml('pgnViwer')
+
+  bd1.event.on('fenChanged', function(params) {
+    bd1.clearArrows();
+    bd1.clearMasks();
+    document.getElementById('baseFen').value = bd1.fen.getFen();
+  })
+  bd1.event.on('move', function(e) {
+    let move = pg.putMove(e, currentMoveIndex, currentVarIndex);
+    let sound = document.createElement('audio');
+    let moveSound = document.createElement('source');
+    moveSound.src = '/public/sound/move.m4a';
+    sound.append(moveSound);
+    // $('body').append(sound);
+    sound.play();
+    sound.remove();
+    pg.toHtml('pgnViwer');
+    setColors(move);
+    bd1.creatArrow(e.sq1.name, e.sq2.name, 'green')
+    analyseBoardSettings.bestMoveArrowObj = {}
+  })
+
+  function setColors(mv) {
+    $(`[varIndex='${currentVarIndex}'][moveIndex='${currentMoveIndex}']`).css("background-color", "")
+    currentMoveIndex = mv.moveIndex;
+    currentVarIndex = mv.varIndex;
+    $(`[varIndex='${currentVarIndex}'][moveIndex='${currentMoveIndex}']`).css("background-color", "yellow")
+    startAnalyse();
+  }
+
+  function setMove(mv) {
+    bd1.setPosition(mv.fen);
+    setColors(mv);
+    // console.log('', mv, pg.varMatris, pg.varMatris[mv.varIndex].moves[mv.moveIndex]);
+    let move = pg.varMatris[mv.varIndex].moves[mv.moveIndex]
+    bd1.creatArrow(move.moveObj.from, move.moveObj.to, 'green')
+    analyseBoardSettings.bestMoveArrowObj = {}
+  }
+  // let stockfish = new Worker("/public/js/lozza.js");
+  let stockfish = new Worker("/public/components/sf/src/stockfish.js");
+
+  // var stockfish = STOCKFISH();
+  function togAnalyse() {
+    // to do stop analyse
+    if (analyseBoardSettings.threat) {
+      analyseBoardSettings.threat = false;
+      document.getElementById('threatOn').classList.remove('d-none');
+      document.getElementById('threatOff').classList.add('d-none');
+      analyseBoardSettings.analyse = true;
+    }
+    analyseBoardSettings.analyse = analyseBoardSettings.analyse ? false : true;
+    if (analyseBoardSettings.analyse) {
+      document.getElementById('analyseOn').classList.remove('d-none');
+      document.getElementById('analyseOff').classList.add('d-none');
+      analyseBoardSettings.threat = false;
+      document.getElementById('threat').classList.remove('d-none');
+      // document.getElementById('threatOn').classList.remove('d-none');
+      // document.getElementById('threatOff').classList.add('d-none');
+      startAnalyse()
+    } else {
+      document.getElementById('analyseOn').classList.add('d-none');
+      document.getElementById('analyseOff').classList.remove('d-none');
+      document.getElementById('threat').classList.add('d-none');
+
+      stockfish.postMessage("stop");
+      stockfish.postMessage('quite');
+      analyseBoardSettings.threat = false
+    }
+  }
+
+  function showThreat() {
+    // to do stop analyse
+    analyseBoardSettings.threat = analyseBoardSettings.threat ? false : true;
+
+    if (analyseBoardSettings.threat) {
+      document.getElementById('threatOn').classList.add('d-none');
+      document.getElementById('threatOff').classList.remove('d-none');
+      analyseBoardSettings.analyse = false;
+      // document.getElementById('analyseOn').classList.add('d-none');
+      // document.getElementById('analyseOff').classList.remove('d-none');
+      startAnalyse('threat');
+    } else {
+      document.getElementById('threatOn').classList.remove('d-none');
+      document.getElementById('threatOff').classList.add('d-none');
+      // stockfish.postMessage("stop");
+      // stockfish.postMessage('quite');
+      analyseBoardSettings.analyse = true;
+      startAnalyse();
+    }
+  }
+
+
+
+  function startAnalyse(threat = false) {
+    if (!(analyseBoardSettings.analyse || analyseBoardSettings.threat)) return;
+    // stockfish.postMessage("stop");
+    // stockfish.postMessage('quite');
+    // stockfish.postMessage("ucinewgame");
+    // stockfish.removeEventListener('message', complileData);
+    // stockfish.onmessage = null;
+    // // stockfish = new Worker("/public/js/lozza.js");
+    // stockfish = new Worker("/public/components/sf/src/stockfish.js");
+    stockfish.postMessage("ucinewgame");
+    let fenStr = bd1.fen.getFen().trim();
+    if (threat == 'threat') {
+      let fenObj = new pgn.Fen(fenStr);
+      fenObj.side = fenObj.side == 'w' ? 'b' : 'w';
+      fenObj.enp = '-'
+      fenStr = fenObj.getFen().trim();
+    }
+    let currentFenObj = new Fen(fenStr);
+
+    stockfish.postMessage("position fen " + currentFenObj.strFen);
+    // stockfish.postMessage("go infinite");
+    stockfish.postMessage("go depth " + analyseBoardSettings.depth);
+    stockfish.onmessage = complileData;
+
+    function complileData(event) {
+
+      if (event.data.includes('nodes') && !event.data.includes('lowerbound') && !event.data.includes('upperbound') && event.data.includes('depth')) {
+        convertAnalyse(event.data, currentFenObj);
+      }
+    }
+
+  }
+
+
+
+  function convertAnalyse(data, currentFenObj) {
+    if (!(analyseBoardSettings.analyse || analyseBoardSettings.threat)) return;
+    // console.log('', data, currentFenObj.getFen());
+    analyseDataEl.innerHTML = null;
+    // bd1.setArrow();
+    let chess = new Chess(currentFenObj.strFen);
+    let firstTurn = chess.turn();
+    setCp(data, firstTurn);
+    setDepth(data);
+    setSuggestArrow(data, currentFenObj.strFen);
+    let variant = data.substr(data.indexOf(' pv ') + 4).trim().split(' ');
+    let strMoves = '';
+    let moveNumber = currentFenObj.moves;
+    let pop = null;
+    for (let i = 0; i < variant.length; i++) {
+      // lozza
+      // let moveObj = chess.move(variant[i]);
+      // stock
+      let moveObj = chess.move({
+        from: variant[i][0] + variant[i][1],
+        to: variant[i][2] + variant[i][3]
+      })
+      if (variant[i].length == 5) {
+        moveObj = chess.move({
+          from: variant[i][0] + variant[i][1],
+          to: variant[i][2] + variant[i][3],
+          promotion: variant[i][4]
+        })
+      }
+      if (!moveObj) continue;
+      let stNum = '';
+      if (i == 0 && firstTurn == 'b') {
+        stNum = moveNumber + '... ';
+        // strMoves += `<span class='ms-1' >${moveNumber}... </span>`;
+      }
+      if (chess.turn() == 'b') {
+        stNum = moveNumber + '. '
+        // strMoves += `<span class='ms-1' >${moveNumber}. </span>`;
+      } else {
+        moveNumber++;
+      }
+      let mv = document.createElement('span');
+      mv.classList.add('ms-1', 'position-relative');
+      mv.innerText = stNum + moveObj.san;
+      // mv.addEventListener('mouseover', function() {
+      //     pop = document.createElement('span');
+      //     pop.innerHTML = 'xxxx';
+      //     pop.style.cssText = 'background-color:blue;z-index:3000; position:absolute ';
+      //     pop.style.top = mv.offsetTop + 20 + 'px';
+      //     pop.style.left = mv.offsetLeft + 'px';
+      //     // pos.classList.add('d-block', 'position-absolute', 'start-50', 'translate-middle')
+      //     document.getElementById('analysePgnPart').append(pop);
+      //     console.log('mouseover', mv.offsetTop);
+      // })
+      // mv.addEventListener('mouseout', function() {
+      //     pop.remove();
+      //     console.log('mouseout', mv.offsetTop);
+      // })
+      analyseDataEl.append(mv)
+      // strMoves += `<span class='ms-1' >${stNum}${moveObj.san}</span>`
+    }
+    // analyseDataEl.innerHTML = strMoves;
+  }
+
+
+
+  function setCp(data, firstTurn) {
+    // to do chack for mat and patt
+    let cp = '';
+    if (data.includes('score cp')) {
+      cp = getNumberAfterWord(data, 'cp');
+      cp = cp / 100;
+      cp = firstTurn == 'w' ? cp : cp * -1;
+      // let cpSide = firstTurn == 'w' ? '+' + cp : cp;
+      cp = cp > 0 ? '+' + cp : cp;
+      gauge.setDegree(cp * 100);
+    }
+    if (data.includes('mate')) {
+      cp = getNumberAfterWord(data, 'mate');
+      cp = '#' + ++cp;
+      if (firstTurn == 'w') gauge.setDegree(400);
+      if (firstTurn = 'b') gauge.setDegree(-400);
+    }
+    document.getElementById('cpAnalyse').innerText = cp;
+  }
+
+  function setDepth(data) {
+    let depth = getNumberAfterWord(data, 'depth');
+    document.getElementById('depthSpan').innerText = 'depth ' + depth;
+  }
+
+  function setSuggestArrow(data, startFen) {
+    if (!analyseBoardSettings.bestMoveArrow) {
+      bd1.clearArrows();
+      return;
+    }
+    let moveStr = getNumberAfterWord(data, 'pv');
+
+    let chess = new Chess(startFen);
+    //lozza
+    // let move = chess.move(moveStr);
+    let move = chess.move({
+      from: moveStr[0] + moveStr[1],
+      to: moveStr[2] + moveStr[3]
+    })
+    let color = 'red';
+    if (analyseBoardSettings.threat) color = 'blue';
+    if (move) {
+      bd1.clearArrows();
+      bd1.creatArrow(move.from, move.to, color);
+      if (analyseBoardSettings.analyse) {
+        analyseBoardSettings.bestMoveArrowObj.from = move.from;
+        analyseBoardSettings.bestMoveArrowObj.to = move.to;
+      }
+      if (analyseBoardSettings.threat) {
+        bd1.creatArrow(analyseBoardSettings.bestMoveArrowObj.from, analyseBoardSettings.bestMoveArrowObj.to, 'red');
+        // console.log('', alyseBoardSettings.bestMoveArrowObj);
+      }
+    }
+
+    // document.getElementById('depthSpan').innerText = 'depth ' + depth;
+  }
+
+  function getNumberAfterWord(data, word) {
+    let str = data.substr(data.indexOf(' ' + word) + word.length + 2).trim();
+    str = str.substring(0, str.indexOf(' ')).trim();
+    return str;
+  }
+  document.onkeydown = checkKey;
+
+  function checkKey(e) {
+
+    e = e || window.event;
+    if (e.keyCode == '38') {
+      e.preventDefault();
+      getStartMove()
+    } else if (e.keyCode == '40') {
+      e.preventDefault();
+      getEndMove()
+    } else if (e.keyCode == '37') {
+
+      getPreMove();
+    } else if (e.keyCode == '39') {
+      getNextMove()
+    }
+
+  }
+
+  function getPreMove() {
+    let move = pg.varMatris[currentVarIndex].moves[currentMoveIndex];
+    if (!move.parentMove) return;
+    bd1.setPosition(move.parentMove.endFenObj.strFen);
+    setColors(move.parentMove);
+    startAnalyse();
+  }
+
+  function getNextMove() {
+    let move = pg.varMatris[currentVarIndex].moves[currentMoveIndex];
+    if (!move.ans[0]) return;
+    bd1.setPosition(move.ans[0].endFenObj.strFen);
+    setColors(move.ans[0]);
+    startAnalyse();
+  }
+
+  function getStartMove() {
+    let move = pg.varMatris[0].moves[0];
+    if (!move) return;
+    bd1.setPosition(move.endFenObj.strFen);
+    setColors(move);
+    startAnalyse();
+  }
+
+  function getEndMove() {
+    let move = pg.varMatris[pg.varMatris.length - 1].moves[pg.varMatris[pg.varMatris.length - 1].moves.length - 1];
+    if (!move) return;
+    bd1.setPosition(move.endFenObj.strFen);
+    setColors(move);
+    startAnalyse();
+  }
+
+  function flipBoard() {
+    bd1.flip()
+  }
+
+  function goToEditor() {
+    window.location.href = '/tool/editor'
+  }
+  $(document).ready(() => {
+    $('#bestMoveArrow').on('change', function(params) {
+      analyseBoardSettings.bestMoveArrow = this.checked;
+    })
+    $('#evaluationGauge').on('change', function(params) {
+      gauge.display(this.checked)
+    })
+    $('#infinit').on('change', function(params) {
+      if (this.checked) analyseBoardSettings.depth = 50;
+      if (!this.checked) analyseBoardSettings.depth = 17;
+      startAnalyse()
+    })
+    $('#cpuRange').on('input', function(params) {
+      document.getElementById('cpuCount').innerText = parseInt(this.value) + 1;
+    })
+    $('#ramRange').on('input', function(params) {
+      document.getElementById('ramCount').innerText = (parseInt(this.value) + 1) * 128;
+    })
+  })
+</script>
+
+<%- include('../../share/superfooter') -%>
+</div>

@@ -1,0 +1,63 @@
+<div onclick="topLiveGame.go()">
+    <div class="w-100 pointer" id='topLiveGame'>
+
+    </div>
+</div>
+
+<div id='topLiveGamePart'>
+    <div class="text-center text-success">
+        game will start soon
+    </div>
+    <div class="w-100" id='topLiveGamePicture'>
+
+    </div>
+    <div class="text-center text-success">
+        start your game
+    </div>
+</div>
+
+<script>
+    let topLiveGame = {
+        gmId: null,
+        setBoard: function () {
+            liveBoard(topLiveGame.gmId, "topLiveGame", function () {
+
+            }, topLiveGame.setEndGame)
+        },
+        getGm: function () {
+            socket.emit('topLiveGame', {}, function (gm) {
+
+                if (!gm) {
+                    document.getElementById('topLiveGame').classList.add('d-none');
+                    document.getElementById('topLiveGamePart').classList.remove('d-none');
+                    setTimeout(function (params) {
+                        topLiveGame.getGm();
+                    }, 5000)
+                    return;
+                }
+                topLiveGame.gmId = gm._id;
+                document.getElementById('topLiveGame').classList.remove('d-none');
+                document.getElementById('topLiveGamePart').classList.add('d-none');
+                topLiveGame.setBoard();
+            })
+        },
+        setEndGame: function () {
+            setTimeout(function (params) {
+                topLiveGame.getGm();
+            }, 2000)
+        },
+        go: function () {
+            window.location.href = '/game/play/' + topLiveGame.gmId;
+        }
+    }
+    $(document).ready(function () {
+        topLiveGame.getGm();
+        let fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+        var bd1 = new bkGraphicalBoard.BkBoard('topLiveGamePicture', {
+            imgSrc: '/public/components/bk-chessboard/pices/'
+        });
+        bd1.creat();
+        bd1.setPosition(fen);
+    })
+
+</script>

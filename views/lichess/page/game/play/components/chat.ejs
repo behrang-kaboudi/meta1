@@ -1,0 +1,57 @@
+<div class="wg-box dir-ltr">
+  <div class="wg-title">
+    Chat Room
+  </div>
+  <div class="wg-inner">
+    <div id="chatAllMasages" class="border p-2 rounded-1 overflow-auto text-wrap text-break" style="height: 300px; ">
+    </div>
+    <div class="d-flex my-1 ">
+      <textarea id="chatMesage" class="form-control me-2 w-57" rows="1"></textarea>
+      <input type="button " class="btn btn-success w-25" value="Send " onclick="chat.sendChatMessage() ">
+    </div>
+
+  </div>
+  <script>
+    let chat = {
+      messageEl: document.getElementById('chatMesage'),
+      chatBox: document.getElementById('chatAllMasages'),
+      allMessages: [],
+      setMessages: () => {
+        chat.chatBox.innerHtml = '';
+        chat.chatBox.innerText = '';
+        chat.allMessages.forEach(mess => {
+          chat.creatChatBoxEl(mess);
+        });
+      },
+      creatChatBoxEl: (messObj) => {
+        messObj = JSON.parse(messObj);
+        let parent = document.createElement('div');
+        chat.chatBox.append(parent);
+        let sender = document.createElement('span');
+        parent.append(sender);
+        sender.innerText = messObj.userName + ':';
+        sender.classList.add('mx-1', 'fs-6', 'fw-bolder')
+        let message = document.createElement('span');
+        parent.append(message);
+        message.innerText = messObj.message;
+      },
+      sendChatMessage: () => {
+        if (!userName) return;
+        let message = (chat.messageEl.value).trim();
+        if (!message) return;
+        socket.emit('chatMessage', {
+          message,
+          gameId: games.recived._id
+        });
+        chat.messageEl.value = " ";
+      }
+    };
+
+    $(document).ready(function() {
+      socket.on('gameData', function(obj) {
+        chat.allMessages = obj.game.chats;
+        chat.setMessages();
+      });
+    })
+  </script>
+</div>

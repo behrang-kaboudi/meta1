@@ -1,0 +1,140 @@
+<%- include('../share/superheader') -%>
+    <%- include('../component/mainnav') -%>
+        <!-- <div class="row container-fluid">
+  <div class="col-lg-5"><- include('../component/talk') -%></div>
+</div> -->
+        <div style="direction: ltr">
+            <!-- <video id="myVideoTag" autoplay></video>
+            <video id="theirVideoTag" autoplay></video> -->
+            <!-- <video id="theirVideoTag" autoplay></video>-->
+
+            <!-- <div id="cameraSelector">
+    Video:
+    <select id="camera"></select>
+  </div> -->
+            <!-- <p>
+    <button id="takeProfilePicture" type="button" autofocus="true">
+      Create Profile Picture
+    </button>
+  </p> -->
+            <!-- <video id="videoTag" autoplay></video> -->
+            <div class="row container-fluid">
+                <div class="col-4">
+                    <button id='callBtn' onclick="call()" class="btn btn-success">call</button>
+                    <button id='answerBtn' onclick="acceptCall()" class="btn btn-danger d-none">answer</button>
+                    <button id='answerBtn' onclick="endCall()" class="btn btn-danger ">endCall</button>
+                </div>
+            </div>
+            <div class="row container-fluid">
+                <div class="col-6">
+
+
+                </div>
+            </div>
+            <div>
+            </div>
+        </div>
+
+        <script>
+            let dc;
+            var mainCall = {};
+            var configuration = {
+                'iceServers': [{
+                    'url': 'stun:stun.l.google.com:19302'
+                }]
+            };
+            var rtcPeerConn = new RTCPeerConnection(configuration);
+            rtcPeerConn.onicecandidate = e => {
+                socket.emit('newCandidate', getCallObj());
+            }
+            rtcPeerConn.oniceconnectionstatechange = function() {
+                if (rtcPeerConn.iceConnectionState == 'disconnected') {
+                    rtcPeerConn.close();
+                }
+            }
+
+            function creatOfferChannnel() {
+                dc = rtcPeerConn.createDataChannel('channel');
+                setUpDataChanelEvents();
+            }
+
+            function endCall() {
+                rtcPeerConn.close();
+            }
+
+            function getCallObj() {
+                let users = {
+                    caller: 'beh',
+                    callee: 'beh2'
+                };
+                return {
+                    users,
+                    candidate: rtcPeerConn.localDescription
+                }
+            }
+
+            function setUpDataChanelEvents() {
+                dc.onmessage = e => console.log('got M' + e.data);
+                dc.onopen = e => console.log('conn opened');
+            }
+
+            function acceptCall() {
+                rtcPeerConn.ondatachannel = e => {
+                    console.log('on chanal')
+                    dc = e.channel;
+                    setUpDataChanelEvents();
+                }
+                rtcPeerConn.setRemoteDescription(mainCall.candidate).then(e => {
+                    console.log('offer Set');
+                    rtcPeerConn.createAnswer().then(o => {
+                        rtcPeerConn.setLocalDescription(o).then(e => {
+                            socket.emit('call', getCallObj());
+                        })
+                    })
+                })
+
+            }
+
+            function call() {
+                creatOfferChannnel();
+                rtcPeerConn.createOffer().then(o => {
+                    rtcPeerConn.setLocalDescription(o).then(e => {
+                        socket.emit('call', getCallObj());
+                    })
+                })
+
+            }
+
+            $(document).ready(function() {
+                socket.on('call', function(call) {
+                    mainCall = call;
+                    console.log(call.candidate)
+                    display.hide('callBtn');
+                    display.show('answerBtn');
+                });
+                socket.on('callAccepted', function(data) {
+                    mainCall = data;
+                    if (rtcPeerConn.signalingState != 'stable') {
+
+                    }
+                    rtcPeerConn.setRemoteDescription(mainCall.candidate).then(e => {
+                        // rtcPeerConn.send('sdsd')
+                        // console.log(rtcPeerConn.remoteDescription)
+                    });
+
+                    display.hide('callBtn');
+                    display.show('answerBtn');
+                });
+                socket.on('newCandidate', function(data) {
+                    mainCall = data;
+                    if (rtcPeerConn.signalingState != 'stable') {
+                        rtcPeerConn.setRemoteDescription(mainCall.candidate).then(e => {
+                            // rtcPeerConn.send('sdsd')
+                            console.log(rtcPeerConn.remoteDescription)
+                        });
+                    }
+
+                });
+            });
+        </script>
+        <%- include('../share/superfooter') -%>

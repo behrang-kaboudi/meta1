@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<% let template="lichess" %>
+  <% user.trans=function (word){ if(!('dbProps' in user)) return word; return lang.getPhrase(word,user.dbProps.lang); }
+    %>
+
+    <head>
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <title>MetaMind</title>
+      <!-- <link rel="icon" type="image/x-icon" href="/images/favicon.ico"> -->
+
+      <script src="/public/components/staticDesign/design.js"></script>
+      <script src="/public/components/dataCreator/dataCreator.js"></script>
+
+
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <!-- <script src="/public/components/jq/jq.js"></script> -->
+      <script src="/public/jquery/dist/jquery.min.js"></script>
+      <link rel="stylesheet" href="/public/fonts/css/all.min.css" />
+      <!-- <link rel="stylesheet" href="/public/components/bootstrap/css/bootstrap.min.css" />
+            <script src="/public/components/bootstrap/js/bootstrap.bundle.min.js"></script> -->
+      <link rel="stylesheet" href="/public/bootstrap/dist/css/bootstrap.min.css" />
+      <script src="/public/bootstrap/dist/js/bootstrap.bundle.js"></script>
+      <script src="/public/<%= template %>/js/main.js"></script>
+
+      <link rel="stylesheet" href="/public/css/sbk.css" />
+      <script src="/public/js/sbk.js"></script>
+      <script src="/public/components/livegame/live-board.js"></script>
+
+      <script src="/public/socket.io/client-dist/socket.io.min.js"></script>
+      <script src="/public/components/siteReact/sbk.js"></script>
+      <!-- <script src="/public/components/rtc/rtc.js"></script> -->
+      <!-- <link rel="shortcut icon" type="image/jpg" href="Favicon_Image_Location" /> -->
+      <link rel="icon" type="image/x-icon" href="/public/favicon.png" />
+    </head>
+    <script>
+      var socket;
+
+  // const R = React;
+  // const Rc = React.createElement;
+  // const Rs = React.useState;
+  // const Re = React.useEffect
+  // $(document).ready(function () {
+  //     rc = React.createElement;
+  // })React.useState
+    </script>
+
+    <% if(user.login) { %>
+      <script>
+        const userName = '<%- user.dbProps.userName %>';
+      </script>
+      <% }else{ %>
+        <script>
+          const userName = '';
+        </script>
+        <% } %>
+
+          <body>

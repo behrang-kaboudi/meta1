@@ -1,0 +1,146 @@
+:root {
+    --black-sq-color: #138550;
+    --white-sq-color: #e2fae2;
+    --parent-color: #adadad;
+    --green-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='100%' width='100%'> <circle class='myCircle' cx='50%' cy='50%' r='45%' stroke='black' stroke-width='4' fill='black' fill-opacity='0' /></svg>");
+    --red-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='100%' width='100%'> <circle class='myCircle' cx='50%' cy='50%' r='45%' stroke='darkred' stroke-width='4' fill='black' fill-opacity='0' /></svg>");
+    --orange-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='100%' width='100%'> <circle class='myCircle' cx='50%' cy='50%' r='45%' stroke='darkorange' stroke-width='4' fill='black' fill-opacity='0' /></svg>");
+    --blue-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='100%' width='100%'> <circle class='myCircle' cx='50%' cy='50%' r='45%' stroke='blue' stroke-width='4' fill='black' fill-opacity='0' /></svg>");
+    --move-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='100%' width='100%'> <rect x='3%' y='3%' width='94%' height='94%' rx='7' stroke='gold' stroke-width='4' fill='black' fill-opacity='0'/></svg>");
+    --check-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='100%' width='100%'> <rect x='3%' y='3%' width='94%' height='94%' rx='7' stroke='red' stroke-width='4' fill='black' fill-opacity='0'/></svg>");
+}
+
+.dragging {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+}
+
+.bk-board {
+    background-color: var(--parent-color);
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    /* position: absolute;
+  width: 100%;
+  height: 100%; */
+}
+
+.bk-board,
+.bk-board * {
+    direction: ltr;
+    box-sizing: border-box;
+    /* float: left; */
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    /* cursor: move;
+  cursor: grab; */
+    /* cursor: -moz-grab;
+  cursor: -webkit-grab; */
+}
+
+.bk-board img {
+    width: 100%;
+    height: 100%;
+}
+
+.bk-row {
+    display: block;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    display: flex;
+}
+
+.top-bar {
+    border-bottom: 1px solid;
+}
+
+.bottom-bar {
+    border-top: 1px solid;
+    text-align: center;
+    font-weight: 800;
+    font-size: 100%;
+    /* background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' ><text x='15' y='15' fill='red' font-size='100%'>1</text></svg>"); */
+    /* background-repeat: no-repeat; */
+    background-position: center;
+    background-size: cover;
+}
+
+.left-bar {
+    border-right: 1px solid;
+}
+
+.right-bar {
+    border-left: 1px solid;
+}
+
+.black-sq {
+    background-color: var(--black-sq-color);
+}
+
+.white-sq {
+    background-color: var(--white-sq-color);
+}
+
+.green-mask {
+    background-image: var(--green-mask);
+}
+
+.red-mask {
+    background-image: var(--red-mask);
+}
+
+.orange-mask {
+    background-image: var(--orange-mask);
+}
+
+.blue-mask {
+    background-image: var(--blue-mask);
+}
+
+.move-mask {
+    background-image: var(--move-mask);
+}
+
+.check-mask {
+    background-image: var(--check-mask);
+}
+
+.bk-arrow-mask {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 25;
+    width: 100%;
+    height: 100%;
+}
+
+.bk-arrow-color-red {
+    stroke: darkred;
+    fill: darkred;
+    opacity: 0.7;
+    /* stroke: none; */
+}
+
+.bk-arrow-color-green {
+    stroke: darkorange;
+    fill: darkorange;
+    opacity: 0.9;
+    /* stroke: none; */
+}
+
+.bk-arrow-color-orange {
+    stroke: green;
+    fill: black;
+    opacity: 0.7;
+    /* stroke: none; */
+}
+
+.bk-arrow-color-blue {
+    stroke: blue;
+    fill: blue;
+    opacity: 0.7;
+    /* stroke: none; */
+}

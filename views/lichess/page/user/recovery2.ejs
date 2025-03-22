@@ -1,0 +1,70 @@
+<%- include('../../share/superheader') -%>
+    <%-
+include('../../component/mainnav') -%>
+
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="text-right col-md-6 col-lg-5">
+                    <div class="wg-box">
+                        <div class="wg-title h4">تغییر رمز عبور</div>
+                        <div class="wg-inner">
+                            <div class="mb-3 mx-3 row">
+                                <li id="formErrors" class="h6 d-none text-danger"></li>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="password" class="form-label">رمز عبور:</label>
+                                <div class="">
+                                    <input type="password" class="form-control dir-ltr" id="password" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="password" class="form-label">تکرار رمز:</label>
+                                <div class="">
+                                    <input type="password" class="form-control dir-ltr" id="password2" placeholder="" />
+                                </div>
+                            </div>
+                            <button onclick="submitForm()" class="btn btn-primary mb-3" style="width: 100%">
+            ورود
+          </button>
+                        </div>
+                        <div class="wg-footer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function submitForm() {
+                let erElement = document.getElementById('formErrors');
+                // console.log(window.location.pathname);
+                let password = document.getElementById('password').value;
+                let password2 = document.getElementById('password2').value;
+                if (password != password2) {
+                    erElement.innerText = 'دو رمز با یکدیگر یکسان نیستند.';
+                    erElement.classList.remove('d-none');
+                    return;
+                }
+                if (password.includes(' ')) {
+                    erElement.innerText = 'برای رمز عبور از فاصله استفاده نکنید';
+                    erElement.classList.remove('d-none');
+                    return;
+
+                }
+                let obj = {
+                    password,
+                };
+
+                sendJSON(obj, window.location.pathname, ok);
+
+                function ok(res) {
+                    let resObj = JSON.parse(res);
+                    console.log(resObj);
+                    if (!resObj.state) {
+                        erElement.innerText = resObj.message;
+                        erElement.classList.remove('d-none');
+                    } else {
+                        window.location.href = '/';
+                    }
+                }
+            }
+        </script>
+        <%- include('../../share/superfooter') -%>

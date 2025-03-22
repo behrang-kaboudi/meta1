@@ -1,0 +1,74 @@
+<%- include('../../share/superheader') -%> <%- include('../../component/mainnav') -%>
+
+    <div class="container " style="direction:ltr">
+      <div class="row justify-content-center">
+        <div class=" col-md-7 col-lg-5">
+          <div class="wg-box">
+            <div class="wg-title h4">
+              <%- user.trans('Login') %>:
+            </div>
+            <div class="wg-inner">
+              <div class="mb-3 mx-3 row">
+                <li id="formErrors" class="h6 d-none text-danger"></li>
+              </div>
+              <div class="mb-3 row">
+                <label for="mailUser" class="form-label">
+                  <%- user.trans('User Name Or Mail ') %>:
+                </label>
+                <div class="">
+                  <input type="text" class="form-control dir-ltr" id="mailUser" />
+                </div>
+              </div>
+              <div class="mb-3 row">
+                <label for="password" class="form-label">
+                  <%- user.trans(' Password ') %>:
+                </label>
+                <div class="">
+                  <input type="password" class="form-control dir-ltr" id="password" placeholder="" />
+                </div>
+              </div>
+              <button onclick="submitForm()" class="btn btn-primary mb-3" style="width: 100%">
+                <%- user.trans(' Login ') %>:
+              </button>
+            </div>
+            <div class="wg-footer">
+              <div class="mb-3 mx-4" style="">
+                
+                    <a href="/user/recovery/">
+                      <%- user.trans(' Forget Password ') %>
+                </a>
+                <br/>
+                    <a href="/user/register/"> 
+                      <%- user.trans(' Register ') %>
+                    </a>
+                    <br />
+                    <a>
+                      <%- user.trans(' Login With mail') %>
+                    </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function submitForm() {
+        let mailUser = document.getElementById('mailUser').value; let
+          password = document.getElementById('password').value; let obj = { mailUser, password, };
+        sendJSON(obj, '/user/login', ok); 
+        function ok(res) { // // // 
+        let resObj=JSON.parse(res);
+          console.log(resObj); if (!resObj.state) {
+            let erElement = document.getElementById('formErrors');
+            erElement.innerText = resObj.message; erElement.classList.remove('d-none');
+          } else {
+                 //  console.log(resObj); // //
+            window.location.href = '/'; //
+       
+            //window.location.replace(resObj.message); // 
+            //window.location.href=resObj.message; 
+            // //            window.location.href = "http://www.w3schools.com";
+          }
+        }
+      } </script>
+    <%- include('../../share/superfooter') -%>

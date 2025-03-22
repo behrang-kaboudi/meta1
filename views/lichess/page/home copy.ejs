@@ -1,0 +1,1081 @@
+<%- include('../share/superheader')  -%> 
+
+<%- include('../component/mainnav')  -%> 
+<style>
+
+    .middle-content{
+
+        background: url('/lichess/img/bg.jpeg') no-repeat  center;
+        background-size: 100% 100%;
+            /* opacity: 0.5    ; */
+    }
+</style>
+<% let template = "lichess" %> 
+    <div id="main-wrap" class="is2d">
+        <main class="lobby">
+            <div class="lobby__table ">
+                <div class="lobby__start ">
+                    <!-- <a href="https://www.yaremehrabanedu.ir" target="_blank" class="d-sm-none d-md-none d-lg-inline-block">
+                        <img class="rounded-2" src="/lichess/img/school.jpeg" style="width: 100%; border: 2px solid;">
+                    </a> -->
+                    <!-- <a class="button button-metal config_hook">ایجاد بازی</a>
+                    <a class="button button-metal config_friend">بازی با دوستان</a>
+                    <a class="button button-metal config_ai">بازی با کامپیوتر</a> -->
+                </div>
+                <div class="lobby__counters mx-5">
+                    <a href="" id="nb_connected_players">
+                        <strong data-count="120841">1,114</strong>
+                        بازی در حال انجام است
+                    </a>
+                    <a href="" id="nb_connected_players">
+                        <strong data-count="50269">504</strong>
+                        نفر بازیکن آنلاین
+                    </a>
+                </div>
+            </div>
+            <div class="lobby__app lobby__app-pools">
+                <div class="tabs-horiz nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                    <span class="active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">
+                      رویارویی جدید
+                    </span>
+                    <span id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">
+                        لابی
+                    </span>
+                    <span id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">
+                        مکاتبه ای
+                    </span>
+                </div>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="middle-content">
+                            <div class="lobby__app__content lpools" style="height: 570px;">
+                                <!-- <div>
+                                    <div class="clock ">1+0</div>
+                                    <div class="peref ">بولت</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">2+1</div>
+                                    <div class="peref ">بولت</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">3+0</div>
+                                    <div class="peref ">بلیتز</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">3+2</div>
+                                    <div class="peref ">بلیتز</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">5+0</div>
+                                    <div class="peref ">بلیتز</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">5+3</div>
+                                    <div class="peref ">بلیتز</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">10+0</div>
+                                    <div class="peref ">سریع</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">10+5</div>
+                                    <div class="peref ">سریع</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">15+10</div>
+                                    <div class="peref ">سریع </div>
+                                </div>
+                                <div>
+                                    <div class="clock ">30+0</div>
+                                    <div class="peref ">کلاسیک</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">30+20</div>
+                                    <div class="peref ">کلاسیک</div>
+                                </div>
+                                <div>
+                                    <div class="clock ">0+0</div>
+                                    <div class="peref ">دلخواه</div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="lobby__app__content lreal_time">
+                            <i></i>
+                            <i></i>
+                            <table class="hooks__list">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Player</th>
+                                        <th class="sortable sort ">
+                                            <i></i> Rating
+                                        </th>
+                                        <th class="sortable ">Time</th>
+                                        <th>Mode</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hook join " title="Join the game | Rapid ">
+                                        <td>
+                                            <span class="is is2 color-icon white "><i class="far fa-circle text-secondary "></i></span>
+                                        </td>
+                                        <td>ناشناس</td>
+                                        <td></td>
+                                        <td>6+5</td>
+                                        <td>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                            <span></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                        <div class="lobby__app__content lseeks">
+                            <table class="hooks__list" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Player</th>
+                                        <th>Rating</th>
+                                        <th>Time</th>
+                                        <th>Mode</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire" aria-hidden="true "></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary" aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire" aria-hidden="true"></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary" aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire" aria-hidden="true"></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary" aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire" aria-hidden="true"></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary" aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire" aria-hidden="true"></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary" aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire" aria-hidden="true"></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary" aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire" aria-hidden="true"></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary" aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire" aria-hidden="true"></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary" aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire" aria-hidden="true"></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="seek join" title="Join the game - Correspondence">
+                                        <td>
+                                            <span class="is is2 color-icon random"></span>
+                                        </td>
+                                        <td>
+                                            <i class="far fa-circle text-secondary " aria-hidden="true "></i>
+                                            <span class="ulpt">Deadly_Warrior</span>
+                                        </td>
+                                        <td>2289?</td>
+                                        <td>1 day</td>
+                                        <td>
+                                            <span>
+                                                <i class="fa fa-fire"></i>
+                                                <span class="varicon"></span> Casual
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lobby__side ">
+                <section class="lobby__streams ">
+                    <!-- <br>
+                    <br>
+                    <a href="https://www.yaremehrabanedu.ir/home/branch/1/course/details/20237" target="_blank">
+                        <img class="rounded-2" src="/lichess/img/elementry.png" style="width: 100%; border: 2px solid;">
+                    </a>
+                    
+                    <br>
+                    <br>
+                    <a href="https://www.yaremehrabanedu.ir/home/branch/1/course/details/20238" target="_blank">
+                        <img class="rounded-2" src="/lichess/img/pre.png" style="width: 100%; border: 2px solid;">
+                    </a>
+                    
+                    <br>
+                    <br> -->
+                    <!-- <a class="stream highlight " href=" " title="Ask Me (almost) Anything, Lichess.org ">
+                        <strong class="text "><i class="fa fa-microphone " aria-hidden="true "></i>Lichess</strong> Ask Me (almost) Anything, Lichess.org
+                    </a>
+                    <a class="stream highlight " href=" " title="Ask Me (almost) Anything, Lichess.org ">
+                        <strong class="text "><i class="fa fa-microphone " aria-hidden="true "></i>Lichess</strong> Ask Me (almost) Anything, Lichess.org
+                    </a>
+                    <a class="stream highlight " href=" " title="Ask Me (almost) Anything, Lichess.org ">
+                        <strong class="text "><i class="fa fa-microphone " aria-hidden="true "></i>Lichess</strong> Ask Me (almost) Anything, Lichess.org
+                    </a>
+                    <a class="stream highlight " href=" " title="Ask Me (almost) Anything, Lichess.org ">
+                        <strong class="text "><i class="fa fa-microphone " aria-hidden="true "></i>Lichess</strong> Ask Me (almost) Anything, Lichess.org
+                    </a>
+                    <a href=" " class="more ">استریم کنندگان »</a> -->
+                </section>
+                <div class="lobby__spotlights ">
+                    <!-- <a href=" " class="little tour-spotlight id_WKJDu74q Yearly SuperBlitz chess960 invert ">
+                        <i class="fa fa-fire fa-4x text-white " aria-hidden="true " style="padding: 10px "></i>
+                        <span class="content ">
+                            <span class="name ">Yearly Chess960 Arena</span>
+                        <span class="more ">۷۶۱ نفر بازیکن آنلاین • به پایان می‌رسد </span>
+                        </span>
+                    </a>
+                    <a href=" " class="little tour-spotlight id_qZYSRQJg Weekly Blitz standard invert ">
+                        <i class="fa fa-fire fa-4x text-white " aria-hidden="true " style="padding: 10px "></i>
+                        <span class="content ">
+                            <span class="name ">Yearly Chess960 Arena</span>
+                        <span class="more ">۷۶۱ نفر بازیکن آنلاین • به پایان می‌رسد </span>
+                        </span>
+                    </a>
+                    <a href=" " class="little tour-spotlight id_8CNSqWHK Weekly SuperBlitz kingOfTheHill ">
+                        <i class="fa fa-fire fa-4x text-white " aria-hidden="true " style="padding: 10px "></i>
+                        <span class="content ">
+                            <span class="name ">Yearly Chess960 Arena</span>
+                        <span class="more ">۷۶۱ نفر بازیکن آنلاین • به پایان می‌رسد </span>
+                        </span>
+                    </a> -->
+                </div>
+                <div class="about-side ">
+                    pmchess کاملا رایگان (
+                    <a href=" " class="blue ">واقعی</a> ), آزاد,  سرور متن باز.
+                    <a href=" ">درباره pmchess...</a>
+                </div>
+            </div>
+            <!-- <div class="lobby__tv ">
+                <a href=" " class="mini-game mini-game-UDjEhDch is2d mini-game--live standard ">
+                    <span class="mini-game__player ">
+                        <span class="mini-game__user ">
+                            <span class="utitle ">GM</span> Gevorg_Harutjunyan
+                    <span class="rating ">2637</span>
+                    </span>
+                    </span>
+                    <span class="mini-game__clock mini-game__clock--black ">1:08</span>
+                </a>
+                <span class="cg-wrap orientation-white ">
+                    <img src="<%= template %>/img/Capture.PNG " alt=" " style="width: 100%;">
+                </span>
+            </div> -->
+            <!-- <a href=" " class="lobby__puzzle ">
+                <span class="text ">Puzzle of the day</span>
+                <span class="mini-board cg-wrap is2d orientation-black "> 
+                    <img src="<%= template %>/img/Capture.PNG " alt=" " style="width: 100%;">
+                </span>
+            </a> -->
+            <!-- <div class="lobby__leaderboard lobby__box ">
+                <div class="lobby__box__top">
+                    <h2 class="title text pt-3"><i class="fas fa-chess-king"></i> بهترین بازیکنان</h2>
+                    <a href=" " class="more ">بیشتر »</a>
+                </div>
+                <div class="lobby__box__content ">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="far fa-circle text-secondary "></i>
+                                        <span class="utitle ">GM</span> ali002
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-microchip " aria-hidden="true "></i> 3100
+                                </td>
+                                <td>
+                                    <i class="fa fa-bolt " aria-hidden="true "></i> 23
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="lobby__winners lobby__box ">
+                <div class="lobby__box__top">
+                    <h2 class="title text pt-3"><i class="fas fa-trophy"></i> برندگان مسابقه</h2>
+                    <a href=" " class="more">بیشتر »</a>
+                </div>
+                <div class="lobby__box__content ">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href=" ">
+                                        <i class="fa fa-circle text-success " aria-hidden="true "></i> Fritzi_2003
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href=" " title="Yearly HyperBullet ">
+                                        Fritzi_2003
+                                        <span>
+                                            <i class="fa fa-fire " aria-hidden="true "></i>
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
+            <!-- <div class="lobby__tournaments lobby__box ">
+                <a href=" " class="lobby__box__top ">
+                    <h2 class="title text "><i class="fas fa-chess-king"></i> بازکزدن مسابقه</h2>
+                    <span class="more ">بیشتر »</span>
+                </a>
+                <div class="enterable_list lobby__box__content ">
+                    <table class="tournaments ">
+                        <tbody>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="name ">
+                                    <a href=" " class="text ">Sicilian Defence Rapid</a>
+                                </td>
+                                <td>
+                                    <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+
+                                </td>
+                                <td>
+                                    1h 57m
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
+            <!-- <div class="lobby__forum lobby__box ">
+                <a href=" " class="lobby__box__top ">
+                    <h2 class="title text "><i class="fas fa-chess-king"></i> آخرین پست های انجمن</h2>
+                    <span class="more ">بیشتر »</span>
+                </a>
+                <div class="lobby__box__content ">
+                    <ol>
+                        <li>
+                            <a href=" " class="post_link text " title="How to win 700 more elo points ">How to win 700 more elo points</a>
+                            <a href=" " class="user-link ulpt ">Genti86</a>
+                            <span class="extract ">I already have reached 1800 elo here on lichess, I need only 700 more …</span>
+                        </li>
+                        <li>
+                            <a href=" " class="post_link text " title="How to win 700 more elo points ">How to win 700 more elo points</a>
+                            <a href=" " class="user-link ulpt ">Genti86</a>
+                            <span class="extract ">I already have reached 1800 elo here on lichess, I need only 700 more …</span>
+                        </li>
+                        <li>
+                            <a href=" " class="post_link text " title="How to win 700 more elo points ">How to win 700 more elo points</a>
+                            <a href=" " class="user-link ulpt ">Genti86</a>
+                            <span class="extract ">I already have reached 1800 elo here on lichess, I need only 700 more …</span>
+                        </li>
+                        <li>
+                            <a href=" " class="post_link text " title="How to win 700 more elo points ">How to win 700 more elo points</a>
+                            <a href=" " class="user-link ulpt ">Genti86</a>
+                            <span class="extract ">I already have reached 1800 elo here on lichess, I need only 700 more …</span>
+                        </li>
+                        <li>
+                            <a href=" " class="post_link text " title="How to win 700 more elo points ">How to win 700 more elo points</a>
+                            <a href=" " class="user-link ulpt ">Genti86</a>
+                            <span class="extract ">I already have reached 1800 elo here on lichess, I need only 700 more …</span>
+                        </li>
+                        <li>
+                            <a href=" " class="post_link text " title="How to win 700 more elo points ">How to win 700 more elo points</a>
+                            <a href=" " class="user-link ulpt ">Genti86</a>
+                            <span class="extract ">I already have reached 1800 elo here on lichess, I need only 700 more …</span>
+                        </li>
+                        <li>
+                            <a href=" " class="post_link text " title="How to win 700 more elo points ">How to win 700 more elo points</a>
+                            <a href=" " class="user-link ulpt ">Genti86</a>
+                            <span class="extract ">I already have reached 1800 elo here on lichess, I need only 700 more …</span>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            <div class="lobby__blog lobby__box ">
+                <a href=" " class="lobby__box__top ">
+                    <h2 class="title text "><i class="fa fa-trophy" aria-hidden="true"></i> آخرین بروز رسانی</h2>
+                    <span class="more ">بیشتر »</span>
+                </a>
+                <div class="lobby__box__content ">
+                    <a href=" " class="post ">
+                        <img src="https://images.prismic.io/lichess/22baae90-c912-4d96-a545-41dc750b4654_Capture.JPG?auto=compress,format&rect=82,0,560,560&w=96&h=96 " alt=" ">
+                        <span class="text ">
+                            <strong>Return of the GMs</strong>
+                            <span></span>
+                        </span>
+                        <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+                    </a>
+                    <a href=" " class="post ">
+                        <img src="https://images.prismic.io/lichess/0a96f6a8-1913-4320-8dbd-addda383ba8f_lichessupdate.png?auto=compress,format&rect=309,0,660,660&w=96&h=96 " alt=" ">
+                        <span class="text ">
+                            <strong>Return of the GMs</strong>
+                            <span>Keep on keeping on.</span>
+                        </span>
+                        <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+                    </a>
+                    <a href=" " class="post ">
+                        <img src="https://images.prismic.io/lichess/e9e9fb5e-df6a-434d-bfe8-c3e7fec55c54_puzzle+blog+title+image.jpg?auto=compress,format&rect=300,0,2400,2400&w=96&h=96 " alt=" ">
+                        <span class="text ">
+                            <strong>Return of the GMs</strong>
+                            <span>The wait is over.</span>
+                        </span>
+                        <time datetime="2008-02-14 20:00 ">Jan 3, 2021</time>
+                    </a>
+                </div>
+            </div>
+            <div class="lobby__support ">
+                <a href=" ">
+                    <i class="fa fa-tags text-warning fa-lg " style="padding: inherit; " aria-hidden="true "></i>
+                    <span class="lobby__support__text ">
+                    <strong>Donate</strong>
+                    <span>Become a Lichess Patron</span>
+                    </span>
+                </a>
+                <a href=" ">
+                    <i class="fas fa-tshirt text-warning fa-lg " style="padding: inherit; " aria-hidden="true "></i>
+                    <span class="lobby__support__text ">
+                    <strong>Donate</strong>
+                    <span>استایل شطرنج باز داشته باشید!</span>
+                    </span>
+                </a>
+            </div>
+            <div class="lobby__about ">
+                <a href=" ">درباره pmchess</a>
+                <a href=" ">پرسش های متداول</a>
+                <a href=" ">Contact</a>
+                <a href=" ">برنامه ی موبایل</a>
+                <a href=" ">قوانین</a>
+                <a href=" ">حریم شخصی</a>
+                <a href=" ">منبع کد</a>
+                <a href=" ">Ads</a>
+                <div class="connect-links ">
+                    <a href=" ">توییتر</a>
+                    <a href=" ">Discord</a>
+                    <a href=" ">یوتویوب</a>
+                    <a href=" ">Twitch</a>
+                </div>
+            </div> -->
+        </main>
+    </div>
+    <%- include('../share/superfooter')  -%> 

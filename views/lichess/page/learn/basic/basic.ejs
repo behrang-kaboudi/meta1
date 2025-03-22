@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<% let template="lichess" %>
+    <% user.trans=function (word){ if(!('dbProps' in user)) return word; return lang.getPhrase(word,user.dbProps.lang);
+        } %>
+
+        <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <title>PMChess</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <script src="/public/components/jq/jq.js"></script>
+            <link rel="stylesheet" href="/public/fonts/css/all.min.css" />
+            <link rel="stylesheet" href="/public/components/bootstrap/css/bootstrap.min.css" />
+            <script src="/public/components/bootstrap/js/bootstrap.bundle.min.js"></script>
+            <link rel="stylesheet" href="/public/<%= template %>/css/vazir.css" />
+            <link rel="stylesheet" href="/public/<%= template %>/css/home.css" />
+            <script src="/public/<%= template %>/js/main.js"></script>
+
+            <link rel="stylesheet" href="/public/css/sbk.css" />
+            <script src="/public/js/sbk.js"></script>
+            <script src="/public/components/livegame/live-board.js"></script>
+
+            <script src="/public/components/socket.io/socket.io.js"></script>
+            <!-- <script src="/public/components/rtc/rtc.js"></script> -->
+        </head>
+        <script>
+            var socket;
+            var userName = '';
+        </script>
+
+        <% if(user.login) { %>
+            <script>
+                userName = '<%- user.dbProps.userName %>';
+            </script>
+            <% } %>
+<!-- <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"> -->
+    <!-- <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https://lichess1.org; connect-src 'self' https://lichess1.org wss://socket0.lichess.org wss://socket1.lichess.org wss://socket2.lichess.org wss://socket3.lichess.org wss://socket4.lichess.org wss://socket5.lichess.org https://explorer.lichess.ovh https://tablebase.lichess.ovh; style-src 'self' 'unsafe-inline' https://lichess1.org; frame-src 'self' https://lichess1.org https://www.youtube.com https://player.twitch.tv; worker-src 'self' https://lichess1.org; img-src data: *; script-src 'nonce-1rwH4sNZgohkZNnqVXpzaU5O' 'self' https://lichess1.org; base-uri 'none';"> -->
+    <!-- <meta name="theme-color" content="#dbd7d1"> -->
+    <!-- <title>Learn chess - by playing! • lichess.org</title> -->
+   
+   <!--  <meta content="You don't know much about chess? Excellent! Let's have fun and learn to play chess!"
+        name="description" />
+    <link rel="mask-icon" href="https://lichess1.org/assets/_PUFLQ9/logo/lichess.svg" style="color: black;" />
+    <link rel="icon" type="image/png" href="https://lichess1.org/assets/_PUFLQ9/logo/lichess-favicon-512.png"
+        sizes="512x512">
+    <link rel="icon" type="image/png" href="https://lichess1.org/assets/_PUFLQ9/logo/lichess-favicon-256.png"
+        sizes="256x256">
+    <link rel="icon" type="image/png" href="https://lichess1.org/assets/_PUFLQ9/logo/lichess-favicon-192.png"
+        sizes="192x192">
+    <link rel="icon" type="image/png" href="https://lichess1.org/assets/_PUFLQ9/logo/lichess-favicon-128.png"
+        sizes="128x128">
+    <link rel="icon" type="image/png" href="https://lichess1.org/assets/_PUFLQ9/logo/lichess-favicon-64.png"
+        sizes="64x64">
+    <link id="favicon" rel="icon" type="image/png"
+        href="https://lichess1.org/assets/_PUFLQ9/logo/lichess-favicon-32.png" sizes="32x32"> -->
+    <!-- <meta name="google" content="notranslate">
+    <meta property="og:title" content="Learn chess by playing" />
+    <meta property="og:description"
+        content="You don't know much about chess? Excellent! Let's have fun and learn to play chess!" />
+    <meta property="og:url" content="https://lichess.org/learn" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="lichess.org" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Learn chess by playing" />
+    <meta name="twitter:description"
+        content="You don't know much about chess? Excellent! Let's have fun and learn to play chess!" /> -->
+    <link href="/blog.atom" title="Blog" type="application/atom+xml" rel="alternate" />
+    <link rel="preload" href="https://lichess1.org/assets/_PUFLQ9/font/lichess.woff2" as="font" type="font/woff2"
+        crossorigin>
+    <link rel="preload" href="https://lichess1.org/assets/_PUFLQ9/font/lichess.chess.woff2" as="font" type="font/woff2"
+        crossorigin>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="twitter:site" content="@lichess">
+    <link rel="jslicense" href="/source">
+<!-- </head> -->
+
+<body class=" wood3 Woodi Basic coords-in dir-ltr"
+    data-vapid="BGr5CL0QlEYa7qW7HLqe7DFkCeTsYMLsi1Db+5Vwt1QBIs6+WxN8066AjtP8S9u+w+CbleE8xWY+qQaNEMs7sAs="
+    data-user="chessplus1978" data-sound-set="standard"
+    data-socket-domains="socket0.lichess.org,socket1.lichess.org,socket2.lichess.org,socket3.lichess.org,socket4.lichess.org,socket5.lichess.org"
+    data-asset-url="https://lichess1.org" data-asset-version="PUFLQ9" data-theme="light" data-piece-set="alpha"
+    style="--zoom:85">
+    <link href="/public/<%=template %>/css/site.light.min.css" rel="stylesheet" />
+    <link href="https://lichess1.org/assets/_PUFLQ9/css/site.light.min.css" rel="stylesheet" />
+    <link href="https://lichess1.org/assets/_PUFLQ9/css/learn.light.min.css" rel="stylesheet" />
+    <link id="piece-sprite" href="https://lichess1.org/assets/_PUFLQ9/piece-css/alpha.css" rel="stylesheet" />
+    <%-include('../../../component/mainnav') -%>
+    <div class="container mt-3">
+        <div id="main-wrap" class="is2d">
+            <main id="learn-app"></main>
+        </div>
+        <div id="friend_box"
+            data-i18n="{&quot;nbFriendsOnline:one&quot;:&quot;%s friend online&quot;,&quot;nbFriendsOnline&quot;:&quot;%s friends online&quot;}">
+            <div class="friend_box_title"><i data-icon=""></i> friends online</div>
+            <div class="content_wrap none">
+                <div class="content list"></div>
+            </div>
+        </div>
+        <!-- <a id="reconnecting" class="link text" data-icon="">Reconnecting</a> -->
+        <svg width="0" height="0">
+            <mask id="mask">
+                <path fill="#fff" stroke="#fff" stroke-linejoin="round"
+                    d="M38.956.5c-3.53.418-6.452.902-9.286 2.984C5.534 1.786-.692 18.533.68 29.364 3.493 50.214 31.918 55.785 41.329 41.7c-7.444 7.696-19.276 8.752-28.323 3.084C3.959 39.116-.506 27.392 4.683 17.567 9.873 7.742 18.996 4.535 29.03 6.405c2.43-1.418 5.225-3.22 7.655-3.187l-1.694 4.86 12.752 21.37c-.439 5.654-5.459 6.112-5.459 6.112-.574-1.47-1.634-2.942-4.842-6.036-3.207-3.094-17.465-10.177-15.788-16.207-2.001 6.967 10.311 14.152 14.04 17.663 3.73 3.51 5.426 6.04 5.795 6.756 0 0 9.392-2.504 7.838-8.927L37.4 7.171z" />
+            </mask>
+        </svg>
+        <script
+            nonce="1rwH4sNZgohkZNnqVXpzaU5O">lichess = { load: new Promise(r => { window.onload = r }), quantity: function (c) { return c == 1 ? 'one' : 'other'; } }; lichess.timeagoLocale = function (s, n) { return [["just now", "right now"], ["%s seconds ago", "in %s seconds"], ["1 minute ago", "in 1 minute"], ["%s minutes ago", "in %s minutes"], ["1 hour ago", "in 1 hour"], ["%s hours ago", "in %s hours"], ["1 day ago", "in 1 day"], ["%s days ago", "in %s days"], ["1 week ago", "in 1 week"], ["%s weeks ago", "in %s weeks"], ["1 month ago", "in 1 month"], ["%s months ago", "in %s months"], ["1 year ago", "in 1 year"], ["%s years ago", "in %s years"]][n] };</script>
+        <script defer="defer" src="https://lichess1.org/assets/_PUFLQ9/compiled/lichess.min.js"></script>
+        <script defer="defer" src="https://lichess1.org/assets/_PUFLQ9/compiled/learn.min.js"></script>
+        <script
+            nonce="1rwH4sNZgohkZNnqVXpzaU5O">lichess.load.then(() => { LichessLearn(document.getElementById('learn-app'), { "data": { "_id": "chessplus1978", "stages": { "knight": { "scores": [600, 850, 550, 900, 800, 550] }, "pawn": { "scores": [550, 350, 650, 800, 850, 750, 550, 800] } }, "createdAt": 1633362333892, "updatedAt": 1633362754745 }, "i18n": { "learnChess": "Learn chess", "byPlaying": "by playing!", "menu": "Menu", "progressX": "Progress: %s", "resetMyProgress": "Reset my progress", "youWillLoseAllYourProgress": "You will lose all your progress!", "play": "play!", "chessPieces": "Chess pieces", "theRook": "The rook", "itMovesInStraightLines": "It moves in straight lines", "rookIntro": "The rook is a powerful piece. Are you ready to command it?", "rookGoal": "Click on the rook\u000ato bring it to the star!", "grabAllTheStars": "Grab all the stars!", "theFewerMoves": "The fewer moves you make,\u000athe more points you win!", "useTwoRooks": "Use two rooks\u000ato speed things up!", "rookComplete": "Congratulations! You have successfully mastered the rook.", "theBishop": "The bishop", "itMovesDiagonally": "It moves diagonally", "bishopIntro": "Next we will learn how to maneuver a bishop!", "youNeedBothBishops": "One light-squared bishop,\u000aone dark-squared bishop.\u000aYou need both!", "bishopComplete": "Congratulations! You can command a bishop.", "theQueen": "The queen", "queenCombinesRookAndBishop": "Queen = rook + bishop", "queenIntro": "The most powerful chess piece enters. Her majesty the queen!", "queenComplete": "Congratulations! Queens have no secrets for you.", "theKing": "The king", "theMostImportantPiece": "The most important piece", "kingIntro": "You are the king. If you fall in battle, the game is lost.", "theKingIsSlow": "The king is slow.", "lastOne": "Last one!", "kingComplete": "You can now command the commander!", "theKnight": "The knight", "itMovesInAnLShape": "It moves in an L shape", "knightIntro": "Here\u0027s a challenge for you. The knight is... a tricky piece.", "knightsHaveAFancyWay": "Knights have a fancy way\u000aof jumping around!", "knightsCanJumpOverObstacles": "Knights can jump over obstacles!\u000aEscape and vanquish the stars!", "knightComplete": "Congratulations! You have mastered the knight.", "thePawn": "The pawn", "itMovesForwardOnly": "It moves forward only", "pawnIntro": "Pawns are weak, but they pack a lot of potential.", "pawnsMoveOneSquareOnly": "Pawns move one square only.\u000aBut when they reach the other side of the board, they become a stronger piece!", "mostOfTheTimePromotingToAQueenIsBest": "Most of the time promoting to a queen is the best.\u000aBut sometimes a knight can come in handy!", "pawnsMoveForward": "Pawns move forward,\u000abut capture diagonally!", "captureThenPromote": "Capture, then promote!", "useAllThePawns": "Use all the pawns!\u000aNo need to promote.", "aPawnOnTheSecondRank": "A pawn on the second rank can move 2 squares at once!", "grabAllTheStarsNoNeedToPromote": "Grab all the stars!\u000aNo need to promote.", "pawnComplete": "Congratulations! Pawns have no secrets for you.", "pawnPromotion": "Pawn promotion", "yourPawnReachedTheEndOfTheBoard": "Your pawn reached the end of the board!", "itNowPromotesToAStrongerPiece": "It now promotes to a stronger piece.", "selectThePieceYouWant": "Select the piece you want!", "fundamentals": "Fundamentals", "capture": "Capture", "takeTheEnemyPieces": "Take the enemy pieces", "captureIntro": "Identify the opponent\u0027s undefended pieces, and capture them!", "takeTheBlackPieces": "Take the black pieces!", "takeTheBlackPiecesAndDontLoseYours": "Take the black pieces!\u000aAnd don\u0027t lose yours.", "captureComplete": "Congratulations! You know how to fight with chess pieces!", "protection": "Protection", "keepYourPiecesSafe": "Keep your pieces safe", "protectionIntro": "Identify the pieces your opponent attacks, and defend them!", "protectionComplete": "Congratulations! A piece you don\u0027t lose is a piece you win!", "escape": "You\u0027re under attack!\u000aEscape the threat!", "noEscape": "There is no escape,\u000abut you can defend!", "dontLetThemTakeAnyUndefendedPiece": "Don\u0027t let them take\u000aany undefended piece!", "combat": "Combat", "captureAndDefendPieces": "Capture and defend pieces", "combatIntro": "A good warrior knows both attack and defense!", "combatComplete": "Congratulations! You know how to fight with chess pieces!", "checkInOne": "Check in one", "attackTheOpponentsKing": "Attack the opponent\u0027s king", "checkInOneIntro": "To check your opponent, attack their king. They must defend it!", "checkInOneGoal": "Aim at the opponent\u0027s king\u000ain one move!", "checkInOneComplete": "Congratulations! You checked your opponent, forcing them to defend their king!", "outOfCheck": "Out of check", "defendYourKing": "Defend your king", "outOfCheckIntro": "You are in check! You must escape or block the attack.", "escapeWithTheKing": "Escape with the king!", "theKingCannotEscapeButBlock": "The king cannot escape,\u000abut you can block the attack!", "youCanGetOutOfCheckByTaking": "You can get out of check\u000aby taking the attacking piece.", "thisKnightIsCheckingThroughYourDefenses": "This knight is checking\u000athrough your defenses!", "escapeOrBlock": "Escape with the king\u000aor block the attack!", "outOfCheckComplete": "Congratulations! Your king can never be taken, make sure you can defend against a check!", "mateInOne": "Mate in one", "defeatTheOpponentsKing": "Defeat the opponent\u0027s king", "mateInOneIntro": "You win when your opponent cannot defend against a check.", "attackYourOpponentsKing": "Attack your opponent\u0027s king\u000ain a way that cannot be defended!", "mateInOneComplete": "Congratulations! That is how you win chess games!", "intermediate": "Intermediate", "boardSetup": "Board setup", "howTheGameStarts": "How the game starts", "boardSetupIntro": "The two armies face each other, ready for the battle.", "thisIsTheInitialPosition": "This is the initial position\u000aof every game of chess!\u000aMake any move to continue.", "firstPlaceTheRooks": "First place the rooks!\u000aThey go in the corners.", "thenPlaceTheKnights": "Then place the knights!\u000aThey go next to the rooks.", "placeTheBishops": "Place the bishops!\u000aThey go next to the knights.", "placeTheQueen": "Place the queen!\u000aShe goes on her own color.", "placeTheKing": "Place the king!\u000aRight next to his queen.", "pawnsFormTheFrontLine": "Pawns form the front line.\u000aMake any move to continue.", "boardSetupComplete": "Congratulations! You know how to set up the chess board.", "castling": "Castling", "theSpecialKingMove": "The special king move", "castlingIntro": "Bring your king to safety, and deploy your rook for attack!", "castleKingSide": "Move your king two squares\u000ato castle king-side!", "castleQueenSide": "Move your king two squares\u000ato castle queen-side!", "theKnightIsInTheWay": "The knight is in the way!\u000aMove it, then castle king-side.", "castleKingSideMovePiecesFirst": "Castle king-side!\u000aYou need to move out pieces first.", "castleQueenSideMovePiecesFirst": "Castle queen-side!\u000aYou need to move out pieces first.", "youCannotCastleIfMoved": "You cannot castle if\u000athe king has already moved\u000aor the rook has already moved.", "youCannotCastleIfAttacked": "You cannot castle if\u000athe king is attacked on the way.\u000aBlock the check then castle!", "findAWayToCastleKingSide": "Find a way to\u000acastle king-side!", "findAWayToCastleQueenSide": "Find a way to\u000acastle queen-side!", "castlingComplete": "Congratulations! You should almost always castle in a game.", "enPassant": "En passant", "theSpecialPawnMove": "The special pawn move", "enPassantIntro": "When the opponent pawn moved by two squares, you can take it like if it moved by one square.", "blackJustMovedThePawnByTwoSquares": "Black just moved the pawn\u000aby two squares!\u000aTake it en passant.", "enPassantOnlyWorksImmediately": "En passant only works\u000aimmediately after the opponent\u000amoved the pawn.", "enPassantOnlyWorksOnFifthRank": "En passant only works\u000aif your pawn is on the 5th rank.", "takeAllThePawnsEnPassant": "Take all the pawns en passant!", "enPassantComplete": "Congratulations! You can now take en passant.", "stalemate": "Stalemate", "theGameIsADraw": "The game is a draw", "stalemateIntro": "When a player is not in check and does not have a legal move, it\u0027s a stalemate. The game is drawn: no one wins, no one loses.", "stalemateGoal": "To stalemate black:\u000a- Black cannot move anywhere\u000a- There is no check.", "stalemateComplete": "Congratulations! Better be stalemated than checkmated!", "advanced": "Advanced", "pieceValue": "Piece value", "evaluatePieceStrength": "Evaluate piece strength", "pieceValueIntro": "Pieces with high mobility have a higher value!\u000aQueen = 9\u000aRook = 5\u000aBishop = 3\u000aKnight = 3\u000aPawn = 1\u000aThe king is priceless! Losing it means losing the game.", "queenOverBishop": "Take the piece\u000awith the highest value!\u000aQueen \u003e Bishop", "takeThePieceWithTheHighestValue": "Take the piece\u000awith the highest value!", "pieceValueLegal": "Take the piece\u000awith the highest value!\u000aMake sure your move is legal!", "pieceValueExchange": "Take the piece with the highest value!\u000aDo not exchange\u000aa higher valued piece for a less valuable one.", "pieceValueComplete": "Congratulations! You know the value of material!\u000aQueen = 9\u000aRook = 5\u000aBishop = 3\u000aKnight = 3\u000aPawn = 1", "checkInTwo": "Check in two", "twoMovesToGiveCheck": "Two moves to give a check", "checkInTwoIntro": "Find the right combination of two moves that checks the opponent\u0027s king!", "checkInTwoGoal": "Threaten the opponent\u0027s king\u000ain two moves!", "checkInTwoComplete": "Congratulations! You checked your opponent, forcing them to defend their king!", "whatNext": "What next?", "youKnowHowToPlayChess": "You know how to play chess, congratulations! Do you want to become a stronger player?", "register": "Register", "getAFreeLichessAccount": "Get a free Lichess account", "practice": "Practice", "learnCommonChessPositions": "Learn common chess positions", "puzzles": "Puzzles", "exerciseYourTacticalSkills": "Exercise your tactical skills", "videos": "Videos", "watchInstructiveChessVideos": "Watch instructive chess videos", "playPeople": "Play people", "opponentsFromAroundTheWorld": "Opponents from around the world", "playMachine": "Play machine", "testYourSkillsWithTheComputer": "Test your skills with the computer", "letsGo": "Let\u0027s go!", "stageX": "Stage %s", "awesome": "Awesome!", "excellent": "Excellent!", "greatJob": "Great job!", "perfect": "Perfect!", "outstanding": "Outstanding!", "wayToGo": "Way to go!", "yesYesYes": "Yes, yes, yes!", "youreGoodAtThis": "You\u0027re good at this!", "nailedIt": "Nailed it.", "rightOn": "Right on!", "stageXComplete": "Stage %s complete", "yourScore": "Your score", "next": "Next", "backToMenu": "Back to menu", "puzzleFailed": "Puzzle failed!", "retry": "Retry" } }) })</script>
+    </div>
+    <!-- <form id="blind-mode" action="/toggle-blind-mode" method="POST"><input type="hidden" name="enable" value="1"><input
+            type="hidden" name="redirect" value="/learn"><button type="submit">Accessibility: Enable blind mode</button>
+    </form> -->
+   
+    <script>
+        socket = io();
+        $(document).ready(function () {
+                socket.on('goToPlayPage', function (page) {
+                    window.location.href = page;
+                });
+        });
+    </script>
+    </body>
+
+</html>

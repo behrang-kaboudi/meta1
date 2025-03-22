@@ -1,0 +1,103 @@
+<script src="/public/components/bk-chessboard/js/bk-board-class.js"></script>
+<div class="row container-fluid  text-center">
+    <div class="mx-auto d-flex align-items-center justify-content-center dir-ltr">
+        <span>
+            go next game automaticaly:
+        </span>
+        
+        <span class="fs-4 mx-3 pointer" onclick="simul.toggAuto()">
+            <i id="simulAutoOff" class="fas fa-toggle-on text-danger fa-rotate-180"></i>
+            <i id="simulAutoOn" class="fas fa-toggle-on  text-success d-none"></i>
+        </span>
+    </div> 
+    
+</div>
+<div class="row container-fluid dir-ltr my-4 dir-ltr">
+    <% for(let i=0;i<simull.games.length;i++){ %>
+        <div class="col-lg-4" id="">
+            <div class="board border border-4" id="board<%=i%>"></div>
+        </div>
+        <% } %>
+</div>
+
+<script>
+    let simullCount = <%= simull.games.length %>;
+     simul ={
+            id: '<%= simull._id %>',
+            host: '<%= simull.creatorUserName %>',
+            liveBoards : [],
+            auto:false,
+            cliked:false,
+            controls:{
+                autoOn : document.getElementById('simulAutoOn'),
+                autoOff : document.getElementById('simulAutoOff'),
+            },
+            toggAuto:function(){
+                if(simul.auto)
+                {
+                    simul.auto = false;
+                    simul.controls.autoOff.classList.add('d-none');
+                    simul.controls.autoOn.classList.remove('d-none')
+                }
+                else
+                {
+                    simul.auto = true;
+                    simul.controls.autoOff.classList.remove('d-none');
+                    simul.controls.autoOn.classList.add('d-none')
+                }
+            },
+            canGoNext:function(preGm,gm){
+                if( preGm._id == gm._id) return true
+                if(simul.cliked)
+                {
+                    simul.cliked = false;
+                    return true;
+                }
+                if(!simul.auto){
+                    if( preGm._id != gm._id) return false
+                }
+                else{
+                    let prop = preGm.sideToMove.side == 'b' ?'black':'white';
+                    prop += 'UserName';
+                    if(preGm[prop] == simul.host)
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+            },
+            next:function () {
+                socket.emit('simul', { signal: 'next', data: {id:simul.id} }, function (game) {
+                   if(game){
+                    simul.afterGetID(game._id);
+                   }else{
+                     
+                   }
+                })
+            },
+            afterGetID : function (id) {
+                socket.emit('newGameData', id, function () {
+                    for (let i = 0; i < array.length; i++) {
+                        const element = array[i];
+                    }
+                });
+                for (let i = 0; i < simullCount; i++) {
+                    document.getElementById("board" + i).classList.remove('border-danger');
+                }
+                let table = simul.liveBoards.find(tbl=>tbl.id == id)
+                table.parent.classList.add('border-danger');
+            }
+        }
+    $(document).ready(() => {
+            <% for (let i = 0; i < simull.games.length; i++) { %>
+                if(simul){
+                    simul.liveBoards[<%=i%>] =  liveBoard('<%=simull.games[i] %>', "board<%=i%>", function () {
+                    simul.cliked =true;
+                    simul.afterGetID('<%=simull.games[i] %>')
+                    });
+                }
+                
+            <% } %>
+        })
+
+</script>

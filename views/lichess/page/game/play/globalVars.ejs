@@ -1,0 +1,130 @@
+<script>
+    let simul=null;
+    let sounds = {
+        move: document.getElementById('moveSound'),
+        start: document.getElementById('startSound'),
+        end: document.getElementById('endSound'),
+        playStart: function () {
+            if (games.recived.firstMove.isFirstMove && (games.recived.firstMove.remainingTime > 0)) {
+                if (games.recived.gmMoves.length != games.pre.gmMoves.length) {
+                    sounds.start.play();
+                }
+
+            }
+        },
+        playEnd: function () {
+            if (!games.pre.result) {
+                sounds.end.play();
+            }
+        }
+    }
+    let timer = {
+        timersInterval: null,
+        startInterval: function (side) {
+            timer.timersInterval = setInterval(function () {
+                let s = side == 'w' ? 'white' : 'black';
+                games.recived[s + 'RemainingTime'] -= 1000;
+                if (games.recived[s + 'RemainingTime'] < 0) {
+                    clearInterval(timer.timersInterval);
+                    games.recived[s + 'RemainingTime'] = 0;
+                    socket.emit('newGameData', games.recived._id);
+                }
+                timer.setClockTime(side);
+            }, 1000);
+        },
+        setClockTime: function (side) {
+            let s = side == 'w' ? 'white' : 'black';
+            timer.showTime(games.recived[s + 'RemainingTime'], side);
+        },
+        primeryTime: null, // place for put interval key
+        showPrimeryTime: function () {
+            games.recived.firstMove.remainingTime--;
+            if (games.recived.firstMove.remainingTime <= 0) {
+                games.recived.firstMove.remainingTime = 0;
+                clearInterval(timer.primeryTime);
+                socket.emit('newGameData', games.recived._id);
+            }
+            document.getElementById('priTimeTime').innerText =
+                games.recived.firstMove.remainingTime;
+            document.getElementById('priTimeSide').innerText =
+                games.recived.sideToMove.dictate;
+        },
+        secsToStart: null, // place for put interval key
+        showTimeToStart: function () {
+            games.recived.secsToStart--;
+            if (games.recived.secsToStart <= 0) {
+                games.recived.secsToStart = 0;
+                clearInterval(timer.secsToStart);
+                socket.emit('newGameData', games.recived._id);
+            }
+            document.getElementById('secsToStart').innerText =
+                games.recived.secsToStart;
+        },
+        showTime: function (time, side) {
+            if (time < 0) {
+                time = 0;
+            }
+            var parts = this.getTimeParts(time);
+
+            document.getElementById(side + 'Min').innerText = parts[0];
+            document.getElementById(side + 'BigSec').innerText = parts[1];
+            document.getElementById(side + 'SmallSec').innerText = parts[2];
+        },
+        getTimeParts: function (tim) {
+            tim = Math.floor(tim / 1000);
+            var parts = [];
+            parts[0] = Math.floor(tim / 60);
+            var s = tim % 60;
+            parts[1] = Math.floor(s / 10);
+            parts[2] = Math.floor(s % 10);
+            return parts;
+        },
+    };
+
+
+    let players = {
+        blackUser: '',
+        whiteUser: '',
+        mySide: '',
+        viewSide: '',
+        oppSide: ''
+    }
+    let games = {
+        recived: null,
+        pre: null,
+    }
+    let parts = {
+        setTimes: function (side, place) {
+            document.getElementById(place).innerText = '';
+            let mainNode = document.getElementById('Time');
+            let copyNode = mainNode.cloneNode(true);
+            mainNode.id = side + mainNode.id;
+            let min = document.getElementById('Min');
+            min.id = side + min.id;
+            min.innerText = games.recived.gameTimeMins;
+            min.classList.add(side + 'time');
+            let bigSec = document.getElementById('BigSec');
+            bigSec.id = side + bigSec.id;
+            bigSec.innerText = parseInt(games.recived.gameTimeSecs / 10);
+            bigSec.classList.add(side + 'time');
+            let smallSec = document.getElementById('SmallSec');
+            smallSec.id = side + smallSec.id;
+            smallSec.innerText = games.recived.gameTimeSecs % 10;
+            smallSec.classList.add(side + 'time');
+            document.getElementById('timeSample').appendChild(copyNode);
+            document.getElementById(place).appendChild(mainNode);
+        },
+        downName: document.getElementById('downName'),
+        upName: document.getElementById('upName'),
+        upRating: document.getElementById('upRating'),
+        downRating: document.getElementById('downRating'),
+        downChangeRate: document.getElementById('downChangeRate'),
+        upChangeRate: document.getElementById('upChangeRate'),
+        result: document.getElementById('result'),
+    }
+    let engine, engineLastMove;
+    let bd2 = new BkBoard('board', {
+        imgSrc: '/public/components/bk-chessboard/pices/'
+    });
+    let spg = new Spgn('pgnViwer', bd2);
+</script>

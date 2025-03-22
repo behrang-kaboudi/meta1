@@ -1,0 +1,416 @@
+<%- include('../../share/superheader') -%>
+    <%-
+include('../../component/mainnav') -%>
+
+        <audio class="d-none" id="moveSound" controls>
+  <source src="/public/sound/move.m4a" type="audio/ogg" />
+</audio>
+        <audio class="d-none" id="startSound" controls>
+    <source src="/public/sound/start.wav" type="audio/ogg" />
+</audio>
+        <audio class="d-none" id="endSound" controls>
+    <source src="/public/sound/end.wav" type="audio/ogg" />
+</audio>
+        <link rel="stylesheet" href="/public/components/bk-chessboard/css/bk-board.css" />
+        <script src="/public/components/bk-chessboard/js/bk-board.js"></script>
+        <script src="/public/components/bk-chessboard/js/bk-board-consts.js"></script>
+        <script src="/public/js/chess.js"></script>
+        <script src="/public/components/pgn/spgn.js"></script>
+        <!-- <script src="/public/components/pgn-parser/pgn-parser.js"></script> -->
+        <link rel="stylesheet" href="/public/components/pgn/spgn.css" />
+        <div class="container-fluid">
+            <div onclick="display.hide('bgAll');display.hide('promotionb');display.hide('promotionw');" id="bgAll" class="position-fixed row d-none" style="
+      background-color: rgba(20, 20, 20, 0.479);
+      width: 100%;
+      height: 100%;
+      top: 0px;
+      z-index: 50;
+    "></div>
+            <div class="row mt-3">
+                <div class="order-sm-2 order-lg-2 col-lg-4 col-md-5 align-items-center">
+                    <div class="wg-box dir-ltr my-3">
+                        <!-- <div class="wg-title h4"></div> -->
+                        <div class="wg-inner h6 ">
+                            <div class="mt-1 text-center">
+                                <img id="imgTurn" src="" style="width: 90px;" />
+                            </div>
+                            <div class="mt-2 mx-auto align-middle text-center" style="font-weight: bold; font-size: 25px;">
+                                <span id="txtTurn"> ... </span>
+                                <span>   to move .....</span>
+                            </div>
+                        </div>
+                        <!-- <div class="wg-footer">
+
+                        </div> -->
+                    </div>
+
+
+                    <div id="pgnViwer" style="width: 100%; height: 220px" class="px-3 "></div>
+
+
+                    <br />
+
+                    <!-- <div class="text-center" style="width: 100%">
+                        <span onclick="flip()" class="p-2 rounded-2 pointer" style="font-size: x-large">
+          <i class="fas fa-sync fa-microscope"></i>
+        </span>
+                        <span onclick="creatRematch()" class="p-2 rounded-2 pointer" style="font-size: x-large">
+          <i class="far fa-swords"></i>
+        </span>
+                    </div> -->
+                </div>
+                <div class="order-sm-1 order-lg-2 col-lg-4 col-md-7 order-first">
+                    <div style="z-index: 150; margin-top: 10px" class="text-center d-flex justify-content-center w-100" style="width: 100%">
+                        <div id="promotionb" class="picPromotion py-12 d-flex d-none z-index: 300">
+                            <img onclick="doPromotion('n')" src="/public/components/bk-chessboard/pices/bn.svg" class="bg-light mx-1 rounded-2" style="width: 14%; border: 1px solid; z-index: 999" />
+                            <img onclick="doPromotion('b')" src="/public/components/bk-chessboard/pices/bb.svg" class="bg-light mx-1 rounded-2" style="width: 14%; border: 1px solid; z-index: 999" />
+                            <img onclick="doPromotion('r')" src="/public/components/bk-chessboard/pices/br.svg" class="bg-light mx-1 rounded-2" style="width: 14%; border: 1px solid; z-index: 999" />
+                            <img onclick="doPromotion('q')" src="/public/components/bk-chessboard/pices/bq.svg" class="bg-light mx-1 rounded-2" style="width: 14%; border: 1px solid; z-index: 999" />
+                        </div>
+                        <div id="promotionw" class="picPromotion justify-content-center py-12 d-flex d-none" style="width: 100%">
+                            <img onclick="doPromotion('n')" src="/public/components/bk-chessboard/pices/wn.svg" class="bg-light mx-1 rounded-2" style="width: 14%; border: 1px solid; z-index: 999" />
+                            <img onclick="doPromotion('b')" src="/public/components/bk-chessboard/pices/wb.svg" class="bg-light mx-1 rounded-2" style="width: 14%; border: 1px solid; z-index: 999" />
+                            <img onclick="doPromotion('r')" src="/public/components/bk-chessboard/pices/wr.svg" class="bg-light mx-1 rounded-2" style="width: 14%; border: 1px solid; z-index: 999" />
+                            <img onclick="doPromotion('q')" src="/public/components/bk-chessboard/pices/wq.svg" class="bg-light mx-1 rounded-2" style="width: 14%; border: 1px solid; z-index: 999" />
+                        </div>
+                    </div>
+                    <div>
+
+                    </div>
+
+                    <div class="board" id="board"></div>
+
+                </div>
+                <div class="order-sm-3 order-lg-3 col-lg-4 col-md-12">
+                    <div class="mx-4">
+                        <div class="wg-box dir-ltr">
+                            <!-- <div class="wg-title h4"></div> -->
+                            <div class="wg-inner h6 d-flex justify-content-around">
+                                <div class="ms-3 me-5">
+                                    <i class="fas fa-bullseye-arrow" style="font-size:70Px;"></i>
+                                </div>
+                                <div class="d-flex flex-column flex-grow-1" style="font-weight: 700;">
+                                    <div class="mt-2">
+                                        PUZZLE
+                                    </div>
+                                    <div class="mt-2">
+                                        Rating :
+                                        <span> ---- </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="wg-footer">
+
+                        </div> -->
+                        </div>
+                        <div class="wg-box dir-ltr my-5">
+                            <!-- <div class="wg-title h4"></div> -->
+                            <div class="wg-inner h6 ">
+                                <div class="mt-1">
+                                    RATING:
+                                </div>
+                                <div class="mt-2 mx-auto align-middle text-center" style="font-weight: bold; font-size: 50px;">
+                                    <span> <%-user.dbProps.puzzle %> </span>
+                                    <span id="rtChanges" style="font-size: smaller;">  </span>
+                                </div>
+                            </div>
+                            <!-- <div class="wg-footer">
+
+                        </div> -->
+                        </div>
+                        <div id='falseAnswer' class="wg-box dir-ltr  d-none">
+                            <!-- <div class="wg-title h4"></div> -->
+                            <div class="wg-inner h6">
+                                <div class="ms-3 me-5">
+
+                                    <i class="fal fa-times-hexagon text-danger" style="font-size:60Px;"></i>
+                                </div>
+                                <div class="align-middle text-center mt-3   " style="font-weight: 400;font-size: x-large; ">
+                                    <span class="text-primary  my-3 mx-4  pointer" onclick="showAnswer()">ANSWER</span>
+                                    <span class="text-primary  my-3  pointer" onclick="location.reload()">Next</span>
+                                </div>
+                            </div>
+                            <!-- <div class="wg-footer">
+
+                        </div> -->
+                        </div>
+                        <div id='trueAnswer' class="wg-box dir-ltr  d-none">
+                            <!-- <div class="wg-title h4"></div> -->
+                            <div class="wg-inner h6 d-flex justify-content-evenly py-2 my-3">
+                                <div class="ms-3 me-5">
+                                    <i onclick="location.reload();" class="fa fa-thumbs-up text-success pointer" aria-hidden="true" style="font-size:60Px;"></i>
+                                </div>
+                                <div class="align-middle text-center mt-3  text-danger " style="font-weight: 400;font-size: x-large; ">
+                                    <i onclick="location.reload();" class="fa fa-thumbs-down pointer" aria-hidden="true" style="font-size:60Px;"></i>
+                                </div>
+                            </div>
+                            <div class="wg-footer text-center">
+                                Select one to continue ......
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            let sounds = {
+                    move: document.getElementById('moveSound'),
+                    start: document.getElementById('startSound'),
+                    end: document.getElementById('endSound'),
+                    playEnd: function() {
+                        setTimeout(() => {
+                            sounds.end.play()
+                        }, 600);
+                    }
+                }
+                //// viewr
+            let pgnData = null;
+            let pezzleMoveIndex = -1;
+            let sideToMove = 'w';
+            // let viewSide = game.blackUserName == userName ? 'b' : 'w';
+            let bd2 = new BkBoard('board', {
+                imgSrc: '/public/components/bk-chessboard/pices/'
+            });
+            // bd2.Funcs.getSqs = getSqs;
+            let chess = new Chess();
+            let spg = new Spgn('pgnViwer', bd2);
+            $(document).ready(function() {
+                bd2.creatBoard();
+                bd2.settings.engine = 'chess';
+                bd2.Funcs.moveEnd = afterMove;
+                spg.initial();
+                socket.emit('newPuzzle', 'newPuzzle', function(ans) {
+                    puzzleDataProcess(ans)
+                });
+            });
+
+            function setBoard() {
+                let downName = document.getElementById('downName');
+                let upName = document.getElementById('upName');
+                downName.innerText = '';
+                upName.innerText = '';
+                bd2.filipSide(viewSide);
+                bd2.settings.sideToMove = viewSide;
+                setTimes(viewSide, 'downTime');
+                let oppSide = 'b';
+                if (viewSide == 'b') {
+                    oppSide = 'w';
+                    downName.innerText = game.blackUserName + ': ';
+                    if (blackUser) {
+                        let innerText = blackUser[game.timeControll] - game.blackRate;
+                        if (innerText > 0) {
+                            document
+                                .getElementById('downChangeRate')
+                                .classList.remove('text-danger');
+                            innerText = ' +' + innerText;
+                            document
+                                .getElementById('downChangeRate')
+                                .classList.add('text-success');
+                        }
+                        document.getElementById('downChangeRate').innerText = innerText;
+                    }
+                    upName.innerText = game.whiteUserName + ': ';
+                    document.getElementById('upRating').innerText = game.whiteRate;
+                    document.getElementById('downRating').innerText = game.blackRate;
+                    if (whiteUser) {
+                        let innerText = whiteUser[game.timeControll] - game.whiteRate;
+                        if (innerText > 0) {
+                            document
+                                .getElementById('downChangeRate')
+                                .classList.remove('text-danger');
+                            document.getElementById('upChangeRate').classList.add('text-success');
+                            innerText = ' +' + innerText;
+                        }
+                        document.getElementById('upChangeRate').innerText = innerText;
+                    }
+                } else {
+                    upName.innerText = game.blackUserName + ': ';
+                    document.getElementById('upRating').innerText = game.blackRate;
+                    if (blackUser) {
+                        let innerText = blackUser[game.timeControll] - game.blackRate;
+                        if (innerText > 0) {
+                            document
+                                .getElementById('downChangeRate')
+                                .classList.remove('text-danger');
+                            document.getElementById('upChangeRate').classList.add('text-success');
+                            innerText = ' +' + innerText;
+                        }
+                        document.getElementById('upChangeRate').innerText = innerText;
+                    }
+                    downName.innerText = game.whiteUserName + ': ';
+                    document.getElementById('downRating').innerText = game.whiteRate;
+                    if (whiteUser) {
+                        let innerText = whiteUser[game.timeControll] - game.whiteRate;
+
+                        if (innerText > 0) {
+                            innerText = ' +' + innerText;
+                            document
+                                .getElementById('downChangeRate')
+                                .classList.remove('text-danger');
+                            document
+                                .getElementById('downChangeRate')
+                                .classList.add('text-success');
+                        }
+                        document.getElementById('downChangeRate').innerText = innerText;
+                    }
+                }
+                setTimes(oppSide, 'upTime');
+                if (gameFinished) {
+                    timer.setClockTime('w');
+                    timer.setClockTime('b');
+                }
+            }
+
+            function flip() {
+                viewSide = viewSide == 'w' ? 'b' : 'w';
+                setBoard();
+            }
+
+            function puzzleDataProcess(pgn) {
+                pgnData = pgn;
+                setInitiallPos();
+
+            }
+
+            function setInitiallPos() {
+
+                chess = new Chess(pgnData.fen);
+                let moves = pgnData.pgnObj.moves;
+                for (let i = 0; i < moves.length; i++) {
+                    pezzleMoveIndex++;
+                    if (moves[i].comments.length > 0) {
+                        chess.move(moves[i].move);
+                        sideToMove = chess.turn();
+                        break;
+                    }
+                    chess.move(moves[i].move)
+                }
+                // let ch = new Chess();
+                bd2.settings.fen = chess.fen();
+                bd2.creatBoard();
+                spg.setPgnFromEngin(chess);
+                spg.canClick = true;
+                bd2.settings.canMove = true;
+                bd2.settings.sideToMove = sideToMove;
+                bd2.filipSide(sideToMove);
+                if (sideToMove == 'b') {
+                    document.getElementById('imgTurn').src = '/public/img/pices/bk.svg';
+                    document.getElementById('txtTurn').innerText = 'Black';
+                } else {
+                    document.getElementById('imgTurn').src = '/public/img/pices/wk.svg';
+                    document.getElementById('txtTurn').innerText = 'White';
+                }
+                sounds.start.play();
+            }
+
+
+            function afterMove() {
+
+
+                // setMask(lastMove)
+                sounds.move.play();
+                bd2.settings.canMove = false;
+                let pgnMoves = pgnData.pgnObj.moves;
+                let engMove = chess.move(bd2.moveObj);
+                if (pgnMoves[++pezzleMoveIndex].move == engMove.san) {
+                    if (pgnMoves.length == pezzleMoveIndex + 1) {
+                        sendAnswerToServer(true);
+                        document.getElementById('trueAnswer').classList.remove('d-none');
+                        sounds.playEnd();
+                    } else {
+                        setTimeout(continuePuzzle, 400);
+                    }
+
+                } else {
+                    sendAnswerToServer(false);
+                    showFalseEnswer();
+                    sounds.playEnd();
+                }
+            }
+
+            function showFalseEnswer() {
+                document.getElementById('falseAnswer').classList.remove('d-none')
+            }
+
+            function sendAnswerToServer(answer) {
+
+                socket.emit('puzzleAnswer', {
+                    fen: pgnData.fen,
+                    rating: pgnData.rating,
+                    answer: answer
+                }, function(ans) {
+                    // puzzleDataProcess(ans)
+                    let rt = document.getElementById('rtChanges');
+
+                    if (parseFloat(ans) < 0) {
+                        rt.classList.add('text-danger')
+                        rt.innerText = ans;
+                    } else {
+                        rt.classList.add('text-success')
+                        rt.innerText = "+" + ans;
+                    }
+
+                });
+            }
+
+            function continuePuzzle() {
+                let moves = pgnData.pgnObj.moves;
+                pezzleMoveIndex++;
+
+
+                let m = chess.move(moves[pezzleMoveIndex].move);
+                setMask(m)
+                    // let ch = new Chess();
+                bd2.settings.fen = chess.fen();
+                bd2.creatBoard();
+                spg.setPgnFromEngin(chess);
+                bd2.settings.canMove = true;
+                bd2.settings.sideToMove = sideToMove;
+                sounds.move.play();
+            }
+
+            function updateEngine() {
+                let gmMoves = game.gmMoves;
+                chess = new Chess(game.startPosition);
+                for (let i = 0; i < gmMoves.length; i++) {
+                    let mv = gmMoves[i];
+                    if (mv) {
+                        mv = JSON.parse(mv);
+                        chess.move(mv);
+                    }
+                }
+            }
+
+            function showAnswer() {
+                chess = new Chess(pgnData.fen);
+                let moves = pgnData.pgnObj.moves;
+                for (let i = 0; i < moves.length; i++) {
+                    pezzleMoveIndex++;
+                    chess.move(moves[i].move)
+                }
+                bd2.settings.fen = chess.fen();
+                bd2.creatBoard();
+                spg.setPgnFromEngin(chess);
+                bd2.settings.canMove = false;
+
+            }
+
+
+            //userdata
+
+
+            function setMask(move) {
+                if (!move) return;
+                console.log(move);
+
+                bd2.removeMasks();
+                // let move = game.gmMoves[game.gmMoves.length - 1];
+                // move = JSON.parse(move);
+                bd2.setMask(move.from, 'move-mask');
+                bd2.setMask(move.to, 'move-mask');
+            }
+        </script>
+        <%- include('../../share/superfooter') -%>

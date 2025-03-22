@@ -1,0 +1,80 @@
+<style>
+    .btn-quickPairing-clicked,
+    .quickPairing-topMenu div div:hover {
+        color: rgb(242, 101, 34);
+        border-bottom-style: solid;
+        border-color: rgb(242, 101, 34);
+    }
+
+    .quickPairing-topMenu div {
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    @media (max-width: 768px) {
+        .quickPairing-topMenu {
+            font-size: 3vw;
+        }
+    }
+</style>
+<div class="row quickPairing-topMenu">
+    <div class="col-4 px-1">
+        <div id="HomeLoby_btnPairing" class=" text-center pointer btn-quickPairing-clicked pb-2"
+            onclick="homeLobbyTopMenu.goToQuickPairing()">
+            <span class="mx-auto " style="">
+                <%- user.trans('Quick Pairing') %>
+            </span>
+
+        </div>
+    </div>
+    <div class="col-4 px-1">
+        <div id="HomeLoby_btnLobby" class="text-center pointer pb-2" onclick="homeLobbyTopMenu.goToLobby()">
+            <span class="mx-auto ">
+                <%- user.trans('Lobby') %>
+            </span>
+
+        </div>
+    </div>
+
+    <div class="col-4 px-1">
+        <div id="HomeLoby_TopMenu" class="text-center pointer pb-2" onclick="btnCorrespondence()">
+            <span class="mx-auto">
+                <%- user.trans('Correspondence') %>
+            </span>
+
+        </div>
+    </div>
+
+
+
+
+</div>
+<script>
+    homeLobbyTopMenu = {
+        controls: {
+            btnPairing: document.getElementById('HomeLoby_btnPairing'),
+            btnLobby: document.getElementById('HomeLoby_btnLobby'),
+
+        },
+        goToLobby: function name() {
+            homeLobbyTopMenu.controls.quickPairing.classList.add('d-none');
+            homeLobbyTopMenu.controls.lobby.classList.remove('d-none');
+            homeLobbyTopMenu.controls.btnPairing.classList.remove('btn-quickPairing-clicked');
+            homeLobbyTopMenu.controls.btnLobby.classList.add('btn-quickPairing-clicked');
+        },
+        goToQuickPairing: function name(params) {
+            homeLobbyTopMenu.controls.lobby.classList.add('d-none');
+            homeLobbyTopMenu.controls.quickPairing.classList.remove('d-none');
+            homeLobbyTopMenu.controls.btnPairing.classList.add('btn-quickPairing-clicked');
+            homeLobbyTopMenu.controls.btnLobby.classList.remove('btn-quickPairing-clicked');
+        }
+
+    };
+    $(document).ready(function () {
+        homeLobbyTopMenu.controls.quickPairing = document.getElementById('homePageQuickPairing');
+        homeLobbyTopMenu.controls.lobby = document.getElementById('homePageLobby');
+    })
+    function name(params) {
+
+    }
+</script>

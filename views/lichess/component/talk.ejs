@@ -1,0 +1,22 @@
+<!-- <script src="/js/rtc.js"></script> -->
+<div class="position-relative" style="width: 320px; height: 400px">
+  <video width="100%" autoplay class="position-absolute"></video>
+  <div class="position-absolute bottom-0 end-0">
+    <button id="call" onclick="call()" class="btn btn-success">call</button>
+    <button id="endCall" onclick="endCall()" class="btn btn-danger d-none">
+      end call
+    </button>
+  </div>
+</div>
+<script>
+  function call() {
+    display.hide('call');
+    display.show('endCall');
+    sendOffer('calee');
+  }
+  function endCall() {
+    display.show('call');
+    display.hide('endCall');
+    stopStream();
+  }
+</script>

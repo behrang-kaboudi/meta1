@@ -1,0 +1,149 @@
+<style>
+  #chalengeDiv {
+    width: 350px;
+  }
+
+  @media (max-width: 576px) {
+    #chalengeDiv {
+      width: 100%;
+      left: 0px;
+    }
+  }
+</style>
+
+<div id="chalengeParent">
+  <span class="position-relative pointer" onclick="display.show('chalengeDiv')">
+    <img src="/public/img/Challenge icon.png" style="width: 25px;">
+    <!-- <i class="far fa-swords"></i> -->
+    <span id="chalengNumbers" class="badge bg-danger position-absolute top-0 start-50 translate-middle py-1 d-none" style="font-size: x-small">0</span>
+  </span>
+  <div id="chalengeDiv" class="position-absolute bg-light mt-2 d-none" style="z-index: 100;left: -70px;">
+    <div id="chalengeData" class="dir-ltr"></div>
+  </div>
+</div>
+<div id="sampleChalengeData" class="d-none">
+  <div id="sampleChalenge" class="bg-light" style="border: 1px solid">
+    <div class="mx-2 h5 my-1" style="width: 100%">
+      <i class="fa fa-toggle-off"></i>
+      <span id="chalengeUserName"> ------ </span>
+      <span id="chalengeRating"> ------ </span>
+    </div>
+    <div class="mx-2 h7" style="width: 100%">
+      <span span id="chalengeProps"> ------- </span>
+    </div>
+    <div class="py-1 d-flex justify-content-between" style="border-top: 1px solid; background-color: darkgray">
+      <span id="chalengeReqCancel" class="flex-fill text-center pointer" style="border-right: 1px solid">
+        <i class="fal fa-window-close" style="font-size: x-large; color: red"></i>
+      </span>
+      <span id="chalengeReqAccept" class="flex-fill text-center pointer" style="border-right: 1px solid">
+        <i class="fal fa-check" style="font-size: x-large; color: green"></i>
+      </span>
+      <span class="flex-fill text-center pointer">
+        -----------------------
+      </span>
+    </div>
+  </div>
+</div>
+<script>
+  function getChalenges() {
+    if (!userName) return;
+    $(() => {
+      socket.emit('chalenge', {
+        signal: 'byFriends'
+      }, (ans) => {
+        //   console.log(ans);
+        let chalengNumbers = document.getElementById('chalengNumbers');
+        chalengNumbers.innerText = ans.length;
+        if (ans.length == 0) {
+          chalengNumbers.classList.add('d-none')
+        } else {
+          chalengNumbers.classList.remove('d-none')
+        }
+        document.getElementById('chalengeData').innerText = '';
+        ans.forEach((chaleng) => {
+          chalenge.setChalengeUser(chaleng);
+        });
+      });
+    })
+  }
+
+  function acceptChalengeReq(id) {
+    socket.emit('chalenge', {
+      signal: 'accept',
+      id
+    }, (game) => {
+      window.location.href = "/game/play/" + game._id;
+    });
+  }
+
+  function cancelChalengeReq1(id) {
+    socket.emit('chalenge', {
+      signal: 'cancel',
+      id
+    }, getChalenges);
+  }
+  $(document).ready(function() {
+    getChalenges();
+    socket.on('chalengeReq', (data) => {
+      console.log('chalengeReq', data);
+
+      getChalenges();
+    });
+    socket.io.on('reconnect', function() {
+      getChalenges();
+    });
+    socket.on('connect', function() {
+      getChalenges();
+    });
+  });
+
+  let chalenge = {
+    chalengeId: '',
+    userName: userName,
+    setChalengeUser: function(chaleng) {
+      chaleng.id = chaleng._id;
+      let pre = document.getElementById('sampleChalenge');
+      let newClone = pre.cloneNode(true);
+      pre.id = 'id' + chaleng.id;
+      let userName = document.getElementById('chalengeUserName');
+      userName.id = 'chalengeUserName' + chaleng.userName;
+      userName.innerText = chaleng.requsterUserName;
+      let chalengeRating = document.getElementById('chalengeRating');
+      chalengeRating.id = 'chalengeRating' + chaleng.userName;
+      chalengeRating.innerText = chaleng.requsterData[chaleng.timeControll];
+      let chalengeProps = document.getElementById('chalengeProps');
+      chalengeProps.id = 'chalengePropsFor' + chaleng.id;
+      chalengeProps.innerText =
+        'standard * ' +
+        chaleng.gameTimeMins +
+        ':' +
+        chaleng.gameTimeSecs +
+        ' + ' +
+        chaleng.timeIncresment +
+        's * ' +
+        chaleng.selectedColor;
+
+      let chalengeReqCancel = document.getElementById('chalengeReqCancel');
+      chalengeReqCancel.id = 'chalengeReqCancel' + chaleng.id;
+      chalengeReqCancel.addEventListener('click', function(e) {
+        cancelChalengeReq1(chaleng.id)
+      });
+      let chalengeReqAcept = document.getElementById('chalengeReqAccept');
+      chalengeReqAcept.id = 'chalengeReqAccept' + chaleng.id;
+      chalengeReqAcept.addEventListener('click', function(e) {
+        acceptChalengeReq(chaleng.id)
+      });
+      document.getElementById('sampleChalengeData').appendChild(newClone);
+      document.getElementById('chalengeData').appendChild(pre);
+    },
+  };
+
+
+
+  window.addEventListener('click', (e) => {
+    let el = document.getElementById('chalengeParent');
+    if (!el.contains(e.target)) {
+      display.hide('chalengeDiv');
+    }
+  });
+</script>

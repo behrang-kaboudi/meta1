@@ -1,0 +1,76 @@
+<%- include('../../share/superheader') -%>
+    <%- include('../../component/mainnav') -%>
+        <div class="container-fluid mt-4">
+            <style>
+                .wg-inner {
+                    min-height: 600px;
+                }
+            </style>
+            <div class="row">
+                <div class="text-right col-md-4 col-lg-3">
+                    <div class="wg-box">
+                        <div class="wg-title h4">منو</div>
+                        <div class="wg-inner h6">
+                            <%- include('../../component/adminMenu') -%>
+                        </div>
+                        <div class="wg-footer">
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="dir-ltr col-md-8 col-lg-9">
+                    <div class="wg-box">
+                        <div class="wg-title h4 ">
+                            Pages List
+                        </div>
+                        <div class="wg-inner">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Title</th>
+                                        <th scope="col">Link</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for(let i=0; i<pages.length; i++) {%>
+                                        <% pages %>
+                                            <tr>
+                                                <th scope="row" class="pt-3">
+                                                    <%- i+1 %>
+                                                </th>
+                                                <td class="pt-3">
+                                                    <%- pages[i].title %>
+                                                </td>
+                                                <td class="pt-3">
+                                                    <a href="/static/page/<%- pages[i]._id %>">
+                                                        /static/page/<%- pages[i]._id %>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-primary"
+                                                        href="/admin/staticEdit/<%- pages[i]._id %>">edit</a>
+
+                                                </td>
+                                            </tr>
+                                            <%} %>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="wg-footer text-center">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <script>
+
+        </script>
+
+        <%- include('../../share/superfooter') -%>

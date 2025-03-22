@@ -1,0 +1,41 @@
+<div>
+    Puzzle Of Day
+</div>
+<div class="w-100 pointer" id='PazzleOfDayPicture' onclick="puzzleOfDay.go()">
+
+</div>
+<div>
+    <span id="pauzzleOfDaySide">No body</span>
+    To Move
+</div>
+<script>
+    let puzzleOfDay = {
+        controls: {
+            side: document.getElementById('pauzzleOfDaySide'),
+            bd: null
+        },
+        puzzle: null,
+        process: function (puzzle) {
+            puzzleOfDay.puzzle = puzzle;
+            let fen = new Fen(puzzle.fen);
+            puzzleOfDay.controls.bd.setPosition(puzzle.fen);
+            puzzleOfDay.controls.side.innerText = fen.side == 'w' ? 'White ' : 'Black ';
+        },
+        go: function () {
+            window.location.href = '/puzzle/training'
+        }
+    }
+    $(document).ready(function () {
+
+        let fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+        puzzleOfDay.controls.bd = new bkGraphicalBoard.BkBoard('PazzleOfDayPicture', {
+            imgSrc: '/public/components/bk-chessboard/pices/'
+        });
+        puzzleOfDay.controls.bd.creat();
+        puzzleOfDay.controls.bd.setPosition(fen);
+        socket.emit('newPuzzle', {}, function (puzzle) {
+            puzzleOfDay.process(puzzle);
+        })
+    })
+
+</script>
