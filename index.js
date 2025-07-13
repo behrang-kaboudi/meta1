@@ -15,6 +15,7 @@ const ut = require('./module/utility');
 const toolRout = require('./rout/tool');
 const userRout = require('./rout/user');
 const staticRout = require('./rout/static');
+const sabetRout = require('./rout/sabet');
 const adminRout = require('./rout/admin');
 const gameRout = require('./rout/game');
 const puzzleRout = require('./rout/puzzle');
@@ -157,6 +158,7 @@ app.get('/test', (req, res) => {
 app.use('/tool/', toolRout);
 app.use('/learn/', learnRout);
 app.use('/static/', staticRout);
+app.use('/sb/', sabetRout);
 app.use('/user/', userRout);
 app.use('/admin/', adminRout);
 app.use('/game/', gameRout);

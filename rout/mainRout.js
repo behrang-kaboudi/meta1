@@ -72,18 +72,18 @@ var io = ioSocket(server);
 //         }
 //     )
 ///Last connection **********
-// mongoose.connect(
-//     'mongodb://metaches_startup:startup123456@metachessmind.com:27017/metaches_startup', {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-// }
-// )
-
-// apis Main To uncomment
-mongoose.connect('mongodb://127.0.0.1/testPmChess', {
+mongoose.connect(
+    'mongodb://metaches_startup:startup123456@metachessmind.com:27017/metaches_startup', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-})
+}
+)
+
+// apis Main To uncomment
+// mongoose.connect('mongodb://127.0.0.1/testPmChess', {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+// })
 // apis
 // mongoose.connect('mongodb://localhost/host1', {
 //     useNewUrlParser: true,

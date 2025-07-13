@@ -1,0 +1,148 @@
+<%- include('../../share/superheader') -%>
+    <%- include('../../component/mainnav') -%>
+        <% let template="lichess" %>
+          <title>Meet the Team</title>
+          <style>
+            .card {
+              background: linear-gradient(to bottom, #fefaf6, #f1e6d8);
+              width: 100%;
+              border-radius: 20px;
+              box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+              padding: 2rem;
+              text-align: center;
+              position: relative;
+              font-family: 'Segoe UI', sans-serif;
+            }
+          
+            .chess-icon {
+              font-size: 2rem;
+              color: #4b2e10;
+              font-weight: bold;
+              opacity: 0.2;
+              position: absolute;
+              top: 1rem;
+              right: 1rem;
+              transition: all 0.3s ease;
+            }
+          
+            .avatar {
+              width: 100px;
+              height: 100px;
+              object-fit: cover;
+              border-radius: 50%;
+              margin: 1rem auto;
+              border: 3px solid #d8cfc1;
+              cursor: pointer;
+            }
+          
+            .name {
+              font-size: 1.3rem;
+              font-weight: bold;
+              color: #3e3224;
+              margin-top: 0.5rem;
+            }
+          
+            .role {
+              font-size: 1rem;
+              color: #7e6a4d;
+              margin-bottom: 1rem;
+            }
+          
+            .tags {
+              display: flex;
+              justify-content: center;
+              gap: 0.5rem;
+              flex-wrap: wrap;
+            }
+          
+            .tag {
+              background-color: #e5dbcd;
+              color: #5a4a35;
+              padding: 0.3rem 0.8rem;
+              border-radius: 20px;
+              font-size: 0.8rem;
+            }
+          
+            .bio {
+              margin-top: 1rem;
+              font-size: 0.9rem;
+              color: #5a4a35;
+            }
+          
+            @media (max-width: 768px) {
+              .bio {
+                display: none;
+              }
+          
+              .chess-icon {
+                position: static;
+                margin-top: 1rem;
+              }
+            }
+          </style>
+          
+          <div class="card">
+            <img class="avatar" src="/public/img/team/1.webp" alt="Elham Shourabi" onclick="toggleBio(this)">
+            <div class="chess-icon">♛</div>
+            <div class="name">Elham Shourabi</div>
+            <div class="role">Chief Marketing Officer</div>
+            <div class="tags">
+              <div class="tag">Marketing</div>
+              <div class="tag">Strategy</div>
+              <div class="tag">Branding</div>
+            </div>
+            <p class="bio">
+              Elham, known as the 'Queen of MetaMind', is a strategic marketing expert. She leads MetaMind’s brand vision, international outreach, and community development. She has mentored more than 50 startup teams, judged innovation events, and developed bilingual digital platforms.
+              <br>
+              <a href="https://www.linkedin.com/in/elhamshourabi/" target="_blank" style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem;">LinkedIn Profile</a>
+            </p>
+          </div>
+          
+          <script>
+            function toggleBio(img) {
+              const card = img.closest(".card");
+              const bio = card.querySelector(".bio");
+              if (window.innerWidth <= 768) {
+                bio.style.display = bio.style.display === "block" ? "none" : "block";
+              }
+            }
+          </script>
+                    <style>
+                      @media only screen and (max-width: 768px) {
+                              .card-section{
+                                      display: grid;
+                                      grid-template-columns: 100%;
+                                  }
+      
+                           }
+      
+                </style>
+                <div class="card-section">
+                  <div class="card-pice">♛</div>
+                  <div class="card-image">
+                      <img class="" src="/public/img/team/1.webp" alt="Elham Shourabi">
+                  </div>
+                  <div class="card-name">Elham Shourabi</div>
+                  <div class="card-title">Chief Marketing Officer</div>
+                  <div class="card-tags">
+                    <div class="">Marketing</div>
+                    <div class="">Strategy</div>
+                    <div class="">Branding</div>
+                  </div>
+                  <div class="card-paragraph">
+                      <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35;">
+                          Elham, known as the 'Queen of MetaMind', is a strategic marketing expert. She leads MetaMind’s brand vision, international outreach, and community development. She has mentored more than 50 startup teams, judged innovation events, and developed bilingual digital platforms.
+                          <br>
+                      
+                      
+                      </p>
+                  </div>
+                  <div class="card-links">
+                    <a href="https://www.linkedin.com/in/elhamshourabi/" target="_blank" style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem;">LinkedIn Profile</a>
+                  </div>
+                </div>
+          
+          <p style="margin-top: 30px;"></p>
+          
+        
+            <%- include('../../share/superfooter') -%>

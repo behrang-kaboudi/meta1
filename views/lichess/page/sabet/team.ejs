@@ -1,0 +1,236 @@
+<%- include('../../share/superheader') -%>
+    <%- include('../../component/mainnav') -%>
+        <% let template="lichess" %>
+          <title>Meet the Minds Behind MetaMind</title>
+          <style>
+            body {
+              margin: 0;
+              font-family: sans-serif;
+              background: linear-gradient(to bottom right, #f9f6ef, #e9ddc9);
+              color: #333;
+            }
+        
+            
+        
+            .team-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 1rem;
+              width: 99%;
+              margin: 0 auto;
+            }
+            
+
+             
+        
+
+          </style>
+
+          <style>
+                    .secTeam {
+                      display: grid;
+                      text-align: center;
+                      /* padding: 1vw 2rem; */
+                      width: 95%;
+                      margin: 0 auto;
+                    
+                      /* background-image: url('/public/img/bgTeam.webp'); */
+                      background-size: cover;
+                      background-repeat: no-repeat;
+                      background-position: center;
+                      border-radius: 12px;
+                      inset: 0;
+                    }
+                    @media (min-width: 768px) and (max-width: 1250px){
+                      .secTeam  {
+                        grid-template-columns: 50% 50%
+                        }
+                        .teamHeader{
+                                    grid-column: 1 / span 2;     /* start Col Num / length */
+                          }
+                      }
+                      @media (min-width: 1250px) {
+                      .secTeam  {
+                        grid-template-columns: 25% 25% 25% 25%;
+                        }
+                        .teamHeader{
+                                padding-top: 40px;;
+                                padding-bottom: -10px;;
+                                    grid-column: 1 / span 4;     /* start Col Num / length */
+                                height: auto;
+                          }
+                      }
+
+                
+                    .team-section h1 {
+                      margin-top: 4rem;
+                      text-align: center;
+                      margin-bottom: 3rem;
+                    }
+                    .section-heading {
+                      font-weight: 800;
+                      background: linear-gradient(90deg, #ce4500, #ee0000); /* بنفش-آبی گرادیانت */
+                      -webkit-background-clip: text;
+                      text-align: center;
+                      padding-bottom: 0.5rem;
+                      display: inline-block;
+                      margin-bottom: 2rem;
+                      padding: 0.5rem 1rem;
+                      border-radius: 8px;
+                      display: inline-block;
+                      /* color: #ab9687; */
+                      font-size: 2.5rem;
+                      /* background: linear-gradient(to bottom, #f4f4f4, #f0ece6); */
+                    }
+                    .card1 {
+                      background: linear-gradient(to bottom, #f4f4f4, #f0ece6);
+                      width: 90%;
+                      border-radius: 20px;
+                      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+                      padding: 1.5rem;
+                      text-align: center;
+                      position: relative;
+                      font-family: 'Segoe UI', sans-serif;
+                      margin-bottom: 10px;;
+                    }
+                    .chess-icon1 {
+                        font-size: 4.5rem;
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        opacity: 0.2;
+                        position: static;
+                        margin: -20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #4b2e10; /* قهوه‌ای تیره */
+                        font-weight: bold;
+                    }
+                    .avatar1 {
+                      width: 10rem;
+                      height: 10rem;
+                      object-fit: cover;
+                      border-radius: 50%;
+                      margin: 1rem auto;
+                      border: 3px solid #d8cfc1;
+                    }
+                  
+                    .name1 {
+                      font-size: 1.3rem;
+                      font-weight: bold;
+                      color: #3e3224;
+                      margin-top: 0.5rem;
+                    }
+                  
+                    .role1 {
+                      font-size: 1rem;
+                      color: #7e6a4d;
+                      margin-bottom: 1rem;
+                    }
+                  
+                    .tags1 {
+                      display: flex;
+                      justify-content: center;
+                      gap: 0.5rem;
+                      flex-wrap: wrap;
+                    }
+                  
+                    .tag1 {
+                      background-color: #e5dbcd;
+                      color: #5a4a35;
+                      padding: 0.3rem 0.8rem;
+                      border-radius: 20px;
+                      font-size: 0.8rem;
+                    }
+
+          </style>
+          <section class="secTeam" style="direction: ltr;">
+            <div class="teamHeader">
+              <h1 class="section-heading">Meet the Minds Behind MetaMind</h1>
+            </div>
+            <div class="teamBeh">
+              <div class="card1 mx-auto">
+                <div class="chess-icon1">♞</div>
+                <img class="avatar1" src="/public/img/team/behrang.jpeg" alt="Behrang Kaboudi">
+                <div class="name1">Behrang Kaboudi</div>
+                <div class="role1">CEO - Developer</div>
+                <div class="tags1">
+                  <div class="tag1">Node.js</div>
+                  <div class="tag1">Socket.IO</div>
+                  <div class="tag1">MongoDB</div>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35;">
+                  Behrang, known as the 'Knight of Code', profesional chess player and coach is a passionate back-end developer with deep expertise in JavaScript, scalable APIs, and real-time apps. He powers MetaMind's infrastructure and loves solving chess challenges through code.
+                  <br>
+                </p>
+                <a href="https://www.linkedin.com/in/behrangkaboudi/" target="_blank" style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem;">LinkedIn Profile</a>
+              </div>
+
+            </div>
+            <div class="teamEli">
+              <div class="card1 mx-auto">
+                <div class="chess-icon1">♛</div>
+                <img class="avatar1" src="/public/img/team/elham.jpeg" alt="Elham Shourabi">
+                <div class="name1">Elham Shourabi</div>
+                <div class="role1">CMO-Chief Marketing Officer</div>
+                <div class="tags1">
+                  <div class="tag1">Marketing</div>
+                  <div class="tag1">Strategy</div>
+                  <div class="tag1">Branding</div>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35;">
+                    Elham, known as the 'Queen of MetaMind', is a strategic marketing expert. She leads MetaMind’s brand vision, international outreach, and community development. She has mentored more than 50 startup teams, judged innovation events, and developed bilingual digital platforms.
+                    <br>
+                   
+                
+                  </p>
+                  <a href="https://www.linkedin.com/in/ellie-shourabi/" target="_blank" style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem;">LinkedIn Profile</a>
+
+              </div>
+            </div>
+            <div class="teamMoh">
+              <div class="card1 mx-auto">
+                <div class="chess-icon1">♝</div>
+                <img class="avatar1" src="/public/img/team/khodaii.jpeg" alt="Mohammadreza Khodaie">
+                <div class="name1">Mohammadreza Khodaie</div>
+                <div class="role1">Product Manager</div>
+                <div class="tags1">
+                  <div class="tag1">Strategy</div>
+                  <div class="tag1">Roadmap</div>
+                  <div class="tag1">User Insight</div>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35;">
+                  Mohammadreza, the 'Bishop of vision', connects insight with execution. With over a decade in product management, he aligns market needs with engineering excellence to ensure impact-driven delivery.
+                  <br>
+                </p>
+                <a href="https://www.linkedin.com/in/mohammad-reza-khodaei/" target="_blank" style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem;">LinkedIn Profile</a>
+              </div>
+            </div>
+            <div class="teamRaz">
+              <div class="card1 mx-auto">
+                <div class="chess-icon1">♜</div>
+                <img class="avatar1" src="/public/img/team/razieh.jpeg" alt="Razieh Malekzadeh">
+                <div class="name1">Razieh Malekzadeh</div>
+                <div class="role1">HR/Recruiter Specialist</div>
+                <div class="tags1">
+                  <div class="tag1">Talent</div>
+                  <div class="tag1">Hiring</div>
+                  <div class="tag1">People Ops</div>
+                </div>
+
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35;">
+                    <br/>
+                    <br/>
+                  Razieh, the 'Rook of Culture', ensures that MetaMind recruits the right minds and nurtures their growth. With 9 years in HR, she drives structure, trust, and sustainable people-first strategies.
+                  <br>
+                </p>
+                <a href="https://www.linkedin.com/in/razie-malekzade-a5384a294/" target="_blank" style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem;">LinkedIn Profile</a>
+              </div>
+            </div>
+
+          </section>
+
+          <p style="margin-top: 30px;"> </p>
+        
+            <%- include('../../share/superfooter') -%>

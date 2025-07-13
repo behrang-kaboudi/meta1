@@ -19,6 +19,7 @@ Puzzle.creatNewPuzzle = async function (puzzleObj) {
 };
 Puzzle.getNewPuzzle = async function (fens) {
     let puzzle = await Puzzle.findOne({ fen: { $nin: fens } });
+    if (!puzzle) return;
     let rtPuzzlle = {};
     rtPuzzlle = JSON.stringify(puzzle);
     rtPuzzlle = JSON.parse(rtPuzzlle);
