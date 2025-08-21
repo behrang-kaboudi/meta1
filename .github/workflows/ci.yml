@@ -14,31 +14,25 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     strategy:
       fail-fast: false
-      matrix:
-        node: [18, 20, 22]
-
+      matrix: { node: [18, 20, 22] }
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           cache: npm
+      - run: npm ci
 
-      - name: Install dependencies (npm ci)
-        run: npm ci
+      - name: Tool versions (debug)
+        run: node -v && npm -v && npx eslint -v && npx prettier -v
 
-      - name: Lint
+      - name: Lint (CI)
         run: npm run lint:ci
 
-      - name: Prettier check
-        run: npm run format:check
+      - name: Prettier check (CI)
+        run: npm run format:check:ci
 
       # اگر بعداً تست‌ها را اضافه کردید، این مرحله را فعال کنید:
       # - name: Tests

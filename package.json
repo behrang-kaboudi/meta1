@@ -11,11 +11,13 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "debug": "nodemon --inspect index.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "prepare": "husky",
+    "lint": "eslint --cache index.js app.js module/**/*.js rout/**/*.js",
+    "lint:fix": "eslint --cache --fix index.js app.js module/**/*.js rout/**/*.js",
+    "lint:ci": "eslint --cache --no-warn-ignored --quiet index.js app.js module/**/*.js rout/**/*.js",
     "format": "prettier -w .",
     "format:check": "prettier -c .",
-    "prepare": "husky"
+    "format:check:ci": "prettier -c --ignore-unknown ."
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [
