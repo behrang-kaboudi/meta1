@@ -10,7 +10,6 @@ const fs = require('fs');
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
 
-// const logger = require('./rout/logger');
 const ut = require('./module/utility');
 const toolRout = require('./rout/tool');
 const userRout = require('./rout/user');
@@ -108,7 +107,6 @@ app.get('/test', (req, res) => {
     res.render(config.get('template') + '/page/test', { user: req.user });
 });
 
-// app.use('/logger/', logger);
 app.use('/tool/', toolRout);
 app.use('/learn/', learnRout);
 app.use('/static/', staticRout);
@@ -345,7 +343,6 @@ io.on('connect', function (socket) {
     });
     // swiss tournament
     socket.on('swiss', async function (data, ack) { await swissRout.ioF(data, ack, userData) });
-    // socket.on('logger', async function (data, ack) { await logger.ioF(data, ack, userData) });
 
     // simull
     socket.on('simul', async function (data, ack) { await simullRout.ioF(data, ack, userData) });

@@ -8,7 +8,6 @@ const fs = require('fs');
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
 
-// const logger = require('./rout/logger');
 const ut = require('./module/utility');
 const toolRout = require('./rout/tool');
 const userRout = require('./rout/user');
@@ -149,7 +148,6 @@ app.get('/test', (req, res) => {
   res.render(config.get('template') + '/page/test', { user: req.user });
 });
 
-// app.use('/logger/', logger);
 app.use('/tool/', toolRout);
 app.use('/learn/', learnRout);
 app.use('/static/', staticRout);
@@ -256,11 +254,11 @@ io.on('connect', function (socket) {
     ack(game);
   });
 
-  // socket.on('search', function(user, ack) {
-  //     userRout.io.getUsersFromDbWhithPublicData(user).then(ansers => {
-  //         ack(ansers);
-  //     });
-  // });userData
+  socket.on('search', function (user, ack) {
+    userRout.io.getUsersFromDbWhithPublicData(user).then((ansers) => {
+      ack(ansers);
+    });
+  }); //userData
   socket.on('chalenge', async function (data, ack) {
     await chalenge.ioF(data, ack, userData);
   });
@@ -380,7 +378,6 @@ io.on('connect', function (socket) {
   socket.on('swiss', async function (data, ack) {
     await swissRout.ioF(data, ack, userData);
   });
-  // socket.on('logger', async function (data, ack) { await logger.ioF(data, ack, userData) });
 
   // simull
   socket.on('simul', async function (data, ack) {
