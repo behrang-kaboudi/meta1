@@ -2,11 +2,11 @@
 process.env.PORT = process.env.PORT || 3000;
 const express = require('express');
 const path = require('path');
-const fs = require('fs')
+const fs = require('fs');
 const fileUpload = require('express-fileupload');
 const ioSocket = require('socket.io');
 const mongoose = require('mongoose');
-var viewEngine = require('consolidate')
+var viewEngine = require('consolidate');
 
 const app = express();
 // app.use('/public/', function (req, res, next) {
@@ -14,22 +14,21 @@ const app = express();
 //     next();
 // });
 app.use('/public/', function (req, res, next) {
-    let reqAddress = path.normalize(req.originalUrl).replace(/%20/g, ' ');
-    // let reqAddress = path.normalize(req.originalUrl).replace(/\\/g, '/');
-    reqAddress = path.normalize(reqAddress)//.replace(/\\/g, '/');
-    console.log('reqAddress:', reqAddress)
-    reqAddress = path.join(process.env.mainDir, reqAddress)
-    if (fs.existsSync(reqAddress)) {
-        res.sendFile(reqAddress);
-    }
-    else {
-        reqAddress = reqAddress.replace('public', 'node_modules')
-        console.log('reqAddress:', reqAddress)
-        // reqAddress = reqAddress.replace('public', 'node_modules');
-        // console.log(path.join(__dirname, reqAddress))
-        res.sendFile(reqAddress);
-    }
-    // next();
+  let reqAddress = path.normalize(req.originalUrl).replace(/%20/g, ' ');
+  // let reqAddress = path.normalize(req.originalUrl).replace(/\\/g, '/');
+  reqAddress = path.normalize(reqAddress); //.replace(/\\/g, '/');
+  console.log('reqAddress:', reqAddress);
+  reqAddress = path.join(process.env.mainDir, reqAddress);
+  if (fs.existsSync(reqAddress)) {
+    res.sendFile(reqAddress);
+  } else {
+    reqAddress = reqAddress.replace('public', 'node_modules');
+    console.log('reqAddress:', reqAddress);
+    // reqAddress = reqAddress.replace('public', 'node_modules');
+    // console.log(path.join(__dirname, reqAddress))
+    res.sendFile(reqAddress);
+  }
+  // next();
 });
 // app.use(express.static('public'));
 // app.use('/public/', express.static('public'));
@@ -53,7 +52,6 @@ app.use(fileUpload());
 app.engine('ejs', viewEngine.ejs);
 app.set('view engine', 'ejs');
 
-
 var server = app.listen(process.env.PORT);
 var io = ioSocket(server);
 //local to host
@@ -73,11 +71,12 @@ var io = ioSocket(server);
 //     )
 ///Last connection **********
 mongoose.connect(
-    'mongodb://metaches_startup:startup123456@metachessmind.com:27017/metaches_startup', {
+  'mongodb://metaches_startup:startup123456@metachessmind.com:27017/metaches_startup',
+  {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-}
-)
+  },
+);
 
 // apis Main To uncomment
 // mongoose.connect('mongodb://127.0.0.1/testPmChess', {
@@ -90,12 +89,12 @@ mongoose.connect(
 //     useUnifiedTopology: true,
 // })
 //pages
-ioFuncs = {};
+let ioFuncs = {};
 ioFuncs.connect = (socket, room) => {
-    io.on('connect', () => {
-        socket.join(room);
-        console.log('joind',);
-    })
-}
+  io.on('connect', () => {
+    socket.join(room);
+    console.log('joind');
+  });
+};
 
-module.exports = { express, app, io, ioFuncs }
+module.exports = { express, app, io, ioFuncs };

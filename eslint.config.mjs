@@ -6,7 +6,20 @@ import globals from 'globals';
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
   // Ignore common output folders
-  { ignores: ['node_modules/', 'dist/', 'build/', 'coverage/'] },
+  {
+    ignores: [
+      'node_modules/',
+      'dist/',
+      'build/',
+      'coverage/',
+      // --- TODO(Behrang): legacy paths — re-enable lint gradually ---
+      'views/lichess/page/tool/stockfish.js-master/**',
+      'module/**',
+      'public/**',
+      'rout/**',
+      'index.js',
+    ],
+  },
 
   // Base recommended rules
   js.configs.recommended,

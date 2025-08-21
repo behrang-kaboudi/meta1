@@ -1,4 +1,23 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# Husky v9+ (no wrapper)
 
+# Reminder: if you touch temporarily-ignored paths, nudge yourself to clean them up.
+PATTERN='^(views/lichess/page/tool/stockfish\.js-master/|rout/|module/|public/|index\.js$)'
+
+CHANGED="$(git diff --cached --name-only)"
+TOUCHED="$(printf "%s\n" "$CHANGED" | grep -E "$PATTERN" || true)"
+
+if [ -n "$TOUCHED" ]; then
+  echo ""
+  echo "🔔 Lint TODO: You touched files under TEMPORARILY-IGNORED paths."
+  echo "    -> Please consider fixing ESLint issues and shrinking ignores."
+  echo "Touched:"
+  # print each on its own line with a bullet
+  printf "      • %s\n" $TOUCHED
+  echo "Hints:"
+  echo "  - Run: npm run lint:fix && npm run lint"
+  echo "  - Remove the path from 'ignores' in eslint.config.mjs when clean."
+  echo ""
+fi
+
+# Run staged linters/formatters
 npx lint-staged
