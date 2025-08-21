@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload');
 const ioSocket = require('socket.io');
 const mongoose = require('mongoose');
 var viewEngine = require('consolidate');
+const {MONGO_URI,ENV} = require('../config/env')
 
 const app = express();
 // app.use('/public/', function (req, res, next) {
@@ -54,41 +55,14 @@ app.set('view engine', 'ejs');
 
 var server = app.listen(process.env.PORT);
 var io = ioSocket(server);
-//local to host
-// mongoose.connect(
-//         'mongodb://chesshel_pmchessdeh:dehghan1234@yaremehrabanchess.ir:27017/chesshel_pmchess', {
-//             useNewUrlParser: true,
-//             useUnifiedTopology: true,
-//         }
-//     )
-//     .catch(err => {});
-// un coment in site
-// mongoose.connect(
-//         'mongodb://chesshel_pmchessdeh:dehghan1234@localhost:27017/chesshel_pmchess', {
-//             useNewUrlParser: true,
-//             useUnifiedTopology: true,
-//         }
-//     )
-///Last connection **********
-mongoose.connect(
-  'mongodb://metaches_startup:startup123456@metachessmind.com:27017/metaches_startup',
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  },
-);
+mongoose.connect(MONGO_URI)
+  .then(() => console.log(`[mongo] connected (${ENV})`))
+  .catch(err => console.error('[mongo] connection error:', err.message));
 
-// apis Main To uncomment
 // mongoose.connect('mongodb://127.0.0.1/testPmChess', {
 //     useNewUrlParser: true,
 //     useUnifiedTopology: true,
 // })
-// apis
-// mongoose.connect('mongodb://localhost/host1', {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-// })
-//pages
 let ioFuncs = {};
 ioFuncs.connect = (socket, room) => {
   io.on('connect', () => {
