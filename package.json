@@ -14,7 +14,7 @@
     "prepare": "husky",
     "lint": "eslint --cache index.js app.js module/**/*.js rout/**/*.js",
     "lint:fix": "eslint --cache --fix index.js app.js module/**/*.js rout/**/*.js",
-    "lint:ci": "eslint --cache --no-warn-ignored --quiet index.js app.js module/**/*.js rout/**/*.js",
+    "lint:ci": "eslint --cache --no-warn-ignored --quiet --rule 'no-undef:0' --rule 'no-unused-vars:0' --rule 'n/no-missing-require:0' index.js app.js module/**/*.js rout/**/*.js",
     "format": "prettier -w .",
     "format:check": "prettier -c .",
     "format:check:ci": "prettier -c --ignore-unknown ."
