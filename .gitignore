@@ -1,31 +1,42 @@
-node_modules
-# node modules
+# === Node.js ===
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# logs
-logs
+# === Logs ===
+logs/
 *.log
+logs\combined.log
 
-# environment files
+# === Runtime data ===
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# === Environment files ===
 .env
+.env.*
+!.env.example   # فقط نمونهٔ env رو نگه داریم
 
-# build files
+# === Build / Dist ===
 dist/
 build/
-
-# OS files
-.DS_Store
-
-# IDEs
-.vscode/
-.idea/
-
-# test coverage
+.tmp/
 coverage/
 
-node_modules/
-logs/
-.env
+# === IDE / Editor ===
+.vscode/
+.idea/
+*.swp
+
+# === OS files ===
 .DS_Store
-__MACOSX/
-*.log
+Thumbs.db
+
+# === Package managers ===
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
