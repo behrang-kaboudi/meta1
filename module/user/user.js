@@ -100,7 +100,6 @@ User.getUserLoginCockie = function (dbUser) {
 User.setUserPublicData = function (user) {
     let pub = {};
     if(!user)return null;//TODO
-    console.log("xxxxxxxxxxxxxxxx",user);
     pub.userName = user.userName;
     pub.bullet = user.bullet;
     pub.blitz = user.blitz;

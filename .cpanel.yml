@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/metaches/metaMain # ← مسیر واقعی ریپو
+    - cd "$DEPLOYPATH"
+    - /bin/node -v && /bin/npm -v
+    - /bin/npm ci --omit=dev || /bin/npm i --omit=dev
+    - /bin/mkdir -p tmp
+    - /bin/touch tmp/restart.txt # سیگنال ری‌استارت Passenger

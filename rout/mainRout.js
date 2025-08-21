@@ -18,13 +18,11 @@ app.use('/public/', function (req, res, next) {
   let reqAddress = path.normalize(req.originalUrl).replace(/%20/g, ' ');
   // let reqAddress = path.normalize(req.originalUrl).replace(/\\/g, '/');
   reqAddress = path.normalize(reqAddress); //.replace(/\\/g, '/');
-  console.log('reqAddress:', reqAddress);
   reqAddress = path.join(process.env.mainDir, reqAddress);
   if (fs.existsSync(reqAddress)) {
     res.sendFile(reqAddress);
   } else {
     reqAddress = reqAddress.replace('public', 'node_modules');
-    console.log('reqAddress:', reqAddress);
     // reqAddress = reqAddress.replace('public', 'node_modules');
     // console.log(path.join(__dirname, reqAddress))
     res.sendFile(reqAddress);
