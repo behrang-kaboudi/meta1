@@ -9,6 +9,7 @@ const ut = require("../module//utility");
 const user = require("../module/user/user");
 const preregister = require("../module/user/preregister");
 const { func } = require("joi");
+const rateLimit = require('express-rate-limit');
 const rout = express.Router();
 
 rout.events = new Event();
@@ -171,7 +172,22 @@ rout.get("/register/", (req, res) => {
     user: req.user,
   });
 });
-rout.post("/register/", (req, res) => {
+const registerLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(200).json({
+      state: false,
+      code: 'RATE_LIMITED',
+      message: 'Too many sign-up attempts. Please try later.'
+    });
+  },
+});
+
+
+rout.post("/register/",registerLimiter, (req, res) => {
   req.body.email = req.body.email.toLowerCase();
   req.body.userName = req.body.userName.toLowerCase().trim();
   req.body.password = req.body.password.trim();
