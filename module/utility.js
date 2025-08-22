@@ -8,18 +8,31 @@ ut.joi = {
     englishSpacialChars: `!@#$%^&*()_+-={}|[]\\:";'<>?,./`,
     PersianSpacialChars: `‍!٬٫ریال٪×،*)(ـ+}{|\\:؛><؟./})`,
 };
-ut.joi.getJoiPersianErrs = function (filedName) {
-    let persianErrs = {
-        'string.min': ` حداقل تعدا کاراکتر ${filedName} باید {#limit} کاراکتر باشد.`,
-        'string.empty': ` فیلد ${filedName} نمیتواند خالی باشد.`,
-        'string.base': `"a" should be a type of 'text'`,
-        'any.required': `پر کردن فیلد ${filedName} اجباری میباشد.`,
-        'string.email': ` فرمت ایمیل صحیح نوشته شود.`,
-        'any.english': `  فیلد ${filedName} باید با حروف انگلیسی باشد.`,
-        'any.persian': `  فیلد ${filedName} باید با حروف فارسی باشد.`,
+ut.joi.getJoiEnglishErrs = function (fieldName) {
+    let englishErrs = {
+        'string.min': `The field ${fieldName} must be at least {#limit} characters long.`,
+        'string.empty': `The field ${fieldName} cannot be empty.`,
+        'string.base': `The field ${fieldName} should be of type 'text'.`,
+        'any.required': `The field ${fieldName} is required.`,
+        'string.email': `The field ${fieldName} must be a valid email address.`,
+        'any.english': `The field ${fieldName} must contain only English letters.`,
+        'any.persian': `The field ${fieldName} must contain only Persian letters.`,
     };
-    return persianErrs;
+    return englishErrs;
 };
+
+// ut.joi.getJoiPersianErrs = function (filedName) {
+//     let persianErrs = {
+//         'string.min': ` حداقل تعدا کاراکتر ${filedName} باید {#limit} کاراکتر باشد.`,
+//         'string.empty': ` فیلد ${filedName} نمیتواند خالی باشد.`,
+//         'string.base': `"a" should be a type of 'text'`,
+//         'any.required': `پر کردن فیلد ${filedName} اجباری میباشد.`,
+//         'string.email': ` فرمت ایمیل صحیح نوشته شود.`,
+//         'any.english': `  فیلد ${filedName} باید با حروف انگلیسی باشد.`,
+//         'any.persian': `  فیلد ${filedName} باید با حروف فارسی باشد.`,
+//     };
+//     return persianErrs;
+// };
 ut.joi.english = (value, helpers) => {
     let src =
         ut.joi.englishLetter + ut.joi.englishNumber + ut.joi.englishSpacialChars;

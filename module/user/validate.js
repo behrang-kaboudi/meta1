@@ -4,20 +4,20 @@ const Joi = require ('joi');
 const joiSchema = {
   mailUser: Joi.string ()
     .min (3)
-    .messages (ut.joi.getJoiPersianErrs ('نام کاربری ایمیل')),
-  mobile: Joi.string ().min (11).messages (ut.joi.getJoiPersianErrs ('موبایل')),
+    .messages (ut.joi.getJoiEnglishErrs ('Username / Email')),
+  mobile: Joi.string ().min (11).messages (ut.joi.getJoiEnglishErrs ('موبایل')),
   password: Joi.string ()
     .min (3)
     .custom (ut.joi.english)
-    .messages (ut.joi.getJoiPersianErrs ('رمز')),
+    .messages (ut.joi.getJoiEnglishErrs ('Password')),
   email: Joi.string ()
     .min (3)
     .email ()
     .custom (ut.joi.english)
-    .messages (ut.joi.getJoiPersianErrs ('ایمیل')),
+    .messages (ut.joi.getJoiEnglishErrs ('Email')),
   userName: Joi.string ()
     .custom (ut.joi.english)
-    .messages (ut.joi.getJoiPersianErrs ('نام کاربری')),
+    .messages (ut.joi.getJoiEnglishErrs ('Username')),
 };
 const validator = Joi.object (joiSchema);
 function validate (reqBody) {
