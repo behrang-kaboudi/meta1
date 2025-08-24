@@ -27,52 +27,6 @@ const lang = require('./module/language/index');
 // const lang2 = require('./module/language/index');
 const staticDesign = require('./public/components/staticDesign/design');
 
-// var nodemailer = require('nodemailer');
-
-// var transporter = nodemailer.createTransport({
-//     host: 'metachessmind.com',
-//     // port: 25,
-//     // host: 'mail.metachessmind.com',
-//     // port: 25,
-//     secure: false,
-//     auth: {
-//         user: 'no-reply@metachessmind.com',
-//         pass: 'IG;0zY@3E43bhf'
-//     },
-//     tls: {
-//         rejectUnauthorized: false
-//     }
-
-//     // service: 'localhost',
-//     // auth: {
-//     //     user: 'no-reply@metachessmind.com',
-//     //     pass: 'IG;0zY@3E43bhf'
-//     // }
-// });
-
-// var mailOptions = {
-//     from: 'no-reply@metachessmind.com',
-//     to: 'work.behrang@gmail.com',
-//     subject: 'Sending Email using Node.js',
-//     text: 'That was easy!',
-//     html: `
-
-//                     <h4 >
-//                     Complete your registration by clicking on the link below
-//                     </h4>
-//                     <br>
-//                     wwww
-//                   `,
-// };
-
-// transporter.sendMail(mailOptions, function (error, info) {
-//     if (error) {
-//         console.log(error);
-//     } else {
-//         console.log('Email sent: ' + info.response);
-//     }
-// });
-
 app.use(userRout.setReqUser());
 
 // var id = 0;
@@ -140,6 +94,7 @@ app.use(userRout.setReqUser());
 
 app.get('/', (req, res) => {
   // res.render (config.get ('template') + '/page/home');
+
   res.render(config.get('template') + '/page/home', { user: req.user });
 });
 
@@ -174,20 +129,20 @@ app.get('/livegames/', (req, res) => {
 /// test÷
 
 io.on('connect', function (socket) {
+  // console.log('test on index.js'); // چرا قسمت زیر در سوکت و فایل ایندک خیلی تکرار میشود انگار همش داره بررسی میکنه که ارتباط برقراه
   let userData = null;
   let personalRoom = 'socketId';
+  /// حذف پایین با کمک چت زیرا گفته بود میشود قسمت زیر را پاک کرد
   socket.use(async ([event, ...args], next) => {
-    // if (event != 'staticFile') {
-    userData = user.setUserObjFromCoockies(socket.request.headers.cookie);
+    // console.log('test on index.js');
+    userData = user.setUserObjFromCookies(socket.request.headers.cookie);
+    //
     if (userData) {
-      // let dbUser = userRout.
+      userData.login = true;
       personalRoom = 'user-' + userData.userName;
       socket.join(personalRoom);
-      user.setOnline(userData.userName, true);
-      // userData.socket = socket;
-      // io.emit('playerOnline', { userName: userData.userName, online: true });
     } else {
-      userData = {};
+      userData = { login: false };
     }
     // }
     userData.socket = socket;
@@ -255,10 +210,12 @@ io.on('connect', function (socket) {
   });
 
   socket.on('search', function (user, ack) {
-    userRout.io.getUsersFromDbWhithPublicData(user).then((ansers) => {
-      ack(ansers);
+    userRout.io.getUsersFromDbWhithPublicData(user).then((answers) => {
+      console.log('dffdffd', answers);
+      ack(answers);
     });
-  }); //userData
+  });
+  // userData;
   socket.on('chalenge', async function (data, ack) {
     await chalenge.ioF(data, ack, userData);
   });

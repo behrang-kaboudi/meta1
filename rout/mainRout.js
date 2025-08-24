@@ -7,7 +7,11 @@ const fileUpload = require('express-fileupload');
 const ioSocket = require('socket.io');
 const mongoose = require('mongoose');
 var viewEngine = require('consolidate');
-const {MONGO_URI,ENV} = require('../config/env')
+const { MONGO_URI, ENV } = require('../config/env');
+mongoose
+  .connect(MONGO_URI)
+  .then(() => console.log(`[mongo] connected (${ENV})`))
+  .catch((err) => console.error('[mongo] connection error:', err.message));
 
 const app = express();
 // app.use('/public/', function (req, res, next) {
@@ -53,9 +57,6 @@ app.set('view engine', 'ejs');
 
 var server = app.listen(process.env.PORT);
 var io = ioSocket(server);
-mongoose.connect(MONGO_URI)
-  .then(() => console.log(`[mongo] connected (${ENV})`))
-  .catch(err => console.error('[mongo] connection error:', err.message));
 
 // mongoose.connect('mongodb://127.0.0.1/testPmChess', {
 //     useNewUrlParser: true,

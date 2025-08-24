@@ -1,24 +1,27 @@
 const fs = require('fs');
 let ut = {};
-ut.json = (obj) => { return JSON.parse(JSON.stringify(obj)) }
+ut.json = (obj) => {
+  return JSON.parse(JSON.stringify(obj));
+};
 ut.joi = {
-    persianLetter: 'چجحخهعغفقثصضگکمنتالبیسش/.وپدذرزطظ ّ َ َ ِ ُ ً ٍ ٌ ْ ة آ أ إ ي ئ ؤ ء ٔ ‌‌‌‌‌ٰژ ط ك ‍',
-    englishLetter: 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCV BNM',
-    englishNumber: ' 1234567890',
-    englishSpacialChars: `!@#$%^&*()_+-={}|[]\\:";'<>?,./`,
-    PersianSpacialChars: `‍!٬٫ریال٪×،*)(ـ+}{|\\:؛><؟./})`,
+  persianLetter:
+    'چجحخهعغفقثصضگکمنتالبیسش/.وپدذرزطظ ّ َ َ ِ ُ ً ٍ ٌ ْ ة آ أ إ ي ئ ؤ ء ٔ ‌‌‌‌‌ٰژ ط ك ‍',
+  englishLetter: 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCV BNM',
+  englishNumber: ' 1234567890',
+  englishSpacialChars: `!@#$%^&*()_+-={}|[]\\:";'<>?,./`,
+  PersianSpacialChars: `‍!٬٫ریال٪×،*)(ـ+}{|\\:؛><؟./})`,
 };
 ut.joi.getJoiEnglishErrs = function (fieldName) {
-    let englishErrs = {
-        'string.min': `The field ${fieldName} must be at least {#limit} characters long.`,
-        'string.empty': `The field ${fieldName} cannot be empty.`,
-        'string.base': `The field ${fieldName} should be of type 'text'.`,
-        'any.required': `The field ${fieldName} is required.`,
-        'string.email': `The field ${fieldName} must be a valid email address.`,
-        'any.english': `The field ${fieldName} must contain only English letters.`,
-        'any.persian': `The field ${fieldName} must contain only Persian letters.`,
-    };
-    return englishErrs;
+  let englishErrs = {
+    'string.min': `The field ${fieldName} must be at least {#limit} characters long.`,
+    'string.empty': `The field ${fieldName} cannot be empty.`,
+    'string.base': `The field ${fieldName} should be of type 'text'.`,
+    'any.required': `The field ${fieldName} is required.`,
+    'string.email': `The field ${fieldName} must be a valid email address.`,
+    'any.english': `The field ${fieldName} must contain only English letters.`,
+    'any.persian': `The field ${fieldName} must contain only Persian letters.`,
+  };
+  return englishErrs;
 };
 
 // ut.joi.getJoiPersianErrs = function (filedName) {
@@ -34,48 +37,47 @@ ut.joi.getJoiEnglishErrs = function (fieldName) {
 //     return persianErrs;
 // };
 ut.joi.english = (value, helpers) => {
-    let src =
-        ut.joi.englishLetter + ut.joi.englishNumber + ut.joi.englishSpacialChars;
-    for (let i = 0; i < value.length; i++) {
-        if (!(src.indexOf(value[i]) > -1)) {
-            return helpers.error('any.english');
-        }
+  let src = ut.joi.englishLetter + ut.joi.englishNumber + ut.joi.englishSpacialChars;
+  for (let i = 0; i < value.length; i++) {
+    if (!(src.indexOf(value[i]) > -1)) {
+      return helpers.error('any.english');
     }
-    return value;
+  }
+  return value;
 };
 ut.joi.persian = (value, helpers) => {
-    for (let i = 0; i < value.length; i++) {
-        if (!(ut.joi.persianLetter.indexOf(value[i]) > -1)) {
-            return helpers.error('any.persian');
-        }
+  for (let i = 0; i < value.length; i++) {
+    if (!(ut.joi.persianLetter.indexOf(value[i]) > -1)) {
+      return helpers.error('any.persian');
     }
-    return value;
+  }
+  return value;
 };
 
 ut.setCookies = function () {
-    return (req, res, next) => {
-        let cookies = req.headers.cookie;
-        cookies = cookies.split(';');
-        let obj = {};
-        cookies.forEach(element => {
-            let parts = element.split('=');
-            let name = parts[0];
-            let value = parts[1];
-            obj[name] = value;
-        });
-        req.siteCookies = obj;
-        next();
-    };
+  return (req, res, next) => {
+    let cookies = req.headers.cookie;
+    cookies = cookies.split(';');
+    let obj = {};
+    cookies.forEach((element) => {
+      let parts = element.split('=');
+      let name = parts[0];
+      let value = parts[1];
+      obj[name] = value;
+    });
+    req.siteCookies = obj;
+    next();
+  };
 };
 ut.getRndInteger = function (min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
+  return Math.floor(Math.random() * (max - min)) + min;
 };
 ut.jsonRes = function () {
-    return { state: false, message: 'داده های ورودی اشتباه است' };
+  return { state: false, message: 'Input data is incorrect' };
 };
 ut.gameTimeControll = function (game) {
-    let totalTime = game.gameTimeMins * 60 + game.gameTimeSecs;
-    return ut.timeControll(totalTime, game.timeIncresment);
+  let totalTime = game.gameTimeMins * 60 + game.gameTimeSecs;
+  return ut.timeControll(totalTime, game.timeIncresment);
 };
 /**
  * Returns game time control type.
@@ -85,24 +87,24 @@ ut.gameTimeControll = function (game) {
  * @return {string} time control type.
  */
 ut.timeControll = function (mainTime, timeIncresment = 0) {
-    let totalTime = mainTime + 40 * timeIncresment;
-    if (totalTime < 179) return 'bullet';
-    if (totalTime < 479) return 'blitz';
-    if (totalTime < 1499) return 'rapid';
-    if (totalTime > 1500) return 'classic';
-    // if (totalTime < 179) return 'correspond';
+  let totalTime = mainTime + 40 * timeIncresment;
+  if (totalTime < 179) return 'bullet';
+  if (totalTime < 479) return 'blitz';
+  if (totalTime < 1499) return 'rapid';
+  if (totalTime > 1500) return 'classic';
+  // if (totalTime < 179) return 'correspond';
 };
 ut.copyObj = function (obj) {
-    let obj2 = JSON.stringify(obj);
-    return JSON.parse(obj2);
-    // if (totalTime < 179) return 'correspond';
+  let obj2 = JSON.stringify(obj);
+  return JSON.parse(obj2);
+  // if (totalTime < 179) return 'correspond';
 };
 ut.log = {
-    json: (data) => {
-        fs.writeFile('./myLog/log.json', JSON.stringify(data), function (err) {
-            if (err) throw err;
-            console.log('Saved!');
-        });
-    }
-}
+  json: (data) => {
+    fs.writeFile('./myLog/log.json', JSON.stringify(data), function (err) {
+      if (err) throw err;
+      console.log('Saved!');
+    });
+  },
+};
 module.exports = ut;

@@ -5,17 +5,13 @@ const user = require('../module/user/user');
 const Static = require('../module/static/static');
 const rout = express.Router();
 
-
-
 rout.get('/team/', async (req, res) => {
-    
-    // res.render(config.get('template') + '/page/sabet/search', { user: req.user });
-    res.render(config.get('template') + '/page/sabet/team', { user: req.user });
+  // res.render(config.get('template') + '/page/sabet/search', { user: req.user });
+  res.render(config.get('template') + '/page/sabet/team', { user: req.user });
 });
 
-
 // rout.get('/createSwissTournament', (req, res) => {
-//     if (req.user.dbProps.role != 'admin') {
+//     if (req.user.role != 'admin') {
 //         res.redirect('/');
 //         return;
 //     }
@@ -32,7 +28,5 @@ rout.get('/team/', async (req, res) => {
 //     return true;
 //     // console.log('d', data);
 // }
-
-
 
 module.exports = rout;

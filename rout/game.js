@@ -339,10 +339,10 @@ rout.api.getSimullGame = async function (simull, user) {
   let wUser, bUser;
   if (simull.color == 'w') {
     wUser = simull.creatorUserName;
-    bUser = user.dbProps.userName;
+    bUser = user.userName;
   }
   if (simull.color == 'b') {
-    wUser = user.dbProps.userName;
+    wUser = user.userName;
     bUser = simull.creatorUserName;
   }
   let gm = await game.findOne({

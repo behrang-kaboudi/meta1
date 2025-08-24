@@ -90,7 +90,7 @@ rout.event.on(eventsNames.changed, async (tour) => {
 });
 
 rout.get('/edit/:id', async (req, res) => {
-  if (req.user.dbProps.role != 'admin') {
+  if (req.user.role != 'admin') {
     res.redirect('/');
     return;
   }
@@ -135,7 +135,7 @@ rout.get('/tournament/:id', async (req, res) => {
 });
 rout.get('/tournaments/regulation/:id', async (req, res) => {
   let sw = await swissTournament.api.getTournamentById(req.params.id);
-  let registerd = sw.players.includes(req.user.dbProps.userName) ? true : false;
+  let registerd = sw.players.includes(req.user.userName) ? true : false;
 
   res.render(config.get('template') + '/page/game/swiss/regulation', {
     user: req.user,
@@ -160,11 +160,11 @@ rout.post('/register/', async (req, res) => {
     res.redirect('/swiss/tournaments/');
     return;
   }
-  if (tour.players.includes(req.user.dbProps.userName)) {
+  if (tour.players.includes(req.user.userName)) {
     res.redirect('/swiss/tournaments/');
     return;
   }
-  tour.players.push(req.user.dbProps.userName);
+  tour.players.push(req.user.userName);
 
   await tour.save();
   res.redirect('/swiss/RoundsInfo/players/' + tour._id);

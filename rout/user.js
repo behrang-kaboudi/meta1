@@ -1,58 +1,75 @@
-const { express, io } = require("./mainRout");
-const Event = require("events");
-const sendmail = require("sendmail")();
+const { express, io } = require('./mainRout');
+const Event = require('events');
+const sendmail = require('sendmail')();
 var nodemailer = require('nodemailer');
-const config = require("config");
-const userValidator = require("../module/user/validate");
-const jwt = require("jsonwebtoken");
-const ut = require("../module//utility");
-const user = require("../module/user/user");
-const preregister = require("../module/user/preregister");
-const { func } = require("joi");
+const config = require('config');
+const userValidator = require('../module/user/validate');
+const jwt = require('jsonwebtoken');
+const ut = require('../module//utility');
+const user = require('../module/user/user');
+const preregister = require('../module/user/preregister');
+const { func } = require('joi');
 const rateLimit = require('express-rate-limit');
+const { hashPassword, verifyPassword, needsRehash } = require('../module/security/password');
+const { log } = require('console');
 const rout = express.Router();
 
 rout.events = new Event();
-rout.get("/admin/", (req, res) => {
+rout.get('/admin/', (req, res) => {
   // to do roles
-  res.render(config.get("template") + "/page/user/admin", { user: req.user });
+  res.render(config.get('template') + '/page/user/admin', { user: req.user });
 });
 
-rout.get("/logout/", (req, res) => {
-  rout.events.emit("userLogOut", req.user);
-  res.cookie("user", "").redirect("/");
+rout.get('/logout/', (req, res) => {
+  if (!req.user.login) return res.redirect('/');
+  rout.events.emit('userLogOut', req.user);
+  res.clearCookie('user');
+  res.redirect('/');
 });
-rout.get("/login/", (req, res) => {
-  res.render(config.get("template") + "/page/user/login", { user: req.user });
+rout.get('/login/', (req, res) => {
+  res.render(config.get('template') + '/page/user/login', { user: req.user });
 });
-rout.post("/login/", (req, res) => {
+const loginLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(200).json({
+      state: false,
+      code: 'RATE_LIMITED',
+      message: 'Too many login attempts. Please try later.',
+    });
+  },
+});
+rout.post('/login/', loginLimiter, async (req, res) => {
   let myRes = userValidator.validator(req.body);
   if (!myRes.state) {
     return res.send(JSON.stringify(myRes));
   }
   req.body.mailUser = req.body.mailUser.toLowerCase().trim();
   req.body.password = req.body.password.trim();
+  let dbUser = await user.findOne({
+    $or: [{ email: req.body.mailUser }, { userName: req.body.mailUser }],
+  });
+  let isHash;
+  if (dbUser) isHash = await verifyPassword(dbUser.passwordHash, req.body.password);
+  if (!dbUser || !isHash) {
+    myRes.state = false;
+    res.send(JSON.stringify(myRes));
+    return;
+  }
+  myRes.message = user.getUserLoginCookie(dbUser);
+  res.cookie('user', myRes.message).send(JSON.stringify(myRes));
   // todo [{email: req.body.emailUser}, {userName: req.body.emailUser}]
   //if key is not exist returns true//   s//  .and ([{password: req.body.password}])
-  user
-    .findOne({ password: req.body.password })
-    .or([{ email: req.body.mailUser }, { userName: req.body.mailUser }])
-    .then((dbUser) => {
-      if (!dbUser) {
-        myRes.state = false;
-        res.send(JSON.stringify(myRes));
-        return;
-      }
-      myRes.message = user.getUserLoginCockie(dbUser);
-      res.cookie("user", myRes.message).send(JSON.stringify(myRes));
-    });
 });
-rout.get("/recovery/", (req, res) => {
-  res.render(config.get("template") + "/page/user/recovery1", {
+rout.get('/recovery/', (req, res) => {
+  res.render(config.get('template') + '/page/user/recovery1', {
     user: req.user,
   });
 });
-rout.post("/recovery/", (req, res) => {
+rout.post('/recovery/', (req, res) => {
   let myRes = userValidator.validator(req.body);
   if (!myRes.state) {
     return res.send(JSON.stringify(myRes));
@@ -67,47 +84,55 @@ rout.post("/recovery/", (req, res) => {
       return;
     }
     let time = Date.now();
-    dbUser.recoveryLink =
-      dbUser._id + "tt-tt" + ut.getRndInteger(123456, 987654) + "tt-tt" + time;
+    dbUser.recoveryLink = 'tt-tt' + ut.getRndInteger(123456, 987654) + 'tt-tt' + time;
     dbUser.save().then((user) => {
-      let link = "/user/note/recovery";
+      let link = '/user/note/recovery';
       myRes.message = link;
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`${process.env.HOST}/user/recovery/${user.recoveryLink}`);
+        res.send(
+          JSON.stringify({
+            state: true,
+            message: 'created link is in console.',
+          }),
+        );
+        return;
+      }
       sendmail(
         {
-          from: "no-reply@metachessmind.com",
+          from: 'no-reply@metachessmind.com',
           to: req.body.email,
-          subject: "Password recovery", // "بازیابی رمز عبور",
+          subject: 'Password recovery', // "بازیابی رمز عبور",
           html: `
                     
                     <h4 >
                      Click on the link below to change the password
                     </h4>
                     <br>
-                    <a href="${config.get("base")}/user/recovery/${user.recoveryLink
-            }">
-                    ${config.get("base")}/user/recovery/${user.recoveryLink}
+                    <a href="${config.get('base')}/user/recovery/${user.recoveryLink}">
+                    ${config.get('base')}/user/recovery/${user.recoveryLink}
                     <a>
                   `,
         },
         function (err, reply) {
           // console.log (err && err.stack);
           // console.dir (reply);
-        }
+        },
       );
 
       res.send(JSON.stringify(myRes));
     });
   });
 });
-rout.get("/recovery/:link", (req, res) => {
+rout.get('/recovery/:link', (req, res) => {
   let link = req.params.link.trim();
-  let time = link.split("tt-tt");
+  let time = link.split('tt-tt');
   time = Number(time[time.length - 1]);
   // if (Date.now () - 24 * 60 * 60 * 1000 > time) return onErr ();
 
   user.findOne({ recoveryLink: link }).then((dbUser) => {
     if (dbUser) {
-      res.render(config.get("template") + "/page/user/recovery2", {
+      res.render(config.get('template') + '/page/user/recovery2', {
         user: req.user,
       });
     } else {
@@ -116,31 +141,31 @@ rout.get("/recovery/:link", (req, res) => {
   });
 
   function onErr() {
-    res.render(config.get("template") + "/page/user/note", {
-      note: "Or your email link has expired, and if you have just registered, your user account has been confirmed and you can log in.", //" یا مدت زمان لینک ایمیل شما منقضی شده و اگر به تازگی ثبت نام کرده اید کاربری شما تایید شده و از قمت ورود اقدام کنید.",
+    res.render(config.get('template') + '/page/user/note', {
+      note: 'Your email link has expired, and if you have just registered, your user account has been confirmed and you can log in.', //" یا مدت زمان لینک ایمیل شما منقضی شده و اگر به تازگی ثبت نام کرده اید کاربری شما تایید شده و از قمت ورود اقدام کنید.",
       user: req.user,
     });
   }
   // res.send (;
 });
-rout.post("/recovery/:link", (req, res) => {
+rout.post('/recovery/:link', (req, res) => {
   let myRes = userValidator.validator(req.body);
   if (!myRes.state) {
     return res.send(JSON.stringify(myRes));
   }
   let link = req.params.link.trim();
-  let time = link.split("tt-tt");
+  let time = link.split('tt-tt');
   time = Number(time[time.length - 1]);
   if (Date.now() - 24 * 60 * 60 * 1000 > time) return onErr();
 
-  user.findOne({ recoveryLink: link }).then((dbUser) => {
+  user.findOne({ recoveryLink: link }).then(async (dbUser) => {
     if (dbUser) {
-      dbUser.password = req.body.password;
-      dbUser.recoveryLink = "";
+      dbUser.passwordHash = await hashPassword(req.body.password);
+      dbUser.recoveryLink = '';
       dbUser.save().then((bdUser2) => {
         myRes.state = true;
-        let message = user.getUserLoginCockie(bdUser2);
-        res.cookie("user", message).send(JSON.stringify(myRes));
+        let message = user.getUserLoginCookie(bdUser2);
+        res.cookie('user', message).send(JSON.stringify(myRes));
       });
     } else {
       return onErr();
@@ -149,26 +174,29 @@ rout.post("/recovery/:link", (req, res) => {
 
   function onErr() {
     myRes.state = false;
-    myRes.message = "Your email link has expired."; //"مدت زمان لینک ایمیل شما منقضی شده.";
+    myRes.message = 'Your email link has expired.';
     res.send(JSON.stringify(myRes));
     return;
   }
 });
 rout.setReqUser = function () {
   return async function (req, res, next) {
-    user.setUserFromCoockies(req).then(() => {
-      if ("setToLogOut" in req.user) {
-        if (req.user.setToLogOut) {
-          res.cookie("user", "").redirect("/");
-          return;
-        }
-      }
-      next();
-    });
+    let userToken = user.setUserObjFromCookies(req.headers.cookie);
+    req.user = {};
+    //   req.user.role = 'guest';
+    //   req.user.id = null;
+    if (userToken) {
+      req.user = { ...userToken };
+      req.user.login = true;
+    } else {
+      req.user.login = false;
+    }
+    next();
   };
 };
-rout.get("/register/", (req, res) => {
-  res.render(config.get("template") + "/page/user/register", {
+rout.get('/register/', (req, res) => {
+  if (req.user.login) return res.redirect('/');
+  res.render(config.get('template') + '/page/user/register', {
     user: req.user,
   });
 });
@@ -181,13 +209,12 @@ const registerLimiter = rateLimit({
     res.status(200).json({
       state: false,
       code: 'RATE_LIMITED',
-      message: 'Too many sign-up attempts. Please try later.'
+      message: 'Too many sign-up attempts. Please try later.',
     });
   },
 });
 
-
-rout.post("/register/",registerLimiter, (req, res) => {
+rout.post('/register/', registerLimiter, (req, res) => {
   req.body.email = req.body.email.toLowerCase();
   req.body.userName = req.body.userName.toLowerCase().trim();
   req.body.password = req.body.password.trim();
@@ -195,28 +222,47 @@ rout.post("/register/",registerLimiter, (req, res) => {
   if (!myRes.state) {
     return res.send(JSON.stringify(myRes));
   }
-  preregister.isInDb(req.body.email, req.body.userName).then((dbreg) => {
-    if (dbreg) {
+  preregister.isInDb(req.body.email, req.body.userName).then(async (dbreg) => {
+    console.log('ssdds', dbreg);
+
+    if (dbreg.ans) {
       myRes.state = false;
-      myRes.message = dbreg;
+      myRes.message = dbreg.message;
       res.send(JSON.stringify(myRes));
     } else {
-      preregister.createNew(req.body).then((dbPre) => {
-        let link = "/user/note/activfromemail";
+      let tempUser = {};
+      tempUser.email = req.body.email.toLowerCase().trim();
+      tempUser.userName = req.body.userName.trim();
+      tempUser.time = Date.now();
+      tempUser.link = tempUser.userName + tempUser.time + ut.getRndInteger(123456, 987654);
+      tempUser.passwordHash = await hashPassword(req.body.password);
+
+      preregister.createNew(tempUser).then((dbPre) => {
+        let link = '/user/note/activfromemail';
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`${process.env.HOST}/user/register/${dbPre.link}`);
+          res.send(
+            JSON.stringify({
+              state: true,
+              message: 'created link is in console.',
+            }),
+          );
+          return;
+        }
         myRes.message = link;
         sendmail(
           {
-            from: "no-reply@metachessmind.com",
+            from: 'no-reply@metachessmind.com',
             to: req.body.email,
-            subject: "Email Confirmation", //"تایید ایمیل",
+            subject: 'Email Confirmation', //"تایید ایمیل",
             html: `
                     
                     <h4 >
                     Complete your registration by clicking on the link below
                     </h4>
                     <br>
-                    <a href="${config.get("base")}/user/register/${dbPre.link}">
-                    ${config.get("base")}/user/register/${dbPre.link}
+                    <a href="${config.get('base')}/user/register/${dbPre.link}">
+                    ${config.get('base')}/user/register/${dbPre.link}
                     <a>
                   `,
           },
@@ -232,11 +278,11 @@ rout.post("/register/",registerLimiter, (req, res) => {
               secure: false,
               auth: {
                 user: 'no-reply@metachessmind.com',
-                pass: 'IG;0zY@3E43bhf'
+                pass: 'IG;0zY@3E43bhf',
               },
               tls: {
-                rejectUnauthorized: false
-              }
+                rejectUnauthorized: false,
+              },
 
               // service: 'localhost',
             });
@@ -252,8 +298,8 @@ rout.post("/register/",registerLimiter, (req, res) => {
                     Complete your registration by clicking on the link below
                     </h4>
                     <br>
-                    <a href="${config.get("base")}/user/register/${dbPre.link}">
-                    ${config.get("base")}/user/register/${dbPre.link}
+                    <a href="${config.get('base')}/user/register/${dbPre.link}">
+                    ${config.get('base')}/user/register/${dbPre.link}
                     <a>
                   `,
             };
@@ -265,8 +311,7 @@ rout.post("/register/",registerLimiter, (req, res) => {
                 console.log('Email sent: ' + info.response);
               }
             });
-
-          }
+          },
         );
 
         res.send(JSON.stringify(myRes));
@@ -274,26 +319,27 @@ rout.post("/register/",registerLimiter, (req, res) => {
     }
   });
 });
-rout.get("/register/:link", (req, res) => {
+rout.get('/register/:link', (req, res) => {
   preregister.getFromLink(req.params.link).then((dbUser) => {
     if (dbUser) {
       let userForDb = {
         userName: dbUser.userName,
         registerTime: Date.now(),
         email: dbUser.email,
-        password: dbUser.password,
+        passwordHash: dbUser.passwordHash,
+        passwordAlgo: dbUser.passwordAlgo,
       };
       user.creatNewUser(userForDb).then((ans) => {
         if (ans) {
           preregister.deleteOne({ _id: dbUser._id }).then((result) => {
-            let message = user.getUserLoginCockie(ans);
-            res.cookie("user", message).redirect("/");
+            let message = user.getUserLoginCookie(ans);
+            res.cookie('user', message).redirect('/');
           });
         }
       });
     } else {
-      res.render(config.get("template") + "/page/user/note", {
-        note: "Your email link has expired.", //"مدت زمان لینک ایمیل شما منقضی شده.",
+      res.render(config.get('template') + '/page/user/note', {
+        note: 'Your email link has expired.', //"مدت زمان لینک ایمیل شما منقضی شده.",
         user: req.user,
       });
     }
@@ -301,29 +347,28 @@ rout.get("/register/:link", (req, res) => {
 
   // res.send (;
 });
-rout.get("/note/:note", (req, res) => {
+rout.get('/note/:note', (req, res) => {
   let note = req.params.note;
   let noteObj = {};
   switch (note) {
-    case "activfromemail":
-      noteObj.note =
-        "Go to your email to activate your account. It may be in your spam folder.";
+    case 'activfromemail':
+      noteObj.note = 'Go to your email to activate your account. It may be in your spam folder.';
       // "برای فعال سازی اکانت خود به ایمیل خود مراجعه کنید. ممکن است که ایملی در پوشه اسپم شما قرار گرفته باشد.)spam.";
       break;
-    case "recovery":
+    case 'recovery':
       noteObj.note =
-        "Go to your email to recover your password. The email may be in your spam folder.";
+        'Go to your email to recover your password. The email may be in your spam folder.';
       //"برای بازیابی رمز عبور خود به ایمیل خود مراجعه کنید. ممکن است که ایملی در پوشه اسپم شما قرار گرفته باشد.)spam.";
       break;
     default:
       break;
   }
-  res.render(config.get("template") + "/page/user/note", {
+  res.render(config.get('template') + '/page/user/note', {
     user: req.user,
     note: noteObj.note,
   });
 });
-rout.get("/profile/", (req, res) => {
+rout.get('/profile/', (req, res) => {
   // preregister.getFromLink(req.params.link).then(dbUser => {
   //     if (dbUser) {
   //         let userForDb = {
@@ -335,7 +380,7 @@ rout.get("/profile/", (req, res) => {
   //         user.creatNewUser(userForDb).then(ans => {
   //             if (ans) {
   //                 preregister.deleteOne({ _id: dbUser._id }).then(result => {
-  //                     let message = user.getUserLoginCockie(ans);
+  //                     let message = user.getUserLoginCookie(ans);
   //                     res.cookie('user', message).redirect('/');
   //                 });
   //             }
@@ -349,15 +394,13 @@ rout.get("/profile/", (req, res) => {
   // });
 
   // res.send (;
-  res.render(config.get("template") + "/page/profile/dashboard", {
+  res.render(config.get('template') + '/page/profile/dashboard', {
     user: req.user,
   });
 });
 rout.io = {};
 rout.io.getUsersFromDbWhithPublicData = async function (userName) {
-  let users = await user
-    .find({ userName: { $regex: ".*" + userName + ".*" } })
-    .limit(10);
+  let users = await user.find({ userName: { $regex: '.*' + userName + '.*' } }).limit(10);
   let pubUsers = [];
   users.forEach((u) => {
     pubUsers.push(user.setUserPublicData(u));
@@ -380,8 +423,8 @@ rout.setUserLanguage = async function (userData, lang) {
   let up = await user.updateOne({ _id: userData.id }, { $set: { lang: lang } });
 };
 // rout.tS = 0;
-io.on("connect", function (socket) {
-  socket.on("search", function (user, ack) {
+io.on('connect', function (socket) {
+  socket.on('search', function (user, ack) {
     rout.io.getUsersFromDbWhithPublicData(user).then((ansers) => {
       ack(ansers);
     });
