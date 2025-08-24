@@ -1,12 +1,11 @@
 node_modules
 dist
 coverage
-node_modules
 dist
 build
 coverage
 logs
 public
-module
-rout
-views
+#module
+#rout
+#views

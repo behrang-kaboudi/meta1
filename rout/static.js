@@ -5,16 +5,13 @@ const user = require('../module/user/user');
 const Static = require('../module/static/static');
 const rout = express.Router();
 
-
-
 rout.get('/page/:id', async (req, res) => {
-    let content = await Static.findById(req.params.id);
-    res.render(config.get('template') + '/page/static', { user: req.user, content });
+  let content = await Static.findById(req.params.id);
+  res.render(config.get('template') + '/page/static', { user: req.user, content });
 });
 
-
 // rout.get('/createSwissTournament', (req, res) => {
-//     if (req.user.dbProps.role != 'admin') {
+//     if (req.user.role != 'admin') {
 //         res.redirect('/');
 //         return;
 //     }
@@ -31,7 +28,5 @@ rout.get('/page/:id', async (req, res) => {
 //     return true;
 //     // console.log('d', data);
 // }
-
-
 
 module.exports = rout;

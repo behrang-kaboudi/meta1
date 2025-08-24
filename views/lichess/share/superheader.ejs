@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 
 <% let template="lichess" %>
-  <% user.trans=function (word){ if(!('dbProps' in user)) return word; return lang.getPhrase(word,user.dbProps.lang); }
+  <% user.trans=function (word){ if(!('dbProps' in user)) return word; return lang.getPhrase(word,user.lang); }
     %>
 
     <head>
@@ -49,7 +49,7 @@
 
     <% if(user.login) { %>
       <script>
-        const userName = '<%- user.dbProps.userName %>';
+        const userName = '<%- user.userName %>';
       </script>
       <% }else{ %>
         <script>

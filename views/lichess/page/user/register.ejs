@@ -1,131 +1,127 @@
-<%- include('../../share/superheader') -%>
-   <%- include('../../component/mainnav') -%>
+<%- include('../../share/superheader') -%> <%- include('../../component/mainnav') -%>
 
-      <div class="row justify-content-center" style="direction: ltr;">
-         <div class="container">
-            <div class="text-right col-lg-7 mx-auto">
-               <div class="wg-box">
-                  <div class="wg-title h4">
-                     <%- user.trans('Register') %>:
-                  </div>
-                  <div class="wg-inner">
-                     <div class="mb-3 mx-3 row">
-                        <li id="formErrors" class="h6 d-none text-danger"></li>
-                     </div>
-                     <div class="mb-3 row">
-                        <label for="userName" class="form-label col-sm-3">
-                           <%- user.trans('User Name') %>:
-                        </label>
-                        <div class="col-sm-9">
-                           <input type="text" class="form-control dir-ltr" id="userName" />
-                        </div>
-                     </div>
-                     <div class="mb-3 row">
-                        <label for="email" class="form-label col-sm-3">
-                           <%- user.trans('Email') %>:
-                        </label>
-                        <div class="col-sm-9">
-                           <input type="email" class="form-control dir-ltr" id="email" placeholder="name@example.com" />
-                        </div>
-                     </div>
-                     <div class="mb-3 row">
-                        <label for="password" class="form-label col-sm-3">
-                           <%- user.trans('Password') %>:
-                        </label>
-                        <div class="col-sm-9">
-                           <input type="password" class="form-control dir-ltr" id="password" placeholder="" />
-                        </div>
-                     </div>
-                     <p class="mb-3 fs-5">
-                        <i class="fas fa-info-circle"></i>
-                        The computer and players who are assisted by the computer are not allowed to play. Please don't
-                        take help from database
-                        chess engines or other players while playing. Also, be careful that creating multiple user
-                        accounts is against the
-                        principles of the site.
-                     </p>
-                     <h3 class="mb-3">
-                        <%- user.trans('Agreements') %>:
-                     </h3>
-                     <div class="mb-3 d-flex justify-content-start">
-                        <div class="form-check form-switch">
-                           <input class="form-check-input float-none" type="checkbox" id="cheat" />
-                        </div>
-                        <span>
-                           I never get help from chess engines, databases or others during the game.
-                        </span>
-                     </div>
-                     <div class="mb-3 d-flex justify-content-start">
-                        <div class="form-check form-switch">
-                           <input class="form-check-input float-none" type="checkbox" id="respect" />
-                        </div>
-                        <span>
-                           We will respect each other in chats and communication.
-                        </span>
-                     </div>
-
-                     <button id="submitBtn" onclick="submitForm()" class="btn btn-primary mb-3" style="width: 100%">
-                        <%- user.trans('Register') %>
-                     </button>
-
-                  </div>
-                  <div class="wg-footer"></div>
-               </div>
+<div class="row justify-content-center" style="direction: ltr">
+  <div class="container">
+    <div class="text-right col-lg-7 mx-auto">
+      <div class="wg-box">
+        <div class="wg-title h4"><%- user.trans('Register') %>:</div>
+        <div class="wg-inner">
+          <div class="mb-3 mx-3 row">
+            <li id="formErrors" class="h6 d-none text-danger"></li>
+          </div>
+          <div class="mb-3 row">
+            <label for="userName" class="form-label col-sm-3">
+              <%- user.trans('User Name') %>:
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control dir-ltr" id="userName" />
             </div>
-         </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="email" class="form-label col-sm-3"> <%- user.trans('Email') %>: </label>
+            <div class="col-sm-9">
+              <input
+                type="email"
+                class="form-control dir-ltr"
+                id="email"
+                placeholder="name@example.com"
+              />
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="password" class="form-label col-sm-3">
+              <%- user.trans('Password') %>:
+            </label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control dir-ltr" id="password" placeholder="" />
+            </div>
+          </div>
+          <p class="mb-3 fs-5">
+            <i class="fas fa-info-circle"></i>
+            The computer and players who are assisted by the computer are not allowed to play.
+            Please don't take help from database chess engines or other players while playing. Also,
+            be careful that creating multiple user accounts is against the principles of the site.
+          </p>
+          <h3 class="mb-3"><%- user.trans('Agreements') %>:</h3>
+          <div class="mb-3 d-flex justify-content-start">
+            <div class="form-check form-switch">
+              <input class="form-check-input float-none" type="checkbox" id="cheat" />
+            </div>
+            <span> I never get help from chess engines, databases or others during the game. </span>
+          </div>
+          <div class="mb-3 d-flex justify-content-start">
+            <div class="form-check form-switch">
+              <input class="form-check-input float-none" type="checkbox" id="respect" />
+            </div>
+            <span> We will respect each other in chats and communication. </span>
+          </div>
+
+          <button
+            id="submitBtn"
+            onclick="submitForm()"
+            class="btn btn-primary mb-3"
+            style="width: 100%"
+          >
+            <%- user.trans('Register') %>
+          </button>
+        </div>
+        <div class="wg-footer">
+          <div class="mb-3 mx-4 fs-5" style="">
+            <a href="/user/recovery/"> <%- user.trans(' Forget Password ') %> </a>
+            <br />
+            <!-- <a> <%- user.trans(' Login With mail') %> </a> -->
+          </div>
+        </div>
       </div>
-      <script>
-         let erElement = document.getElementById('formErrors');
+    </div>
+  </div>
+</div>
+<script>
+  let erElement = document.getElementById('formErrors');
 
-         function submitForm() {
-            // let cheat = document.getElementById('cheat').checked;
-            // console.log(document.getElementById('cheat').checked);
-            if (!document.getElementById('cheat').checked ||
-               !document.getElementById('respect').checked
-            ) {
-               erElement.innerText = 'Confirm agreements first';
-               erElement.classList.remove('d-none');
-               return;
-            }
-            let email = document.getElementById('email').value;
-            let userName = document.getElementById('userName').value;
-            let password = document.getElementById('password').value;
-            if (userName.includes(' ') || password.includes(' ')) {
-               erElement.innerText = 'Do not use spaces for username or password';
-               erElement.classList.remove('d-none');
-               return;
+  function submitForm() {
+    // let cheat = document.getElementById('cheat').checked;
+    // console.log(document.getElementById('cheat').checked);
+    if (!document.getElementById('cheat').checked || !document.getElementById('respect').checked) {
+      erElement.innerText = 'Confirm agreements first';
+      erElement.classList.remove('d-none');
+      return;
+    }
+    let email = document.getElementById('email').value;
+    let userName = document.getElementById('userName').value;
+    let password = document.getElementById('password').value;
+    if (userName.includes(' ') || password.includes(' ')) {
+      erElement.innerText = 'Do not use spaces for username or password';
+      erElement.classList.remove('d-none');
+      return;
+    }
+    let obj = {
+      email,
+      userName,
+      password,
+    };
+    const submitBtn = document.getElementById('submitBtn');
+    const oldText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Please wait...';
+    function finishBtn() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = oldText;
+    }
 
-            }
-            let obj = {
-               email,
-               userName,
-               password,
-            };
-            const submitBtn = document.getElementById('submitBtn');
-            const oldText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Please wait...';
-            function finishBtn() {
-            submitBtn.disabled = false;
-            submitBtn.textContent = oldText;
-            }
+    sendJSON(obj, '/user/register', ok);
 
+    function ok(res) {
+      let resObj = JSON.parse(res);
 
-            sendJSON(obj, '/user/register', ok);
-
-            function ok(res) {
-               let resObj = JSON.parse(res);
-               
-               if (!resObj.state) {
-                  erElement.innerText = resObj.message;
-                  erElement.classList.remove('d-none');
-                  finishBtn();
-               } else {
-                  //  window.location.replace(resObj.message);
-                  window.location.href = resObj.message;
-                  // window.location.href = "http://www.w3schools.com";
-               }
-            }
-         }
-      </script>
-      <%- include('../../share/superfooter') -%>
+      if (!resObj.state) {
+        erElement.innerText = resObj.message;
+        erElement.classList.remove('d-none');
+        finishBtn();
+      } else {
+        window.location.href = resObj.message;
+      }
+    }
+  }
+</script>
+<%- include('../../share/superfooter') -%>

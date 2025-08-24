@@ -4,38 +4,53 @@ const ut = require('../utility');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const preregisterSchema = new mongoose.Schema({
-    email: { type: String, unique: true },
-    userName: { type: String, unique: true },
-    password: String,
-    time: Number,
-    link: String,
+  email: { type: String, unique: true },
+  userName: { type: String, unique: true },
+  password: String,
+  time: Number,
+  link: String,
+  passwordHash: { type: String },
+  passwordAlgo: { type: String, default: 'bcrypt' },
 });
 const Preregister = mongoose.model('Preregister', preregisterSchema);
-Preregister.isInDb = async function(email, userName) {
-    // to do expier time and delete from data base
-    let dbUser = await Preregister.findOne({ email: email });
-    if (dbUser)
-        return 'با این ایمیل ثبت نام انجام شده. برای فعال سازی ایمیل خود را چک کنید.';
-    dbUser = await Preregister.findOne({ userName: userName });
-    if (dbUser) return 'نام کاربری دیگری برای خود انتخاب کنید.';
-    // todo if is user database
-    dbUser = await user.findOne({ email: email });
-    if (dbUser)
-        return 'با این ایمیل ثبت نام انجام شده. از قسمت فراموشی رمز عبور یا ورود اقدام کنید.';
-    dbUser = await user.findOne({ userName: userName });
-    if (dbUser) return 'نام کاربری دیگری برای خود انتخاب کنید';
-    return false;
+Preregister.isInDb = async function (email, userName) {
+  let ansObj = { ans: true };
+  let dbUser = await Preregister.findOne({ email: email });
+  if (dbUser) {
+    // ansObj.ans = false;
+    // // return 'PreRegistration has been completed with this email. Check your email to activate. Or We can resend the activation email. Use resend button';
+    // ansObj.user = dbUser;
+    console.log('pre', dbUser);
+
+    await dbUser.deleteOne();
+  }
+  dbUser = await user.findOne({ email: email });
+  if (dbUser) {
+    ansObj.message =
+      'Registration has been completed with this email. Please use the Forgot Password or Login section.';
+    return ansObj;
+  }
+  dbUser = await Preregister.findOne({ userName: userName });
+  if (dbUser) {
+    console.log(dbUser);
+
+    ansObj.message = 'Choose another username for yourself1.';
+    return ansObj;
+  }
+  dbUser = await user.findOne({ userName: userName });
+  if (dbUser) {
+    ansObj.message = 'Choose another username for yourself';
+    return ansObj;
+  }
+  ansObj.ans = false;
+  return ansObj;
 };
-Preregister.getFromLink = async function(link) {
-    let dbUser = await Preregister.findOne({ link: link });
-    return dbUser;
+Preregister.getFromLink = async function (link) {
+  let dbUser = await Preregister.findOne({ link: link });
+  return dbUser;
 };
-Preregister.createNew = async function(preRegister) {
-    preRegister.time = Date.now();
-    preRegister.link =
-        preRegister.userName + preRegister.time + ut.getRndInteger(123456, 987654);
-    // preRegister.time = ut.getRndInteger (123456, 987654);
-    let dbPreRegister = new Preregister(preRegister);
-    return dbPreRegister.save();
+Preregister.createNew = async function (preRegister) {
+  let dbPreRegister = new Preregister(preRegister);
+  return dbPreRegister.save();
 };
 module.exports = Preregister;
