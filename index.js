@@ -128,184 +128,162 @@ app.get('/livegames/', (req, res) => {
 // const Swiss = require('./module/swiss/swiss');
 /// test÷
 
-io.on('connect', function (socket) {
-  // console.log('test on index.js'); // چرا قسمت زیر در سوکت و فایل ایندک خیلی تکرار میشود انگار همش داره بررسی میکنه که ارتباط برقراه
-  let userData = null;
-  let personalRoom = 'socketId';
-  /// حذف پایین با کمک چت زیرا گفته بود میشود قسمت زیر را پاک کرد
-  socket.use(async ([event, ...args], next) => {
-    // console.log('test on index.js');
-    userData = user.setUserObjFromCookies(socket.request.headers.cookie);
-    //
-    if (userData) {
-      userData.login = true;
-      personalRoom = 'user-' + userData.userName;
-      socket.join(personalRoom);
-    } else {
-      userData = { login: false };
-    }
-    // }
-    userData.socket = socket;
-    next();
-  });
+// ✅ فقط یک‌بار در زمان Handshake اجرا می‌شود
+io.use((socket, next) => {
+  const cookies = socket.handshake?.headers?.cookie || '';
+  const u = user.setUserObjFromCookies(cookies);
+  socket.data.user = u ? { ...u, login: true } : { login: false };
+
+  if (socket.data.user.login) {
+    socket.join(`user-${socket.data.user.userName}`);
+  }
+  next();
+});
+io.on('connection', function (socket) {
+  console.log('socket connected:', socket.id);
+
+  // --- دیگر نیازی به userData/personalRoom و socket.use نیست ---
+  // let userData = null;
+  // let personalRoom = 'socketId';
+
   socket.on('joinRoom', function (room, ack) {
-    // let roomName = roomNameMaker(data)
     socket.join(room);
     if (ack) ack();
-
-    // const arr = Array.from(io.sockets.adapter.rooms);
-    // // Filter rooms whose name exist in set:
-    // // ==> [['room1', Set(2)], ['room2', Set(2)]]
-    // const filtered = arr.filter(room => !room[1].has(room[0]))
-    // console.log('filtered',filtered);
-    // // Return only the room name:
-    // // ==> ['room1', 'room2']
-    // const res = filtered.map(i => i[0]);
-
-    // console.log('res:',res);
   });
+
   socket.on('leaveRoom', function (data, ack) {
     let roomName = roomNameMaker(data);
     socket.leave(roomName);
-    // ack();
   });
+
   socket.on('staticFile', async function (data, ack) {
     let data1 = await readFile('./module/' + data.address, 'utf8');
     socket.emit('staticFile', { text: data1 });
   });
-  //socket.on("disconnect", (reason) => {
-  //     // to do sent are you online to rome if get answer not set offline
-  //     user.setOnline(userData.userName, false);
-  //     io.emit('playerOnline', { userName: userData.userName, online: false });
-  // });
 
   socket.on('disconnect', (reason) => {
-    // to do sent are you online to rome if get answer not set offline
-    // if (userData) {
-    // user.setOnline(userData.userName, false);
+    // اگر لازم شد وضعیت آنلاین را مدیریت کنی، از socket.data.user استفاده کن
+    // if (socket.data.user?.login) {
+    //   user.setOnline(socket.data.user.userName, false);
+    //   io.emit('playerOnline', { userName: socket.data.user.userName, online: false });
     // }
-    // io.emit('playerOnline', { userName: userData.userName, online: false });
   });
-  socket.on('changeLanguage', function (data, ack) {
-    userRout.setUserLanguage(userData, data.lang).then(() => ack());
-  });
-  //ueser
 
+  socket.on('changeLanguage', function (data, ack) {
+    userRout.setUserLanguage(socket.data.user, data.lang).then(() => ack && ack());
+  });
+
+  // user
   socket.on('onlineUsers', async (obj, ack) => {
     let users = await user.getOnlinePlayers();
-    ack(users);
+    ack && ack(users);
   });
+
   socket.on('liveGames', async (obj, ack) => {
     let games;
-    if ('userName' in obj) {
+    if (obj && 'userName' in obj) {
       games = await gameRout.io.getLiveGames(obj.userName);
     } else {
       games = await gameRout.io.getLiveGames();
     }
-    ack(games);
+    ack && ack(games);
   });
+
   socket.on('topLiveGame', async (obj, ack) => {
     let game = await gameRout.io.getTopLiveGame();
-    ack(game);
+    ack && ack(game);
   });
 
-  socket.on('search', function (user, ack) {
-    userRout.io.getUsersFromDbWhithPublicData(user).then((answers) => {
-      console.log('dffdffd', answers);
-      ack(answers);
+  socket.on('search', function (q, ack) {
+    userRout.io.getUsersFromDbWhithPublicData(q).then((answers) => {
+      ack && ack(answers);
     });
   });
-  // userData;
+
   socket.on('chalenge', async function (data, ack) {
-    await chalenge.ioF(data, ack, userData);
+    await chalenge.ioF(data, ack, socket.data.user);
   });
 
-  // todo onle sender and reciver can cancel
+  // فقط فرستنده/گیرنده واقعی بتوانند لغو کنند (بعداً rules اضافه کن)
   socket.on('chat', async function (data, ack) {
-    await chat.ioF(data, ack, userData);
+    await chat.ioF(data, ack, socket.data.user);
   });
 
   socket.on('newGameData', function (gameId, ack) {
     socket.join('gameRome' + gameId);
     gameRout.io.getGameData(gameId).then((game) => {
       io.to('gameRome' + gameId).emit('gameData', { game });
-      if (game.result != '' || game.whiteResult) {
-        io.emit('gameFinished', game);
-      }
+      if (game.result !== '' || game.whiteResult) io.emit('gameFinished', game);
     });
   });
-  socket.on('userPubData', function (user, ack) {
-    userRout.io.getUserPublicData(user).then((ansers) => {
-      ack(ansers);
+
+  socket.on('userPubData', function (u, ack) {
+    userRout.io.getUserPublicData(u).then((answers) => {
+      ack && ack(answers);
     });
   });
+
   socket.on('gameMove', function (move, ack) {
     socket.join('gameRome' + move.gameId);
     gameRout.io.updateLastMove(move).then((game) => {
-      if (game) {
-        io.to('gameRome' + game._id).emit('gameData', { game });
-      }
-
-      ack('ansers');
+      if (game) io.to('gameRome' + game._id).emit('gameData', { game });
+      ack && ack('answers');
     });
   });
 
   socket.on('resign', function (gameId, ack) {
-    gameRout.io.resign(gameId, userData.userName).then((game1) => {
+    const un = socket.data.user?.userName;
+    gameRout.io.resign(gameId, un).then(() => {
       gameRout.io.getGameData(gameId).then((game) => {
         io.to('gameRome' + gameId).emit('gameData', { game });
-        if (game.result != '' || game.whiteResult) {
-          io.emit('gameFinished', game);
-        }
+        if (game.result !== '' || game.whiteResult) io.emit('gameFinished', game);
       });
     });
   });
+
   socket.on('offerDraw', function (obj, ack) {
-    gameRout.io.offerDraw(obj.game._id, userData.userName).then(() => {
+    const un = socket.data.user?.userName;
+    gameRout.io.offerDraw(obj.game._id, un).then(() => {
       gameRout.io.getGameData(obj.game._id).then((game) => {
         io.to('gameRome' + obj.game._id).emit('gameData', { game });
       });
     });
-    // io
-    //     .to('gameRome' + obj.game._id)
-    //     .emit('offerDraw', { game: obj.game, userName: obj.userName });
-    // ack('ansers');
   });
+
   socket.on('acceptDraw', function (gameId, ack) {
-    gameRout.io.acceptDraw(gameId).then((game2) => {
-      //
+    gameRout.io.acceptDraw(gameId).then(() => {
       gameRout.io.getGameData(gameId).then((game) => {
         io.to('gameRome' + gameId).emit('gameData', { game });
-        if (game.result != '' || game.whiteResult) {
-          io.emit('gameFinished', game);
-        }
+        if (game.result !== '' || game.whiteResult) io.emit('gameFinished', game);
       });
     });
   });
+
   socket.on('chatMessage', function (massage, ack) {
-    massage.userName = userData.userName;
+    massage.userName = socket.data.user?.userName;
     gameRout.io.setMessage(massage).then(() => {
       gameRout.io.getGameData(massage.gameId).then((game) => {
         io.to('gameRome' + massage.gameId).emit('gameData', { game });
       });
     });
   });
+
   // puzzle
-
   socket.on('newPuzzle', function (r, ack) {
-    puzzleRout.io.getNewPuzzle(userData.userName).then((puzzle) => {
-      // io.to ('gameRome' + gameId).emit ('gameData', {game});
+    const un = socket.data.user?.userName;
+    puzzleRout.io.getNewPuzzle(un).then((puzzle) => {
+      ack && ack(puzzle);
+    });
+  });
 
-      ack(puzzle);
-    });
-  });
   socket.on('puzzleAnswer', function (puzzle, ack) {
-    puzzle.userName = userData.userName;
-    puzzle.user = userData;
+    puzzle.userName = socket.data.user?.userName;
+    puzzle.user = socket.data.user;
     puzzleRout.io.updateAnswer(puzzle).then((rtChange) => {
-      ack(rtChange);
+      ack && ack(rtChange);
     });
   });
+
   /// call
   socket.on('callOffer', function (call) {
     io.to(call.callee).emit('offer', call);
@@ -314,57 +292,58 @@ io.on('connect', function (socket) {
     io.to(call.caller).emit('callAnswer', call);
   });
   socket.on('iceCandidate', function (call) {
-    // io.to (call.caller).emit ('callAnswer', call);
+    // ...
   });
+
   /// test
   socket.on('call', function (req) {
-    if (req.candidate.type == 'offer') {
+    if (req.candidate.type === 'offer') {
       io.to(req.users.callee).emit('call', req);
       return;
     }
     io.to(req.users.caller).emit('callAccepted', req);
   });
+
   socket.on('newCandidate', function (req) {
-    if (req.candidate.type == 'offer') {
+    if (req.candidate.type === 'offer') {
       io.to(req.users.callee).emit('newCandidate', req);
       return;
     }
     io.to(req.users.caller).emit('newCandidate', req);
   });
+
   // swiss tournament
   socket.on('swiss', async function (data, ack) {
-    await swissRout.ioF(data, ack, userData);
+    await swissRout.ioF(data, ack, socket.data.user);
   });
 
   // simull
   socket.on('simul', async function (data, ack) {
-    await simullRout.ioF(data, ack, userData);
+    await simullRout.ioF(data, ack, socket.data.user);
   });
+
   socket.on('creatSimull', function (simulData, ack) {
-    simullRout.io.creatSimull(simulData, userData);
-    ack(simulData);
-    // let pairing = require('./module/swiss/pairing');
-    // pairing.pair(pairing.pairingData.playersList, pairing.pairingData.tour)
-    // ack({ pairingData: pairing.pairingData });
+    simullRout.io.creatSimull(simulData, socket.data.user);
+    ack && ack(simulData);
   });
+
   socket.on('availableSimulls', async function (simullData, ack) {
-    let simuls = await simullRout.io.available(userData);
-    ack(simuls);
+    let simuls = await simullRout.io.available(socket.data.user);
+    ack && ack(simuls);
   });
+
   socket.on('joinSimull', async function (simullData) {
-    let join = await simullRout.io.join(userData, simullData);
-    if (join) {
-      io.emit('updateAvailableSimulls');
-    }
+    let join = await simullRout.io.join(socket.data.user, simullData);
+    if (join) io.emit('updateAvailableSimulls');
   });
+
   socket.on('withdrawSimull', async function (simullData) {
-    let withdraw = await simullRout.io.withdraw(userData, simullData);
-    if (withdraw) {
-      io.emit('updateAvailableSimulls');
-    }
+    let withdraw = await simullRout.io.withdraw(socket.data.user, simullData);
+    if (withdraw) io.emit('updateAvailableSimulls');
   });
+
   socket.on('startSimull', async function (simullData) {
-    let start = await simullRout.io.start(userData, simullData);
+    let start = await simullRout.io.start(socket.data.user, simullData);
     if (start) {
       io.emit('updateAvailableSimulls');
       io.emit('simullStarted');
@@ -372,31 +351,297 @@ io.on('connect', function (socket) {
   });
 
   socket.on('mySimullGames', async function (simullData, ack) {
-    let simuls = await simullRout.io.myGames(userData);
-    ack(simuls);
+    let simuls = await simullRout.io.myGames(socket.data.user);
+    ack && ack(simuls);
   });
+
   // searchIn games
   socket.on('searchInGames', async function (data, ack) {
     let games = await gameRout.io.searchInGames(data);
-    // let simuls = await simullRout.io.myGames(userData)
-    ack(games);
+    ack && ack(games);
   });
+
   // staticPages
   socket.on('creatStaticPage', async function (data, ack) {
-    // to do if not admin
     let ans = await adminRout.io.creatStaticPage(data);
-    // let simuls = await simullRout.io.myGames(userData)
-
-    ack(data);
+    ack && ack(data);
   });
-  socket.on('editStaticPage', async function (data, ack) {
-    // to do if not admin
-    let ans = await adminRout.io.editStaticPage(data);
-    // let simuls = await simullRout.io.myGames(userData)
 
-    ack(data);
+  socket.on('editStaticPage', async function (data, ack) {
+    let ans = await adminRout.io.editStaticPage(data);
+    ack && ack(data);
   });
 });
+
+// io.on('connection', function (socket) {
+//   console.log('test on index.js'); // چرا قسمت زیر در سوکت و فایل ایندک خیلی تکرار میشود انگار همش داره بررسی میکنه که ارتباط برقراه
+//   // let userData = null;
+//   // let personalRoom = 'socketId';
+//   // /// حذف پایین با کمک چت زیرا گفته بود میشود قسمت زیر را پاک کرد
+//   // socket.use(async ([event, ...args], next) => {
+//   //   // console.log('test on index.js');
+//   //   userData = user.setUserObjFromCookies(socket.request.headers.cookie);
+//   //   //
+//   //   if (userData) {
+//   //     userData.login = true;
+//   //     personalRoom = 'user-' + userData.userName;
+//   //     socket.join(personalRoom);
+//   //   } else {
+//   //     userData = { login: false };
+//   //   }
+//   //   // }
+//   //   userData.socket = socket;
+//   //   next();
+//   // });
+//   socket.on('joinRoom', function (room, ack) {
+//     // let roomName = roomNameMaker(data)
+//     socket.join(room);
+//     if (ack) ack();
+
+//     // const arr = Array.from(io.sockets.adapter.rooms);
+//     // // Filter rooms whose name exist in set:
+//     // // ==> [['room1', Set(2)], ['room2', Set(2)]]
+//     // const filtered = arr.filter(room => !room[1].has(room[0]))
+//     // console.log('filtered',filtered);
+//     // // Return only the room name:
+//     // // ==> ['room1', 'room2']
+//     // const res = filtered.map(i => i[0]);
+
+//     // console.log('res:',res);
+//   });
+//   socket.on('leaveRoom', function (data, ack) {
+//     let roomName = roomNameMaker(data);
+//     socket.leave(roomName);
+//     // ack();
+//   });
+//   socket.on('staticFile', async function (data, ack) {
+//     let data1 = await readFile('./module/' + data.address, 'utf8');
+//     socket.emit('staticFile', { text: data1 });
+//   });
+//   //socket.on("disconnect", (reason) => {
+//   //     // to do sent are you online to rome if get answer not set offline
+//   //     user.setOnline(userData.userName, false);
+//   //     io.emit('playerOnline', { userName: userData.userName, online: false });
+//   // });
+
+//   socket.on('disconnect', (reason) => {
+//     // to do sent are you online to rome if get answer not set offline
+//     // if (userData) {
+//     // user.setOnline(userData.userName, false);
+//     // }
+//     // io.emit('playerOnline', { userName: userData.userName, online: false });
+//   });
+//   socket.on('changeLanguage', function (data, ack) {
+//     userRout.setUserLanguage(userData, data.lang).then(() => ack());
+//   });
+//   //ueser
+
+//   socket.on('onlineUsers', async (obj, ack) => {
+//     let users = await user.getOnlinePlayers();
+//     ack(users);
+//   });
+//   socket.on('liveGames', async (obj, ack) => {
+//     let games;
+//     if ('userName' in obj) {
+//       games = await gameRout.io.getLiveGames(obj.userName);
+//     } else {
+//       games = await gameRout.io.getLiveGames();
+//     }
+//     ack(games);
+//   });
+//   socket.on('topLiveGame', async (obj, ack) => {
+//     let game = await gameRout.io.getTopLiveGame();
+//     ack(game);
+//   });
+
+//   socket.on('search', function (user, ack) {
+//     userRout.io.getUsersFromDbWhithPublicData(user).then((answers) => {
+//       console.log('dffdffd', answers);
+//       ack(answers);
+//     });
+//   });
+//   // userData;
+//   socket.on('chalenge', async function (data, ack) {
+//     await chalenge.ioF(data, ack, userData);
+//   });
+
+//   // todo onle sender and reciver can cancel
+//   socket.on('chat', async function (data, ack) {
+//     await chat.ioF(data, ack, userData);
+//   });
+
+//   socket.on('newGameData', function (gameId, ack) {
+//     socket.join('gameRome' + gameId);
+//     gameRout.io.getGameData(gameId).then((game) => {
+//       io.to('gameRome' + gameId).emit('gameData', { game });
+//       if (game.result != '' || game.whiteResult) {
+//         io.emit('gameFinished', game);
+//       }
+//     });
+//   });
+//   socket.on('userPubData', function (user, ack) {
+//     userRout.io.getUserPublicData(user).then((ansers) => {
+//       ack(ansers);
+//     });
+//   });
+//   socket.on('gameMove', function (move, ack) {
+//     socket.join('gameRome' + move.gameId);
+//     gameRout.io.updateLastMove(move).then((game) => {
+//       if (game) {
+//         io.to('gameRome' + game._id).emit('gameData', { game });
+//       }
+
+//       ack('ansers');
+//     });
+//   });
+
+//   socket.on('resign', function (gameId, ack) {
+//     gameRout.io.resign(gameId, userData.userName).then((game1) => {
+//       gameRout.io.getGameData(gameId).then((game) => {
+//         io.to('gameRome' + gameId).emit('gameData', { game });
+//         if (game.result != '' || game.whiteResult) {
+//           io.emit('gameFinished', game);
+//         }
+//       });
+//     });
+//   });
+//   socket.on('offerDraw', function (obj, ack) {
+//     gameRout.io.offerDraw(obj.game._id, userData.userName).then(() => {
+//       gameRout.io.getGameData(obj.game._id).then((game) => {
+//         io.to('gameRome' + obj.game._id).emit('gameData', { game });
+//       });
+//     });
+//     // io
+//     //     .to('gameRome' + obj.game._id)
+//     //     .emit('offerDraw', { game: obj.game, userName: obj.userName });
+//     // ack('ansers');
+//   });
+//   socket.on('acceptDraw', function (gameId, ack) {
+//     gameRout.io.acceptDraw(gameId).then((game2) => {
+//       //
+//       gameRout.io.getGameData(gameId).then((game) => {
+//         io.to('gameRome' + gameId).emit('gameData', { game });
+//         if (game.result != '' || game.whiteResult) {
+//           io.emit('gameFinished', game);
+//         }
+//       });
+//     });
+//   });
+//   socket.on('chatMessage', function (massage, ack) {
+//     massage.userName = userData.userName;
+//     gameRout.io.setMessage(massage).then(() => {
+//       gameRout.io.getGameData(massage.gameId).then((game) => {
+//         io.to('gameRome' + massage.gameId).emit('gameData', { game });
+//       });
+//     });
+//   });
+//   // puzzle
+
+//   socket.on('newPuzzle', function (r, ack) {
+//     puzzleRout.io.getNewPuzzle(userData.userName).then((puzzle) => {
+//       // io.to ('gameRome' + gameId).emit ('gameData', {game});
+
+//       ack(puzzle);
+//     });
+//   });
+//   socket.on('puzzleAnswer', function (puzzle, ack) {
+//     puzzle.userName = userData.userName;
+//     puzzle.user = userData;
+//     puzzleRout.io.updateAnswer(puzzle).then((rtChange) => {
+//       ack(rtChange);
+//     });
+//   });
+//   /// call
+//   socket.on('callOffer', function (call) {
+//     io.to(call.callee).emit('offer', call);
+//   });
+//   socket.on('callAccepted', function (call) {
+//     io.to(call.caller).emit('callAnswer', call);
+//   });
+//   socket.on('iceCandidate', function (call) {
+//     // io.to (call.caller).emit ('callAnswer', call);
+//   });
+//   /// test
+//   socket.on('call', function (req) {
+//     if (req.candidate.type == 'offer') {
+//       io.to(req.users.callee).emit('call', req);
+//       return;
+//     }
+//     io.to(req.users.caller).emit('callAccepted', req);
+//   });
+//   socket.on('newCandidate', function (req) {
+//     if (req.candidate.type == 'offer') {
+//       io.to(req.users.callee).emit('newCandidate', req);
+//       return;
+//     }
+//     io.to(req.users.caller).emit('newCandidate', req);
+//   });
+//   // swiss tournament
+//   socket.on('swiss', async function (data, ack) {
+//     await swissRout.ioF(data, ack, userData);
+//   });
+
+//   // simull
+//   socket.on('simul', async function (data, ack) {
+//     await simullRout.ioF(data, ack, userData);
+//   });
+//   socket.on('creatSimull', function (simulData, ack) {
+//     simullRout.io.creatSimull(simulData, userData);
+//     ack(simulData);
+//     // let pairing = require('./module/swiss/pairing');
+//     // pairing.pair(pairing.pairingData.playersList, pairing.pairingData.tour)
+//     // ack({ pairingData: pairing.pairingData });
+//   });
+//   socket.on('availableSimulls', async function (simullData, ack) {
+//     let simuls = await simullRout.io.available(userData);
+//     ack(simuls);
+//   });
+//   socket.on('joinSimull', async function (simullData) {
+//     let join = await simullRout.io.join(userData, simullData);
+//     if (join) {
+//       io.emit('updateAvailableSimulls');
+//     }
+//   });
+//   socket.on('withdrawSimull', async function (simullData) {
+//     let withdraw = await simullRout.io.withdraw(userData, simullData);
+//     if (withdraw) {
+//       io.emit('updateAvailableSimulls');
+//     }
+//   });
+//   socket.on('startSimull', async function (simullData) {
+//     let start = await simullRout.io.start(userData, simullData);
+//     if (start) {
+//       io.emit('updateAvailableSimulls');
+//       io.emit('simullStarted');
+//     }
+//   });
+
+//   socket.on('mySimullGames', async function (simullData, ack) {
+//     let simuls = await simullRout.io.myGames(userData);
+//     ack(simuls);
+//   });
+//   // searchIn games
+//   socket.on('searchInGames', async function (data, ack) {
+//     let games = await gameRout.io.searchInGames(data);
+//     // let simuls = await simullRout.io.myGames(userData)
+//     ack(games);
+//   });
+//   // staticPages
+//   socket.on('creatStaticPage', async function (data, ack) {
+//     // to do if not admin
+//     let ans = await adminRout.io.creatStaticPage(data);
+//     // let simuls = await simullRout.io.myGames(userData)
+
+//     ack(data);
+//   });
+//   socket.on('editStaticPage', async function (data, ack) {
+//     // to do if not admin
+//     let ans = await adminRout.io.editStaticPage(data);
+//     // let simuls = await simullRout.io.myGames(userData)
+
+//     ack(data);
+//   });
+// });
 function roomNameMaker(obj) {
   // let name = obj.root;
   // if (obj.id) roomString += '-' + obj.id;
