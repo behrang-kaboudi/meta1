@@ -40,3 +40,9 @@ Thumbs.db
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+
+
+react/vite-cache/
+react/dist/
+
+.cpanel.yml

@@ -8,8 +8,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=development nodemon index.js",
     "start": "NODE_ENV=production node index.js",
+    "dev": "concurrently -k -n VITE,API \"vite\" \"NODE_ENV=development nodemon index.js\"",
+    "build": "vite build",
     "debug": "nodemon --inspect index.js",
     "prepare": "husky",
     "lint": "eslint --cache index.js app.js module/**/*.js rout/**/*.js",
@@ -52,12 +53,16 @@
     "nodemailer": "^6.9.13",
     "pgn-parser": "^2.1.1",
     "public": "^0.1.5",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "sendmail": "^1.6.1",
     "socket.io": "^4.0.0",
     "stockfish": "^12.0.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.1",
+    "concurrently": "^9.2.0",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -65,6 +70,7 @@
     "globals": "^16.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "vite": "^7.1.3"
   }
 }

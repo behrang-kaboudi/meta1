@@ -6,4 +6,7 @@ deployment:
     - /bin/node -v && /bin/npm -v
     - /bin/npm ci --omit=dev || /bin/npm i --omit=dev
     - /bin/mkdir -p tmp
+    - npm run build # → react/dist ساخته می‌شود
+    - /bin/echo "Restarting app…"
     - /bin/touch tmp/restart.txt # سیگنال ری‌استارت Passenger
+
