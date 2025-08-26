@@ -29,6 +29,20 @@ const staticDesign = require('./public/components/staticDesign/design');
 
 app.use(userRout.setReqUser());
 
+const VITE_ORIGIN = process.env.VITE_ORIGIN || 'http://localhost:5173';
+app.use((req, res, next) => {
+  const dev = process.env.NODE_ENV !== 'production';
+  res.locals.dev = dev; // برای شرط‌های EJS
+  res.locals.viteOrigin = VITE_ORIGIN; // آدرس dev server
+
+  // به‌صورت پیش‌فرض برای همهٔ صفحات:
+  res.locals.loaderSrc = dev
+    ? `${VITE_ORIGIN}/src/loader.jsx` // DEV: از Vite
+    : '/assets/loader.js'; // PROD: از خروجی build
+
+  next();
+});
+
 // var id = 0;
 // var stockfish = require("./node_modules/stockfish/src/stockfish");
 // var stockfishes = [];

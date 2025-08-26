@@ -33,6 +33,10 @@ app.use('/public/', function (req, res, next) {
   }
   // next();
 });
+// درست: loader.js در ریشه‌ی dist است
+
+app.use('/assets', express.static(path.resolve(process.env.mainDir, 'react/dist')));
+
 // app.use(express.static('public'));
 // app.use('/public/', express.static('public'));
 // app.use('/public/', function (req, res, next) {

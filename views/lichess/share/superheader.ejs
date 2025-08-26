@@ -1,5 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+<% if (dev) { %>
+  <!-- React Refresh preamble (ضروری برای HMR ری‌اکت) -->
+  <script type="module">
+    import RefreshRuntime from '<%= viteOrigin %>/@react-refresh';
+    RefreshRuntime.injectIntoGlobalHook(window);
+    window.$RefreshReg$ = () => {};
+    window.$RefreshSig$ = () => (t) => t;
+    window.__vite_plugin_react_preamble_installed__ = true;
+  </script>
+  <!-- Vite HMR client -->
+  <script type="module" src="<%= viteOrigin %>/@vite/client"></script>
+<% } %>
+
 
 <% let template="lichess" %>
   <% user.trans=function (word){ if(!('dbProps' in user)) return word; return lang.getPhrase(word,user.lang); }
