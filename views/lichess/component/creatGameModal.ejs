@@ -161,7 +161,7 @@
       // return
     }
     let timeIncresment = timeIncresmentObj.value;
-    let opponentUserName = search.selectedUserForChalenge;
+    let opponentUserName = document.getElementById('selectedUserForChalenge').innerText.trim() //search.selectedUserForChalenge;
     let selectedColor = color;
     let obj = {
       gameTimeMins,
@@ -171,7 +171,6 @@
       selectedColor,
       rated
     };
-    console.log('', obj);
     socket.emit('chalenge', {
       signal: 'create',
       chalenge: obj

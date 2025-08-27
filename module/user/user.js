@@ -74,15 +74,15 @@ User.getOnlinePlayers = async function (userName, state) {
   return pubPlayers;
 };
 User.getUserLoginCookie = function (dbUser) {
-  let cooKie = jwt.sign(
-    { id: dbUser.id, userName: dbUser.userName, role: dbUser.role, lang: dbUser.lang },
-    config.get('jwt'),
-  );
+  let sendUser = { id: dbUser.id, userName: dbUser.userName, role: dbUser.role, lang: dbUser.lang };
+  let cooKie = jwt.sign(sendUser, config.get('jwt'));
+
   return cooKie;
 };
 User.setUserPublicData = function (user) {
   let pub = {};
   if (!user) return null; //TODO
+  pub.id = user._id;
   pub.userName = user.userName;
   pub.bullet = user.bullet;
   pub.blitz = user.blitz;

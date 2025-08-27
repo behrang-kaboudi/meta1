@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 const registry = {
   Hi: () => import('./islands/Hi.jsx'),
+  PlayerSearch: () => import('./islands/PlayerSearch/PlayerSearch.jsx'),
 };
 function mount(el) {
   const name = el.dataset.island;
