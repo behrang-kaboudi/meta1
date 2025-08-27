@@ -154,7 +154,7 @@ io.use((socket, next) => {
   next();
 });
 io.on('connection', function (socket) {
-  console.log('socket connected:', socket.id);
+  // console.log('socket connected:', socket.id);
 
   // --- دیگر نیازی به userData/personalRoom و socket.use نیست ---
   // let userData = null;

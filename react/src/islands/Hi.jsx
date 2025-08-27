@@ -1,3 +1,3 @@
-export default function Hi({ who = 'hissسسسs' }) {
+export default function Hi({ who = 'hi' }) {
   return <div style={{ fontWeight: 'bold' }}>{who}</div>;
 }
