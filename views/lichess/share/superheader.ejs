@@ -32,8 +32,6 @@
       <!-- <script src="/public/components/jq/jq.js"></script> -->
       <script src="/public/jquery/dist/jquery.min.js"></script>
       <link rel="stylesheet" href="/public/fonts/css/all.min.css" />
-      <!-- <link rel="stylesheet" href="/public/components/bootstrap/css/bootstrap.min.css" />
-            <script src="/public/components/bootstrap/js/bootstrap.bundle.min.js"></script> -->
       <link rel="stylesheet" href="/public/bootstrap/dist/css/bootstrap.min.css" />
       <script src="/public/bootstrap/dist/js/bootstrap.bundle.js"></script>
       <script src="/public/<%= template %>/js/main.js"></script>
@@ -44,20 +42,11 @@
 
       <script src="/public/socket.io/client-dist/socket.io.min.js"></script>
       <script src="/public/components/siteReact/sbk.js"></script>
-      <!-- <script src="/public/components/rtc/rtc.js"></script> -->
-      <!-- <link rel="shortcut icon" type="image/jpg" href="Favicon_Image_Location" /> -->
       <link rel="icon" type="image/x-icon" href="/public/favicon.png" />
     </head>
     <script>
       var socket;
-
-  // const R = React;
-  // const Rc = React.createElement;
-  // const Rs = React.useState;
-  // const Re = React.useEffect
-  // $(document).ready(function () {
-  //     rc = React.createElement;
-  // })React.useState
+      var pageEvs = new MyEvent();
     </script>
 
     <% if(user.login) { %>

@@ -1,4 +1,5 @@
 process.env.mainDir = __dirname;
+process.env.Template = '25';
 // require('events').EventEmitter.prototype._maxListeners = 100;
 process.setMaxListeners(2000);
 require('events').EventEmitter.prototype._maxListeners = 100;
@@ -109,12 +110,12 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   // res.render (config.get ('template') + '/page/home');
 
-  res.render(config.get('template') + '/page/home', { user: req.user });
+  res.render(config.get('template') + '/page/home' + process.env.Template, { user: req.user });
 });
 
 app.get('/test', (req, res) => {
   // res.render (config.get ('template') + '/page/home');
-  res.render(config.get('template') + '/page/test', { user: req.user });
+  res.render(config.get('template') + '/page/testboard', { user: req.user });
 });
 
 app.use('/tool/', toolRout);

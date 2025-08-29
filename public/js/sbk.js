@@ -20,6 +20,7 @@ let display = {
         document.getElementById(id).classList.remove('d-none');
     },
     hide: function (id) {
+        if(document.getElementById(id))
         document.getElementById(id).classList.add('d-none');
     },
     toggle: function (id) {

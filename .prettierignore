@@ -5,7 +5,7 @@ dist
 build
 coverage
 logs
-#public
+public
 #module
 #rout
 #views

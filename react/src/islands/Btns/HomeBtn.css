@@ -1,0 +1,64 @@
+.timeSets-main-part {
+  /* background-image: url("/public/lichess/img/LogoWaterMark.png");
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: 40vw;
+  background-position: center 0.4vw;
+  padding: 0; */
+}
+.timeSets-col {
+  padding-left: 1%;
+  padding-right: 1%;
+}
+
+.timeSets-box {
+  border-width: 1.663px;
+  border-style: solid;
+  border-radius: 4px;
+  height: 5.6vw;
+  width: 100%;
+  cursor: pointer;
+  padding: 9px;
+}
+.timeSets-box:hover {
+  background-color: rgba(250, 150, 0, 0.301);
+}
+
+.timeSets-box-dark {
+  border-color: rgb(198, 156, 109);
+  background-color: rgba(96, 57, 19, 0.2);
+}
+.timeSets-box-light {
+  border-color: rgb(177, 175, 175);
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.timeSets-text {
+  font-size: 1.2vw;
+  font-family: 'Arial';
+  color: rgb(64, 61, 51);
+  line-height: 1.183;
+  text-align: center;
+  cursor: pointer;
+}
+/* @media (min-width: 768px) and (max-width: 1023px) {
+    .timeSets-text {
+        font-size: 1.3vw;
+    }
+    } */
+
+@media (max-width: 1023px) {
+  .timeSets-box {
+    height: 17vw;
+    margin-bottom: 6px;
+  }
+  .timeSets-text {
+    font-size: 4vw;
+  }
+}
+.noSelect {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
