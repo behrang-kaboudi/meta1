@@ -2,6 +2,9 @@
   .dropdown-toggle::after {
     display: none;
   }
+    .topMenu-dark {
+    color: rgb(0, 0, 0);
+  }
 </style>
 <%- include('../component/creatFriendlyGameModal') -%>
   <%- include('../component/creatGameModal2') -%>
@@ -36,9 +39,9 @@
               }
             </style>
 
-            <ul class="navbar-nav mb-2 mb-lg-0">
+            <ul class="navbar-nav mb-2 mb-lg-0 ">
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                   aria-expanded="false">
                   <%- user.trans('Play') %>
                 </a>
@@ -88,6 +91,9 @@
                 <div class="dropdown-menu text-right" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item" href="#">
                     <%- user.trans('Basics') %>
+                <span style="color: red; font-size: 11px;">
+                  (soon..)
+                </span>
                   </a>
                   <!-- <div class="dropdown-divider"></div> -->
                   <!-- <a class="dropdown-item" href="#">شبکه یار مهربان</a> -->
@@ -96,25 +102,28 @@
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#">
                     <%- user.trans('Practice') %>
+                    <span style="color: red; font-size: 11px;">
+                      (soon..)
+                    </span>
                   </a>
-                  <div class="dropdown-divider"></div>
+                  <!-- <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#">
                     <%- user.trans('Co-ordinate') %>
                   </a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#">
                     <%- user.trans('Coaches') %>
-                  </a>
+                  </a> -->
                   <!-- <div class="dropdown-divider"></div> -->
                   <!-- <a class="dropdown-item" href="#">مربی ها</a> -->
                 </div>
               </li>
 
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                <!-- <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                   aria-expanded="false">
                   <%- user.trans('Videos') %>
-                </a>
+                </a> -->
 
                 <!-- <div class="dropdown-menu text-right" aria-labelledby="navbarDropdown"> -->
                 <!-- <a class="dropdown-item" href="#">شبکه یار مهربان</a> -->
