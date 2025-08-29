@@ -1,17 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <% if (dev) { %>
-  <!-- React Refresh preamble (ضروری برای HMR ری‌اکت) -->
+  <% const VITE_URL  = 'http://localhost:5173'; %>
+  <% const VITE_BASE = '/assets/'; %>
+
+  <!-- React Refresh preamble -->
   <script type="module">
-    import RefreshRuntime from '<%= viteOrigin %>/@react-refresh';
+    import RefreshRuntime from '<%= VITE_URL + VITE_BASE %>@react-refresh';
     RefreshRuntime.injectIntoGlobalHook(window);
     window.$RefreshReg$ = () => {};
-    window.$RefreshSig$ = () => (t) => t;
+    window.$RefreshSig$ = () => (type) => type;
     window.__vite_plugin_react_preamble_installed__ = true;
   </script>
+
   <!-- Vite HMR client -->
-  <script type="module" src="<%= viteOrigin %>/@vite/client"></script>
+  <script type="module" src="<%= VITE_URL + VITE_BASE %>@vite/client"></script>
+
+  <!-- Loader (dev) -->
+  <script type="module" src="<%= VITE_URL + VITE_BASE %>src/loader.jsx"></script>
+<% } else { %>
+  <!-- Loader (prod) -->
+  <script type="module" src="/assets/loader.js"></script>
 <% } %>
+
 
 
 <% let template="lichess" %>
