@@ -4,6 +4,7 @@ import path from 'node:path';
 
 export default defineConfig({
   root: 'react', // یعنی dev server ریشه‌اش پوشه‌ی react است
+  base: '/assets/',
   publicDir: false,
   plugins: [react()],
   cacheDir: 'vite-cache', // اختیاری: کش را از node_modules بیرون می‌برد

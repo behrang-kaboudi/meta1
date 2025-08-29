@@ -34,6 +34,8 @@ app.use('/public/', function (req, res, next) {
   // next();
 });
 // درست: loader.js در ریشه‌ی dist است
+const distDir = path.resolve(process.env.mainDir, 'react/dist');
+console.log('Static /assets =>', distDir, fs.existsSync(distDir) ? 'OK' : 'MISSING');
 
 app.use('/assets', express.static(path.resolve(process.env.mainDir, 'react/dist')));
 
