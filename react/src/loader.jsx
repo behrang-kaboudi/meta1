@@ -43,12 +43,12 @@ async function ensureCss(relPath) {
 
 /** 2) رجیستری: برای جزیره‌هایی که CSS دارند، مسیر CSS نسبی را بده */
 const registry = {
-  Hi: { load: () => import('./islands/Hi.jsx'), css: './islands/Hi.css' },
+  Hi: { load: () => import('./islands/Hi.jsx') },
   PlayerSearch: {
     load: () => import('./islands/PlayerSearch/PlayerSearch.jsx'),
-    css: './islands/PlayerSearch/PlayerSearch.css',
   },
   HomeBtn: { load: () => import('./islands/Btns/HomeBtn.jsx'), css: './islands/Btns/HomeBtn.css' },
+  RChessboard: { load: () => import('./islands/Chessboards/Chessboard.jsx') },
 };
 
 function mount(el) {

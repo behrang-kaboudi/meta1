@@ -1,0 +1,77 @@
+.cb-wrap {
+  position: relative;
+  /* جا برای برچسب‌ها */
+  /* margin-left: var(--cb-rankGutter); */
+  width: 100%;
+  /* max-width: 520px; دلخواه */
+  padding-top: var(--cb-gutter);
+  padding-bottom: var(--cb-gutter);
+  padding-left: var(--cb-rankGutter);
+  padding-right: var(--cb-rankGutter);
+
+  /* padding-bottom: var(--cb-gutter); */
+}
+
+.cb-board > div {
+  width: 100%;
+} /* برد ریسپانسیوِ خودِ کتابخانه */
+
+.cb-overlay {
+  position: absolute;
+  inset: 0; /* کل بافر را می‌پوشاند */
+  pointer-events: none; /* مزاحم درَگ/دراپ نشود */
+  /* font-size: 1em; */
+  font-size: clamp(1rem, 1.5vw, 1.3rem);
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.75);
+  text-transform: uppercase;
+}
+
+/* ردیف‌های فایل‌ها بالا/پایین */
+.cb-files {
+  position: absolute;
+  left: var(--cb-rankGutter);
+  right: var(--cb-rankGutter);
+  height: 1.2em;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  justify-items: center;
+}
+.cb-top {
+  top: 0;
+  transform: translateY(calc(-1 * var(--cb-gutter)));
+}
+.cb-bottom {
+  bottom: 0;
+  transform: translateY(calc(var(--cb-gutter) * 1.1));
+}
+
+/* ستون‌های رَنک‌ها چپ/راست */
+.cb-ranks {
+  position: absolute;
+  /* line-height: 1; 👈 اینجا خیلی مهمه */
+  top: var(--cb-gutter);
+  bottom: var(--cb-gutter);
+  margin-top: calc(var(--cb-gutter) * 1);
+  margin-bottom: calc(var(--cb-gutter) * 1);
+  width: 1.2em;
+  display: grid;
+  grid-template-rows: repeat(8, 1fr);
+  align-items: center;
+  justify-items: center;
+}
+.cb-ranks span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* هر span کل خانه رو بگیره */
+  line-height: 1; /* متن دقیقاً وسط */
+}
+.cb-left {
+  left: 0;
+  transform: translateX(calc(-1 * var(--cb-rankGutter)));
+}
+.cb-right {
+  right: 0;
+  transform: translateX(var(--cb-rankGutter));
+}

@@ -54,6 +54,7 @@
     "pgn-parser": "^2.1.1",
     "public": "^0.1.5",
     "react": "^19.1.1",
+    "react-chessboard": "^5.5.0",
     "react-dom": "^19.1.1",
     "sendmail": "^1.6.1",
     "socket.io": "^4.0.0",
