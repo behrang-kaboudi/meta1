@@ -139,7 +139,11 @@
     <div data-island="HomeBtn" data-props='{"labelText":"Train Endgame"}'></div>
   </div>
   <div class="liveBoard1 mx-2"><%- include('../component/puzzleOfDay') -%></div>
-  <div class="liveBoard2 mx-2"><%- include('../component/topLiveGame') -%></div>
+  <div class="liveBoard2">
+    <div data-island="RChessboard" data-props='{"initialOrientation":"white"}'></div>
+
+    <p>Live Board Soon!!!!</p>
+  </div>
 
   <div class="carousel m-1 grid-item"><%- include('../component/mainCarousel') -%></div>
   <div class="counter mx-3 d-flex justify-content-between align-items-center">
@@ -205,6 +209,7 @@
     window.location.href = '/simull/main';
   });
 </script>
-
+<!-- <div data-island="RChessboard" data-props="{}"></div> -->
 <style></style>
+
 <%- include('../share/superfooter') -%>
