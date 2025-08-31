@@ -1,27 +1,26 @@
 .cb-wrap {
   position: relative;
-  /* جا برای برچسب‌ها */
-  /* margin-left: var(--cb-rankGutter); */
   width: 100%;
-  /* max-width: 520px; دلخواه */
   padding-top: var(--cb-gutter);
   padding-bottom: var(--cb-gutter);
-  padding-left: var(--cb-rankGutter);
-  padding-right: var(--cb-rankGutter);
-
-  /* padding-bottom: var(--cb-gutter); */
+}
+.cb-board {
+  display: flex; /* برای لِی‌اوت کلی لازم داری */
+  align-items: flex-start;
 }
 
+.cb-inner {
+  display: inline-block; /* shrink-wrap */
+  max-width: 100%;
+}
 .cb-board > div {
   width: 100%;
 } /* برد ریسپانسیوِ خودِ کتابخانه */
-
 .cb-overlay {
   position: absolute;
   inset: 0; /* کل بافر را می‌پوشاند */
   pointer-events: none; /* مزاحم درَگ/دراپ نشود */
-  /* font-size: 1em; */
-  font-size: clamp(1rem, 1.5vw, 1.3rem);
+  font-size: var(--cb-font);
   line-height: 1;
   color: rgba(0, 0, 0, 0.75);
   text-transform: uppercase;
@@ -30,48 +29,54 @@
 /* ردیف‌های فایل‌ها بالا/پایین */
 .cb-files {
   position: absolute;
-  left: var(--cb-rankGutter);
-  right: var(--cb-rankGutter);
-  height: 1.2em;
+  /* left: var(--cb-gutter);
+  right: var(--cb-gutter); */
+  font-size: calc(var(--cb-font) * 0.55);
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   justify-items: center;
-}
-.cb-top {
-  top: 0;
-  transform: translateY(calc(-1 * var(--cb-gutter)));
+  width: 100%;
 }
 .cb-bottom {
   bottom: 0;
-  transform: translateY(calc(var(--cb-gutter) * 1.1));
 }
+@media (min-width: 768px) {
+  .cb-wrap-parent {
+    padding: 2px;
+  }
+  .cb-wrap {
+    padding-left: var(--cb-gutter);
+    padding-right: var(--cb-gutter);
+    border: solid 1px;
+  }
 
-/* ستون‌های رَنک‌ها چپ/راست */
-.cb-ranks {
-  position: absolute;
-  /* line-height: 1; 👈 اینجا خیلی مهمه */
-  top: var(--cb-gutter);
-  bottom: var(--cb-gutter);
-  margin-top: calc(var(--cb-gutter) * 1);
-  margin-bottom: calc(var(--cb-gutter) * 1);
-  width: 1.2em;
-  display: grid;
-  grid-template-rows: repeat(8, 1fr);
-  align-items: center;
-  justify-items: center;
+  .cb-ranks {
+    position: absolute;
+    top: var(--cb-gutter);
+    bottom: var(--cb-gutter);
+    display: grid;
+    grid-template-rows: repeat(8, 1fr);
+    align-items: center;
+    justify-items: center;
+    left: 0;
+    margin: calc(var(--cb-gutter) * 0.1);
+    padding-top: calc(var(--cb-gutter) * 0.5);
+  }
+  .cb-files {
+    font-size: calc(var(--cb-font) * 0.8);
+    padding-left: var(--cb-gutter);
+    padding-right: var(--cb-gutter);
+  }
+  .cb-bottom {
+    margin-bottom: calc(-1 * (var(--cb-gutter) * 0.15));
+  }
 }
-.cb-ranks span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%; /* هر span کل خانه رو بگیره */
-  line-height: 1; /* متن دقیقاً وسط */
-}
-.cb-left {
-  left: 0;
-  transform: translateX(calc(-1 * var(--cb-rankGutter)));
-}
-.cb-right {
-  right: 0;
-  transform: translateX(var(--cb-rankGutter));
+@media (max-width: 769px) {
+  .cb-ranks {
+    display: none;
+  }
+  .cb-bottom {
+    margin-bottom: calc((var(--cb-gutter) * 0.1));
+    border-bottom: solid 1px;
+  }
 }
