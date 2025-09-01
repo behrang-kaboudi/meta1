@@ -1,5 +1,13 @@
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 process.env.mainDir = __dirname;
 process.env.Template = '25';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+
 // require('events').EventEmitter.prototype._maxListeners = 100;
 process.setMaxListeners(2000);
 require('events').EventEmitter.prototype._maxListeners = 100;

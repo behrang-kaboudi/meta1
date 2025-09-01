@@ -20,7 +20,7 @@ function mediaCreator(className,main,lg='') {
     `;
     return media;
 }
-ejsDesign={}
+const ejsDesign={}
 ejsDesign.gameTypeIcon = (strTime,sizePercent) => {
     let fileName='';
     switch (strTime) {

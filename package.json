@@ -2,6 +2,10 @@
   "name": "metachessmind",
   "version": "1.0.0",
   "description": "Improve at chess",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
   "repository": {
     "private": true
   },
