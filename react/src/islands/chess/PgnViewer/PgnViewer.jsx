@@ -5,8 +5,8 @@ export default function PgnViewer({ pgnText = '', onReady, debug = false }) {
   const enriched = useMemo(() => {
     let game = null;
     game = enrichPgn(pgnText);
+    return game;
   }, [pgnText]);
-
   // حالت مشاهدهٔ سریع برای دیباگ
   if (!debug) return null;
   return (

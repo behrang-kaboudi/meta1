@@ -49,6 +49,7 @@ const registry = {
   },
   HomeBtn: { load: () => import('./islands/Btns/HomeBtn.jsx'), css: './islands/Btns/HomeBtn.css' },
   RChessboard: { load: () => import('./islands/Chessboards/Chessboard.jsx') },
+  PgnViewer: { load: () => import('./islands/chess/PgnViewer/PgnViewer.jsx') },
 };
 
 function mount(el) {
