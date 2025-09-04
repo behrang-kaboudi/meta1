@@ -14,6 +14,75 @@ mongoose
   .catch((err) => console.error('[mongo] connection error:', err.message));
 
 const app = express();
+
+// rout/mainRout.js  (بالای فایل، بعد از const app = express();)
+const crypto = require('crypto');
+const express = require('express');
+const { exec } = require('child_process');
+
+// فقط برای این مسیر raw-body می‌گیریم تا امضا دقیقاً روی بایت‌های اصلی محاسبه شود
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  try {
+    const secret = process.env.GH_WEBHOOK_SECRET || '';
+    const sig = req.get('x-hub-signature-256') || '';
+    const event = req.get('x-github-event') || '';
+    if (event !== 'push') return res.status(202).send('ignored');
+
+    // req.body اینجـا باید Buffer باشد؛ چون express.raw برای همین مسیر ست شده
+    const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(req.body).digest('hex');
+
+    // مقایسه‌ی امن
+    if (
+      !sig ||
+      expected.length !== sig.length ||
+      !crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig))
+    ) {
+      return res.status(403).send('bad signature');
+    }
+
+    const payload = JSON.parse(req.body.toString('utf8'));
+    const BRANCH = process.env.DEPLOY_BRANCH || 'main';
+    if ((payload.ref || '') !== `refs/heads/${BRANCH}`)
+      return res.status(202).send('ignored branch');
+
+    // جلوگیری از ران موازی
+    if (app.locals.__deploying) return res.status(202).send('deploy already running');
+    app.locals.__deploying = true;
+
+    // مسیرها را از env بگیر (بهتر و قابل تغییر)
+    const HOME = process.env.HOME || '/home/metaches';
+    const REPO_PATH = process.env.DEPLOY_REPO_PATH || '/home/metaches/metaMain';
+    const NODE_BIN = process.env.NODE_BIN || '/home/metaches/.nvm/versions/node/v22.14.0/bin';
+
+    const script = `
+      set -e
+      export HOME=${HOME}
+      export PATH=${NODE_BIN}:$PATH
+      cd ${REPO_PATH}
+      git fetch --all
+      git reset --hard origin/${BRANCH}
+      npm ci
+      npm run build --if-present
+      pm2 startOrReload ecosystem.config.js
+      pm2 save
+    `;
+
+    exec(`bash -lc ${JSON.stringify(script)}`, { timeout: 10 * 60_000 }, (err, stdout, stderr) => {
+      app.locals.__deploying = false;
+      if (err) {
+        console.error('DEPLOY ERROR:', err?.message, stderr);
+        return res.status(500).send('deploy failed');
+      }
+      console.log('DEPLOY OK:\n', stdout);
+      res.send('ok');
+    });
+  } catch (e) {
+    app.locals.__deploying = false;
+    console.error('WEBHOOK ERROR:', e);
+    res.status(500).send('error');
+  }
+});
+
 app.use('/public/', function (req, res, next) {
   let reqAddress = path.normalize(req.originalUrl).replace(/%20/g, ' ');
   reqAddress = path.normalize(reqAddress); //.replace(/\\/g, '/');
