@@ -4,7 +4,81 @@ process.env.Template = '25';
 process.setMaxListeners(2000);
 require('events').EventEmitter.prototype._maxListeners = 100;
 
+/// اگر جای دیگری json parser داری، آن را بعد از این روت اضافه کن:
+// app.use(express.json());
+
 const { app, io } = require('./rout/mainRout');
+
+// بالای فایل:
+const express = require('express');
+const crypto = require('crypto');
+const { exec } = require('child_process');
+
+// مسیرهای سرور خودت را دقیق کن:
+const HOME = '/home/metaches';
+const REPO_PATH = '/home/metaches/metaMain';
+const BRANCH = 'main';
+
+// اگر Node/PM2 با nvm اجرا می‌شوند، مسیر باینری را صراحتاً در PATH بگذار
+const NODE_BIN = `${HOME}/.nvm/versions/node/v22.14.0/bin`; // یا v22.x اگر الان با 22 کار می‌کنی
+
+// --- Webhook برای GitHub (HMAC-SHA256 + raw body) ---
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  try {
+    const secret = process.env.GH_WEBHOOK_SECRET || 'PUT-A-RANDOM-SECRET-HERE';
+    const sig = req.header('x-hub-signature-256') || '';
+    const event = req.header('x-github-event') || '';
+
+    // فقط push
+    if (event !== 'push') return res.status(202).send('ignored');
+
+    // اعتبارسنجی امضا
+    const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(req.body).digest('hex');
+    const ok = sig && crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig));
+    if (!ok) return res.status(403).send('bad signature');
+
+    // بررسی برنچ
+    const payload = JSON.parse(req.body.toString('utf8'));
+    if ((payload.ref || '') !== `refs/heads/${BRANCH}`) {
+      return res.status(202).send('ignored branch');
+    }
+
+    // جلوگیری از ران موازی
+    if (global.__deploying) return res.status(202).send('deploy already running');
+    global.__deploying = true;
+
+    // اسکریپت دیپلوی
+    const script = `
+      set -e
+      export HOME=${HOME}
+      export PATH=${NODE_BIN}:$PATH
+      cd ${REPO_PATH}
+      git fetch --all
+      git reset --hard origin/${BRANCH}
+      # اگر ریپو private است، باید origin با PAT یا Deploy Key تنظیم شود
+      npm ci
+      npm run build --if-present
+      pm2 startOrReload ecosystem.config.js
+      pm2 save
+    `;
+
+    exec(`bash -lc ${JSON.stringify(script)}`, { timeout: 10 * 60_000 }, (err, stdout, stderr) => {
+      global.__deploying = false;
+      if (err) {
+        console.error('DEPLOY ERROR:', err, stderr);
+        return res.status(500).send('deploy failed');
+      }
+      console.log('DEPLOY OK:\n', stdout);
+      res.send('ok');
+    });
+  } catch (e) {
+    global.__deploying = false;
+    console.error(e);
+    res.status(500).send('error');
+  }
+});
+/// تا اینجا برای Webhook
+
 const fs = require('fs');
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
