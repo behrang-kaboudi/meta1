@@ -8,54 +8,55 @@ require('events').EventEmitter.prototype._maxListeners = 100;
 // app.use(express.json());
 
 const { app, io } = require('./rout/mainRout');
-
-// بالای فایل:
+// --- Webhook برای GitHub (HMAC-SHA256 + raw body با fallback) ---
 const express = require('express');
 const crypto = require('crypto');
 const { exec } = require('child_process');
 
-// مسیرهای سرور خودت را دقیق کن:
 const HOME = '/home/metaches';
 const REPO_PATH = '/home/metaches/metaMain';
 const BRANCH = 'main';
+// اگر Node/PM2 با نسخهٔ دیگری اجراست، این مسیر را مطابق همان نسخه اصلاح کن
+const NODE_BIN = `${HOME}/.nvm/versions/node/v22.14.0/bin`;
 
-// اگر Node/PM2 با nvm اجرا می‌شوند، مسیر باینری را صراحتاً در PATH بگذار
-const NODE_BIN = `${HOME}/.nvm/versions/node/v22.14.0/bin`; // یا v22.x اگر الان با 22 کار می‌کنی
-
-// --- Webhook برای GitHub (HMAC-SHA256 + raw body) ---
 app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
   try {
     const secret = process.env.GH_WEBHOOK_SECRET || 'PUT-A-RANDOM-SECRET-HERE';
-    const sig = req.header('x-hub-signature-256') || '';
-    const event = req.header('x-github-event') || '';
-
-    // فقط push
+    const sig = req.get('x-hub-signature-256') || '';
+    const event = req.get('x-github-event') || '';
     if (event !== 'push') return res.status(202).send('ignored');
 
-    // اعتبارسنجی امضا
-    const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(req.body).digest('hex');
-    const ok = sig && crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig));
-    if (!ok) return res.status(403).send('bad signature');
+    // 🔧 Fallback: هرطور شده rawBody را Buffer می‌کنیم
+    const rawBody = Buffer.isBuffer(req.body)
+      ? req.body
+      : typeof req.body === 'string'
+        ? Buffer.from(req.body, 'utf8')
+        : Buffer.from(JSON.stringify(req.body || {}), 'utf8');
 
-    // بررسی برنچ
-    const payload = JSON.parse(req.body.toString('utf8'));
-    if ((payload.ref || '') !== `refs/heads/${BRANCH}`) {
-      return res.status(202).send('ignored branch');
+    // امضا (HMAC-SHA256 روی بادیِ خام)
+    const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+    if (
+      !sig ||
+      expected.length !== sig.length ||
+      !crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig))
+    ) {
+      return res.status(403).send('bad signature');
     }
 
-    // جلوگیری از ران موازی
+    const payload = JSON.parse(rawBody.toString('utf8'));
+    if ((payload.ref || '') !== `refs/heads/${BRANCH}`)
+      return res.status(202).send('ignored branch');
+
     if (global.__deploying) return res.status(202).send('deploy already running');
     global.__deploying = true;
 
-    // اسکریپت دیپلوی
     const script = `
       set -e
       export HOME=${HOME}
-      export PATH=${NODE_BIN}:$PATH
+      export PATH=${NODE_BIN}:\$PATH
       cd ${REPO_PATH}
       git fetch --all
       git reset --hard origin/${BRANCH}
-      # اگر ریپو private است، باید origin با PAT یا Deploy Key تنظیم شود
       npm ci
       npm run build --if-present
       pm2 startOrReload ecosystem.config.js
@@ -65,7 +66,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
     exec(`bash -lc ${JSON.stringify(script)}`, { timeout: 10 * 60_000 }, (err, stdout, stderr) => {
       global.__deploying = false;
       if (err) {
-        console.error('DEPLOY ERROR:', err, stderr);
+        console.error('DEPLOY ERROR:', err?.message, stderr);
         return res.status(500).send('deploy failed');
       }
       console.log('DEPLOY OK:\n', stdout);
@@ -73,10 +74,11 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
     });
   } catch (e) {
     global.__deploying = false;
-    console.error(e);
+    console.error('WEBHOOK ERROR:', e);
     res.status(500).send('error');
   }
 });
+
 /// تا اینجا برای Webhook
 
 const fs = require('fs');
