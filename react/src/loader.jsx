@@ -23,7 +23,12 @@ import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 
 /** 1) همه‌ی CSSها: در prod، Vite URL نهایی هَش‌دار را برمی‌گرداند */
-const cssMap = import.meta.glob('./**/*.css', { as: 'url' });
+// const cssMap = import.meta.glob('./**/*.css', { as: 'url' });
+const cssMap = import.meta.glob(['./**/*.css', '!./**/*.module.css'], {
+  query: '?url',
+  import: 'default',
+  eager: false,
+});
 
 async function ensureCss(relPath) {
   if (!import.meta.env.PROD) return; // dev را خود Vite هندل می‌کند
@@ -47,9 +52,15 @@ const registry = {
   PlayerSearch: {
     load: () => import('./islands/PlayerSearch/PlayerSearch.jsx'),
   },
-  HomeBtn: { load: () => import('./islands/Btns/HomeBtn.jsx'), css: './islands/Btns/HomeBtn.css' },
+  HomeBtn: {
+    load: () => import('./islands/Btns/HomeBtn.jsx'),
+    //  css: './islands/Btns/HomeBtn.css'
+  },
   RChessboard: { load: () => import('./islands/Chessboards/Chessboard.jsx') },
-  PgnViewer: { load: () => import('./islands/chess/PgnViewer/PgnViewer.jsx') },
+  PgnViewer: {
+    load: () => import('./islands/chess/PgnViewer/PgnViewer.jsx'),
+    // css: './islands/chess/PgnViewer/PgnViewer.module.css',
+  },
 };
 
 function mount(el) {

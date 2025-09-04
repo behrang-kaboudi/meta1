@@ -1,0 +1,372 @@
+<%- include('../../share/superheader') -%> <%- include('../../component/mainnav') -%> <% let
+template="lichess" %>
+<title>Meet the Minds Behind MetaMind</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: linear-gradient(to bottom right, #f9f6ef, #e9ddc9);
+    color: #333;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    width: 99%;
+    margin: 0 auto;
+  }
+</style>
+
+<style>
+  .secTeam {
+    display: grid;
+    text-align: center;
+    /* padding: 1vw 2rem; */
+    width: 95%;
+    margin: 0 auto;
+
+    /* background-image: url('/public/img/bgTeam.webp'); */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 12px;
+    inset: 0;
+  }
+  @media (min-width: 768px) and (max-width: 1250px) {
+    .secTeam {
+      grid-template-columns: 50% 50%;
+    }
+    .teamHeader {
+      grid-column: 1 / span 2; /* start Col Num / length */
+    }
+  }
+  @media (min-width: 1250px) {
+    .secTeam {
+      grid-template-columns: 25% 25% 25% 25%;
+    }
+    .teamHeader {
+      padding-top: 40px;
+      padding-bottom: -10px;
+      grid-column: 1 / span 4; /* start Col Num / length */
+      height: auto;
+    }
+  }
+
+  .team-section h1 {
+    margin-top: 4rem;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .section-heading {
+    font-weight: 800;
+    background: linear-gradient(90deg, #ce4500, #ee0000); /* بنفش-آبی گرادیانت */
+    -webkit-background-clip: text;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+    margin-bottom: 2rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    display: inline-block;
+    /* color: #ab9687; */
+    font-size: 2.5rem;
+    /* background: linear-gradient(to bottom, #f4f4f4, #f0ece6); */
+  }
+  .card1 {
+    background: linear-gradient(to bottom, #f4f4f4, #f0ece6);
+    width: 90%;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    font-family: 'Segoe UI', sans-serif;
+    margin-bottom: 10px;
+  }
+  .chess-icon1 {
+    font-size: 4.5rem;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    opacity: 0.2;
+    position: static;
+    margin: -20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4b2e10; /* قهوه‌ای تیره */
+    font-weight: bold;
+  }
+  .avatar1 {
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 1rem auto;
+    border: 3px solid #d8cfc1;
+  }
+
+  .name1 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #3e3224;
+    margin-top: 0.5rem;
+  }
+
+  .role1 {
+    font-size: 1rem;
+    color: #7e6a4d;
+    margin-bottom: 1rem;
+  }
+
+  .tags1 {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag1 {
+    background-color: #e5dbcd;
+    color: #5a4a35;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+  }
+</style>
+<section class="secTeam" style="direction: ltr">
+  <div class="teamHeader">
+    <h1 class="section-heading">Meet the Minds Behind MetaMind</h1>
+  </div>
+  <div class="teamBeh">
+    <div class="card1 mx-auto">
+      <div class="chess-icon1">♞</div>
+      <img class="avatar1" src="/public/img/team/behrang.jpeg" alt="Behrang Kaboudi" />
+      <div class="name1">Behrang Kaboudi</div>
+      <div class="role1">CEO - Developer</div>
+      <div class="tags1">
+        <div class="tag1">Node.js</div>
+        <div class="tag1">Socket.IO</div>
+        <div class="tag1">MongoDB</div>
+      </div>
+      <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35">
+        Behrang, known as the 'Knight of Code', profesional chess player and coach is a passionate
+        back-end developer with deep expertise in JavaScript, scalable APIs, and real-time apps. He
+        powers MetaMind's infrastructure and loves solving chess challenges through code.
+        <br />
+      </p>
+      <a
+        href="https://www.linkedin.com/in/behrangkaboudi/"
+        target="_blank"
+        style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem"
+        >LinkedIn Profile</a
+      >
+    </div>
+  </div>
+  <div class="teamEli">
+    <div class="card1 mx-auto">
+      <div class="chess-icon1">♛</div>
+      <img class="avatar1" src="/public/img/team/elham.jpeg" alt="Elham Shourabi" />
+      <div class="name1">Elham Shourabi</div>
+      <div class="role1">CMO-Chief Marketing Officer</div>
+      <div class="tags1">
+        <div class="tag1">Marketing</div>
+        <div class="tag1">Strategy</div>
+        <div class="tag1">Branding</div>
+      </div>
+      <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35">
+        Elham, known as the 'Queen of MetaMind', is a strategic marketing expert. She leads
+        MetaMind’s brand vision, international outreach, and community development. She has mentored
+        more than 50 startup teams, judged innovation events, and developed bilingual digital
+        platforms.
+        <br />
+      </p>
+      <a
+        href="https://www.linkedin.com/in/ellie-shourabi/"
+        target="_blank"
+        style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem"
+        >LinkedIn Profile</a
+      >
+    </div>
+  </div>
+  <div class="teamMoh">
+    <div class="card1 mx-auto">
+      <div class="chess-icon1">♝</div>
+      <img class="avatar1" src="/public/img/team/khodaii.jpeg" alt="Mohammadreza Khodaie" />
+      <div class="name1">Mohammadreza Khodaie</div>
+      <div class="role1">Product Manager</div>
+      <div class="tags1">
+        <div class="tag1">Strategy</div>
+        <div class="tag1">Roadmap</div>
+        <div class="tag1">User Insight</div>
+      </div>
+      <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35">
+        Mohammadreza, the 'Bishop of vision', connects insight with execution. With over a decade in
+        product management, he aligns market needs with engineering excellence to ensure
+        impact-driven delivery.
+        <br />
+      </p>
+      <a
+        href="https://www.linkedin.com/in/mohammad-reza-khodaei/"
+        target="_blank"
+        style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem"
+        >LinkedIn Profile</a
+      >
+    </div>
+  </div>
+  <div class="teamRaz">
+    <div class="card1 mx-auto">
+      <div class="chess-icon1">♜</div>
+      <img class="avatar1" src="/public/img/team/razieh.jpeg" alt="Razieh Malekzadeh" />
+      <div class="name1">Razieh Malekzadeh</div>
+      <div class="role1">HR/Recruiter Specialist</div>
+      <div class="tags1">
+        <div class="tag1">Talent</div>
+        <div class="tag1">Hiring</div>
+        <div class="tag1">People Ops</div>
+      </div>
+
+      <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35">
+        <br />
+        <br />
+        Razieh, the 'Rook of Culture', ensures that MetaMind recruits the right minds and nurtures
+        their growth. With 9 years in HR, she drives structure, trust, and sustainable people-first
+        strategies.
+        <br />
+      </p>
+      <a
+        href="https://www.linkedin.com/in/razie-malekzade-a5384a294/"
+        target="_blank"
+        style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem"
+        >LinkedIn Profile</a
+      >
+    </div>
+  </div>
+</section>
+
+<p style="margin-top: 30px"></p>
+<!-- <div data-island="Hi" data-props="{}"></div>
+<script type="module" src="/public/js/loader.js"></script> -->
+<!-- <div style="padding-left: 11px"> -->
+
+<!-- </div> -->
+
+<div data-island="Hi" data-props='{"who":"HI"}'></div>
+<div
+  data-island="PgnViewer"
+  data-props='{"pgnText":"1. e4 e5 2. d4 (2. f3 g6 (2... c6 3. d4) 3. h3 h5) (2. Nc3 b6) 2... exd4 (2... c5 3. dxc5 h6) 3. c3 f6"}'
+></div>
+<!-- <div
+  data-island="PgnViewer"
+  data-props='{"pgnText":'
+[Event "St Petersburg"]
+[Site "St. Petersburg  RUS"]
+[Date "1914.05.18"]
+[Round "7"]
+[White "Emanuel Lasker"]
+[Black "Jose Raul Capablanca"]
+[Result "*"]
+[ECO "C68"]
+[PlyCount "83"]
+[EventDate "1914.04.21"]
+
+1. e4 {[pgndiagram] This game was a must win for Lasker. Two rounds before the
+finish, he was behind Capablanca by a whole point. Moreover, the Cuban had not
+lost any games in the whole tournament before this encounter.} e5 2. Nf3 Nc6 3.
+Bb5 a6 4. Bxc6 $1 {An amazing decision. Although the Exchange Variation of the
+Ruy Lopez was a formidable weapon in Lasker's hands, few could have thought
+that it would work against Capablanca, whose virtuoso endgame technique was
+already widely known.} dxc6 5. d4 (5. O-O {Nowadays, castling first is
+considered as the best move. Robert James Fischer was the first to realize the
+strength of this move}) 5... exd4 6. Qxd4 Qxd4 7. Nxd4 {[pgndiagram]
+Objectively speaking, White shouldn't claim any advantage in this position
+whatsoever. Black has great compensation for the inferior pawn structure in
+view of the two bishops and free development.} Bd6 (7... Bd7 {With castling
+long has been played more often, with comfortable game}) 8. Nc3 Ne7 9. O-O O-O
+10. f4 $6 {[pgndiagram] A rather double edged, objectively not a very good
+move. White is burning his bridges prematurely. But Lasker is laying for the
+win} (10. Be3 {Is more normal, although here White doesn't have the advantage})
+10... Re8 {Black prevents Be3 due to a knight jump, and also threatens Bc5} (
+10... Bc5 11. Be3 Re8 {Is also possible} 12. Rae1 f6 {With comfortable game}) (
+10... f6 {Is also decent}) 11. Nb3 f6 {Preparing the development of the bishop
+via b6-Lb7} (11... a5 {Is the computer way, grabbing some space for free} 12.
+e5 Bb4 13. a3 Bxc3 14. bxc3 b6 {And Black has an excellent position}) 12. f5 {
+[pgndiagram] "It has been wrongly claimed that this wins the game, but I would
+like nothing better than to have such a position again" - Capablanca.   And
+indeed, this move is double edged. On one hand it hands the e5 square for free,
+but on the other hand, White eyes the e6 square.   However, under normal
+circumstances he shouldn't be allowed to put his knight there} b6 13. Bf4 Bb7
+$2 {Only this is a serious mistake, after which White's play is completely
+justified} (13... Bxf4 14. Rxf4 c5 15. Rd1 Bb7 {Was more logical. The point is
+that White's invasion is not dangerous} 16. Rd7 Rac8 {And his knight and rook
+are stuck on b3 and f4. Black is better}) 14. Bxd6 cxd6 15. Nd4 {[pgndiagram]
+Now Black has  to keep eye over e6. Although his pawn chain looks nice, it is
+not that mobile and White's knights have many potential targets} Rad8 $2 {And
+this is allowing too much. Capablanca is rather careless and allows the White
+knight to resident permanently on e6} (15... Bc8 {Was neccessary, intending c5
+next and preventing White's plan} 16. Rad1 c5 {And now White has to give up
+the idea of occupying the e6 square} 17. Ne6 Bxe6 18. fxe6 Rad8 19. Nd5 Nc6 {
+[pgndiagram] And White doesn't have any advantage}) 16. Ne6 {After this the
+play is completely one sided} Rd7 17. Rad1 {[pgndiagram] Capablanca said that
+he was now on point of playing c6-c5, but suddenly he became ambitious. 
+Indeed, 17... c5 was better} Nc8 (17... c5 18. Rf3 $1 {Preventing d5 in a
+tactical way} (18. Nd5 {Is the only move mentioned by Kasparov and Capablanca,
+but here it seems Black can defend - the d6 weakness is shielded} Bxd5 (18...
+Nxd5 19. exd5) 19. exd5 h5 {Preventing g4. Black is ok}) 18... d5 $2 19. exd5
+Nxd5 $4 20. Rfd3 {And White wins}) 18. Rf2 b5 19. Rfd2 Rde7 20. b4 Kf7 21. a3 {
+[pgndiagram] White has a dream position. The play is completely on one goal}
+Ba8 $2 {"Once again changing my plan and this time without any good reason" -
+Capablanca.} (21... Rxe6 {Was indeed the best move} 22. fxe6+ Rxe6 {And Black
+is very much in the game}) 22. Kf2 {[pgndiagram] Now White will push his
+kingside pawns, opening a second front} Ra7 (22... h5 $2 {Simply loses a pawn}
+23. Rd3 {And after Rh3-Nf3, White will win the h5 pawn}) 23. g4 h6 24. Rd3 a5
+$2 {This is a bad idea, as only White will benefit from the opening of the
+a-file} (24... Rae7 {Waiting passively was better, although not sufficient} 25.
+h4 {And now the exchange sacrifice doesn't work that well after} Rxe6 26. fxe6+
+Rxe6 27. Kf3 Bb7 28. h5 Re5 29. Kf4 Re6 30. a4 $1 {[pgndiagram] And White is
+bound to break through sooner or later. The advance of the kingside pawns
+makes a big difference}) 25. h4 axb4 26. axb4 Rae7 $6 {[pgndiagram] It was
+probably wiser not to move the rook from the a-file} (26... Ra3 {Is a blank
+shot though} 27. g5) (26... Rh8 {Awaiting the opening of the h-file, was more
+subtle. White shouldn't rush, but prepare it with say} 27. Rg1 Ra3 28. g5 {
+[pgndiagram] But this push is strong all the same. White is close to winning;
+tactics work in his favour} hxg5 29. hxg5 Rh2+ 30. Ke3 Nb6 (30... Rxc2 {Falls
+to} 31. Nxb5 Rxd3+ (31... cxb5 32. Rxa3) 32. Kxd3) 31. gxf6 gxf6 32. Rg7+ {and
+wins}) 27. Kf3 Rg8 28. Kf4 g6 $6 (28... Rh8 {Was wiser}) 29. Rg3 (29. g5 $1 {
+Was more energetic. Black doesn't have a good reply} gxf5 30. exf5 fxg5+ 31.
+hxg5 hxg5+ 32. Nxg5+ Kf8 33. Nce4 {And wins}) 29... g5+ {[pgndiagram]} (29...
+gxf5 {It is hard to suggest a better move} 30. exf5 d5 31. Ne2 Nd6 32. N2d4 Ne4
+33. Ra3 {And White penetrates}) 30. Kf3 Nb6 $6 {Desperation. An attempt to
+jump with the knight on the e5 square} (30... Rge8 31. hxg5 fxg5 {Was more
+resistant}) 31. hxg5 hxg5 32. Rh3 Rd7 (32... Nc4 {Is met very nicely with} 33.
+Kg3 $1 {And now it is hard to suggest a move for Black. White intends e5 next}
+(33. Rh7+ Ke8 34. Nc7+ {Also wins though} Kd7 35. Rxe7+ Kxe7 36. Ra1) 33... Ne5
+34. Rxd6) 33. Kg3 Ke8 34. Rdh1 Bb7 35. e5 $1 {[pgndiagram] The knockout blow.
+With this clearance sacrifice, White opens the e4 square for his other knight
+and Black gets overwhelmed} dxe5 (35... fxe5 36. Ne4 {Was not better}) (35...
+c5 {Was more tricky, because now} 36. Rh8 {Is the onl way to win} Bxh1 37.
+Rxg8+ Ke7 38. exd6+ {[pgndiagram] And White wins a piece} Kxd6 39. bxc5+ Kc6
+40. cxb6 {And wins}) 36. Ne4 $1 {f6 and c5 are too weak, h-file is owned by
+White, the game is over} Nd5 37. N6c5 Bc8 38. Nxd7 Bxd7 39. Rh7 Rf8 40. Ra1 Kd8
+41. Ra8+ Bc8 42. Nc5 {[pgndiagram] Playing important games with great power
+and energy was always Lasker's forte and he always managed to score a win when
+he needed one the most} *
+
+"}'
+></div> 
+<!-- <% if (dev) { %> -->
+<!-- React Refresh preamble (ضروری برای $RefreshSig$) -->
+<!-- <script type="module">
+    import RefreshRuntime from 'http://localhost:5173/@react-refresh';
+    RefreshRuntime.injectIntoGlobalHook(window);
+    window.$RefreshReg$ = () => {};
+    window.$RefreshSig$ = () => (type) => type;
+    window.__vite_plugin_react_preamble_installed__ = true;
+  </script> -->
+<!-- Vite HMR client -->
+<!-- <script type="module" src="http://localhost:5173/@vite/client"></script>
+<% } %> -->
+
+<%- include('../../share/superfooter') -%>
