@@ -14,47 +14,21 @@ mongoose
   .catch((err) => console.error('[mongo] connection error:', err.message));
 
 const app = express();
-// app.use('/public/', function (req, res, next) {
-//     console.log("🚀 ~ file: mainRout.js ~ line 12 ~ req.originalUrl", req.originalUrl)
-//     next();
-// });
 app.use('/public/', function (req, res, next) {
   let reqAddress = path.normalize(req.originalUrl).replace(/%20/g, ' ');
-  // let reqAddress = path.normalize(req.originalUrl).replace(/\\/g, '/');
   reqAddress = path.normalize(reqAddress); //.replace(/\\/g, '/');
   reqAddress = path.join(process.env.mainDir, reqAddress);
   if (fs.existsSync(reqAddress)) {
     res.sendFile(reqAddress);
   } else {
     reqAddress = reqAddress.replace('public', 'node_modules');
-    // reqAddress = reqAddress.replace('public', 'node_modules');
-    // console.log(path.join(__dirname, reqAddress))
     res.sendFile(reqAddress);
   }
   // next();
 });
 // درست: loader.js در ریشه‌ی dist است
-const distDir = path.resolve(process.env.mainDir, 'react/dist');
-console.log('Static /assets =>', distDir, fs.existsSync(distDir) ? 'OK' : 'MISSING');
-
 app.use('/assets', express.static(path.resolve(process.env.mainDir, 'react/dist')));
 
-// app.use(express.static('public'));
-// app.use('/public/', express.static('public'));
-// app.use('/public/', function (req, res, next) {
-//     let reqAddress = path.normalize(req.originalUrl).replace(/%20/g, ' ');
-//     reqAddress = reqAddress.replace('public', 'node_modules')
-//     // if (fs.existsSync(reqAddress)) {
-//     res.sendFile(process.env.mainDir + '\\' + reqAddress);
-//     // }
-
-//     // next();
-// });
-// app.use(express.static(process.env.mainDir + '/'))
-
-// app.use('/node_modules/', express.static('node_modules'));
-// app.use(express.static('public'));
-// app.use(express.static('node_modules'));
 app.use(express.json());
 app.use(fileUpload());
 
@@ -64,10 +38,6 @@ app.set('view engine', 'ejs');
 var server = app.listen(process.env.PORT);
 var io = ioSocket(server);
 
-// mongoose.connect('mongodb://127.0.0.1/testPmChess', {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-// })
 let ioFuncs = {};
 ioFuncs.connect = (socket, room) => {
   io.on('connect', () => {

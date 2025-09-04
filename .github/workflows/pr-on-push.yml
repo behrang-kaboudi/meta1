@@ -1,0 +1,55 @@
+name: PR / open-and-automerge
+
+on:
+  push:
+    branches-ignore: [main] # هر شاخه‌ای به جز main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  open-pr-and-automerge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # اگر PR باز وجود نداشت، یکی می‌سازیم؛ اگر وجود داشت، همون رو برمی‌گردونیم
+      - name: Open or find PR to main
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
+            const head = `${owner}:${context.ref.replace("refs/heads/","")}`;
+            const base = "main";
+
+            // پیدا کردن PR باز از این شاخه به main
+            const existing = await github.paginate(github.rest.pulls.list, {
+              owner, repo, state: "open", base, head
+            });
+
+            if (existing.length) {
+              core.setOutput("number", existing[0].number.toString());
+              core.setOutput("url", existing[0].html_url);
+              return;
+            }
+
+            // ساخت PR جدید
+            const title = `Auto PR: ${head.split(":")[1]} → ${base}`;
+            const body  = "Opened automatically on push. Auto-merge will be enabled.";
+            const { data: pr } = await github.rest.pulls.create({
+              owner, repo, head: head.split(":")[1], base, title, body,
+              maintainer_can_modify: true, draft: false
+            });
+            core.setOutput("number", pr.number.toString());
+            core.setOutput("url", pr.html_url);
+            core.notice(`Opened PR #${pr.number}: ${pr.html_url}`);
+
+      # فعال‌کردن Auto-merge روی همین PR (merge-method: squash|merge|rebase)
+      - name: Enable PR Auto-merge (squash)
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          pull-request-number: ${{ steps.pr.outputs.number }}
+          merge-method: squash

@@ -283,7 +283,6 @@ function PgnViewer({ pgnText }) {
           if (r.kind === 'variation') {
             const nextIsVf = rows[i + 1]?.kind === 'pair';
             const style = nextIsVf ? { borderBottom: '1px solid black' } : undefined;
-            console.log(rows[i + 1], style);
             return (
               <div key={r.key} style={style}>
                 <RowVariation line={r.line} onClick={handleClickMove} />

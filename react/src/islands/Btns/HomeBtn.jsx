@@ -1,4 +1,4 @@
-import './HomeBtn.css';
+import styles from './HomeBtn.module.css';
 export default function HomeBtn({
   //   timeText, // مثلا "1 + 0"
   labelText, // مثلا "Bullet"
@@ -11,16 +11,16 @@ export default function HomeBtn({
   }
 
   return (
-    <div className=" timeSets-col noSelect">
+    <div className={`${styles['timeSets-col']} ${styles['noSelect']}`}>
       <div
-        className={`timeSets-box timeSets-box-${variant}  d-flex flex-column align-items-center justify-content-center`}
+        className={`${styles['timeSets-box']}  ${styles['timeSets-box-' + variant]}  d-flex flex-column align-items-center justify-content-center`}
         role="button"
         tabIndex={0}
         onClick={() => name()}
         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick?.()}
       >
         {/* <div className="timeSets-text">{timeText}</div> */}
-        <div className="timeSets-text">{labelText}</div>
+        <div className={styles['timeSets-text']}>{labelText}</div>
       </div>
     </div>
   );

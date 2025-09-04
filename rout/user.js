@@ -88,7 +88,7 @@ rout.post('/recovery/', (req, res) => {
     dbUser.save().then((user) => {
       let link = '/user/note/recovery';
       myRes.message = link;
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.isDev) {
         console.log(`${process.env.HOST}/user/recovery/${user.recoveryLink}`);
         res.send(
           JSON.stringify({
@@ -239,7 +239,7 @@ rout.post('/register/', registerLimiter, (req, res) => {
 
       preregister.createNew(tempUser).then((dbPre) => {
         let link = '/user/note/activfromemail';
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.isDev) {
           console.log(`${process.env.HOST}/user/register/${dbPre.link}`);
           res.send(
             JSON.stringify({
