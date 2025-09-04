@@ -1,39 +1,50 @@
 name: CI / build-and-verify
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch: {} # فقط دستی از تب Actions
 
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
+# بقیه فایل لازم نیست عوض شه؛ ولی چون اجرا نمی‌شه، هزینه‌ای هم نداره.
 jobs:
   verify:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: { node: [18, 20, 22] }
     steps:
-      - name: Temporarily bypass CI work
-        run: echo "Temporarily bypassing ESLint/Prettier in GitHub Actions; fixing locally for now."
+      - run: echo "CI is paused for now."
+# name: CI / build-and-verify
 
-      # اگر بعداً تست‌ها را اضافه کردید، این مرحله را فعال کنید:
-      # - name: Tests
-      #   run: npm test
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
 
-      # اگر کاوریج اضافه شد:
-      # - name: Coverage
-      #   run: npm run coverage
+# concurrency:
+#   group: ci-${{ github.ref }}
+#   cancel-in-progress: true
 
-      # نمونه آپلود آرتیفکت (گزارش کاوریج/لاگ‌ها) — اختیاری
-      # - name: Upload artifacts
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: ci-artifacts-node-${{ matrix.node }}
-      #     path: |
-      #       coverage/**
-      #       logs/**
+# jobs:
+#   verify:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       fail-fast: false
+#       matrix: { node: [18, 20, 22] }
+#     steps:
+#       - name: Temporarily bypass CI work
+#         run: echo "Temporarily bypassing ESLint/Prettier in GitHub Actions; fixing locally for now."
+
+# اگر بعداً تست‌ها را اضافه کردید، این مرحله را فعال کنید:
+# - name: Tests
+#   run: npm test
+
+# اگر کاوریج اضافه شد:
+# - name: Coverage
+#   run: npm run coverage
+
+# نمونه آپلود آرتیفکت (گزارش کاوریج/لاگ‌ها) — اختیاری
+# - name: Upload artifacts
+#   if: always()
+#   uses: actions/upload-artifact@v4
+#   with:
+#     name: ci-artifacts-node-${{ matrix.node }}
+#     path: |
+#       coverage/**
+#       logs/**

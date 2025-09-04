@@ -2,14 +2,15 @@ import { useMemo, useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { Chessboard } from 'react-chessboard';
 import './outer-notation.css';
 
-export default function ChessboardOuterNotation({ initialOrientation = 'black', className = '' }) {
-  const [orientation, setOrientation] = useState(initialOrientation);
+export default function ChessboardOuterNotation() {
+  const [orientation, setOrientation] = useState('black');
   const [showNotation, setShowNotation] = useState(true);
   const [boardWidth, setBoardWidth] = useState(0);
   const [gutter, setGutter] = useState(0);
 
   const outerRef = useRef(null); // والد flex
   const innerRef = useRef(null); // رپرِ shrink-wrap
+  // console.log(orientation, initialOrientation);
 
   useEffect(() => {
     const checkSize = () => {
@@ -110,13 +111,13 @@ export default function ChessboardOuterNotation({ initialOrientation = 'black', 
   return (
     <div className="cb-wrap-parent">
       <div
-        className={`cb-wrap ${className}`}
+        className={`cb-wrap`}
         style={{ '--cb-gutter': `${gutter}px`, '--cb-font': `${(gutter * 135) / 100}px` }}
       >
         <div ref={outerRef} className="cb-board">
           {/* رپر داخلی: shrink-wrap تا اندازه به اندازه‌ی واقعی برد شود */}
           <div ref={innerRef} className="cb-inner">
-            <Chessboard options={chessboardOptions} boardOrientation={orientation} />
+            <Chessboard options={{ ...chessboardOptions, boardOrientation: orientation }} />
           </div>
         </div>
         {/* <div className="mt-2 text-xs">board width: {boardWidth}px</div> */}
