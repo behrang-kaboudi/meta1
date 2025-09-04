@@ -46,7 +46,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
       return res.status(202).send('ignored branch');
 
     // جلوگیری از ران موازی
-    if (app.locals.__deploying) return res.status(202).send('deploy already running');
+    if (app.locals.__deploying) return res.status(202).send('deploy already running ok');
     app.locals.__deploying = true;
 
     // مسیرها را از env بگیر (بهتر و قابل تغییر)
