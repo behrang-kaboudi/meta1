@@ -1,0 +1,113 @@
+/* react/src/islands/chess/PgnViewer/PgnViewer.module.css */
+.viewer {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
+  line-height: 1.35;
+  color: #222;
+  border: 1px solid #222;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ردیف جفتی: شماره + سفید + سیاه */
+.pairRow {
+  display: grid;
+  grid-template-columns: 14% 43% 43%;
+  align-items: center;
+  column-gap: 5%;
+  border-bottom: 1px solid #222;
+}
+.colNumber {
+  font-variant-numeric: tabular-nums;
+  color: #6b7280;
+  text-align: center;
+  border-right: 1px solid black;
+  font-weight: bold;
+}
+.colMove {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+}
+.cellBtn {
+  /* background: #f8fafc; */
+  /* border: 1px solid #e5e7eb; */
+  /* border-radius: 8px; */
+  padding: 6px 10px;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: left;
+  font-weight: bold;
+  width: 100%;
+}
+.cellBtn:hover {
+  border-color: #cbd5e1;
+  /* box-shadow: 0 0 0 2px #eef2ff inset; */
+  background-color: #fed7aa;
+}
+.ellipsis {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* کامنت/واریانت مثل قبل، ولی حالا از ستون 2 تا آخر (روبروی شماره) */
+.comment {
+  grid-column: 1 / -1;
+  background: #f3f4f6;
+  border-left: 4px solid #a7f3d0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #374151;
+}
+.variation {
+  grid-column: 2 / -1; /* زیر هر دو ستون حرکت می‌افتد */
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: #ffffff;
+  /* border: 1px solid #d1d5db; */
+  /* border-bottom: 1px solid #222; */
+  padding: 6px 10px;
+  /* border-radius: 6px; */
+  color: #111827;
+}
+
+.gameComment {
+  margin-bottom: 10px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #9a3412;
+}
+
+/* واریانت‌های درون خط */
+.varChunk {
+  display: inline;
+}
+.varNum {
+  color: #6b7280;
+}
+.varMove {
+  display: inline-block;
+  /* background: #f9fafb; */
+  /* border: 1px solid #e5e7eb; */
+  /* border-radius: 6px; */
+  padding: 2px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-inline: 2px;
+}
+.varMove:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 0 0 2px #eef2ff inset;
+}
+.paren {
+  color: #374151;
+}

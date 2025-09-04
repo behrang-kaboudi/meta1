@@ -18,6 +18,19 @@ rout.get('/team/', async (req, res) => {
     user: req.user,
   });
 });
+rout.get('/mytest/', async (req, res) => {
+  // const dev = process.env.NODE_ENV !== 'production';
+  // res.render(config.get('template') + '/page/sabet/team', {
+  //   user: req.user,
+  //   dev,
+  //   loaderSrc: dev
+  //     ? 'http://localhost:5173/src/loader.jsx' // با root='react'
+  //     : '/assets/loader.js',
+  // });
+  res.render(config.get('template') + '/page/sabet/test', {
+    user: req.user,
+  });
+});
 // rout.get('/team/', async (req, res) => {
 //   // res.render(config.get('template') + '/page/sabet/search', { user: req.user });
 //   res.render(config.get('template') + '/page/sabet/team', { user: req.user });
