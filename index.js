@@ -113,7 +113,7 @@ if (process.env.NODE_ENV == 'development') {
   process.env.isProd = '';
   process.env.isDev = 1;
 }
-if (!process.env.isProd) console.log('xxxxxxxxxxxxx');
+if (!process.env.isProd) console.log('xxxxxxxxxxxxxx');
 
 const VITE_ORIGIN = process.env.VITE_ORIGIN || 'http://localhost:5173';
 
