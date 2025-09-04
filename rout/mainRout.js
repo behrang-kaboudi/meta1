@@ -55,7 +55,7 @@ app.post('/webhook', (req, res) => {
 
     const HOME = process.env.HOME || '/home/metaches';
     const REPO_PATH = process.env.DEPLOY_REPO_PATH || '/home/metaches/metaMain';
-    const NODE_BIN = process.env.NODE_BIN || '/home/metaches/.nvm/versions/node/v16.14.0/bin';
+    const NODE_BIN = process.env.NODE_BIN || '/home/metaches/.nvm/versions/node/v22.14.0/bin';
 
     const script = `
       set -e
