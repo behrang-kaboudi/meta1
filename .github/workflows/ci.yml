@@ -18,7 +18,7 @@ jobs:
       matrix: { node: [22] }
     steps:
       - name: Temporarily bypass CI work
-        run: echo "Temporarily bypassing ESLint/Prettier in GitHub Actions; fixing locally for now."
+        run: echo "Temporarily bypassing ESLint/Prettier in GitHub Actions; fixing locally for now.OK"
 # اگر بعداً تست‌ها را اضافه کردید، این مرحله را فعال کنید:
 # - name: Tests
 #   run: npm test
