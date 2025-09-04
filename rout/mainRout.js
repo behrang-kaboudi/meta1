@@ -17,7 +17,6 @@ const app = express();
 
 // rout/mainRout.js  (بالای فایل، بعد از const app = express();)
 const crypto = require('crypto');
-const express = require('express');
 const { exec } = require('child_process');
 
 // فقط برای این مسیر raw-body می‌گیریم تا امضا دقیقاً روی بایت‌های اصلی محاسبه شود
