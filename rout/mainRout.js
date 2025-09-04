@@ -16,21 +16,27 @@ mongoose
 const app = express();
 
 // rout/mainRout.js  (بالای فایل، بعد از const app = express();)
+// ⬅️ بالاترین بخش rout/mainRout.js ، بلافاصله بعد از: const app = express();
 const crypto = require('crypto');
 const { exec } = require('child_process');
 
-// فقط برای این مسیر raw-body می‌گیریم تا امضا دقیقاً روی بایت‌های اصلی محاسبه شود
-app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+// 1) خام‌گیر برای همین مسیر؛ هر چیزی قبل از این روی /webhook نادیده گرفته می‌شود
+app.use('/webhook', express.raw({ type: '*/*' })); // */* تا اگر هدر اشتباه شد، باز Buffer بگیریم
+
+// 2) خودِ روت وب‌هوک
+app.post('/webhook', (req, res) => {
   try {
     const secret = process.env.GH_WEBHOOK_SECRET || '';
     const sig = req.get('x-hub-signature-256') || '';
     const event = req.get('x-github-event') || '';
     if (event !== 'push') return res.status(202).send('ignored');
 
-    // req.body اینجـا باید Buffer باشد؛ چون express.raw برای همین مسیر ست شده
-    const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(req.body).digest('hex');
+    // اینجا باید Buffer باشد؛ اگر نبود یعنی ترتیب اشتباه است
+    if (!Buffer.isBuffer(req.body)) {
+      return res.status(500).send('raw body missing');
+    }
 
-    // مقایسه‌ی امن
+    const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(req.body).digest('hex');
     if (
       !sig ||
       expected.length !== sig.length ||
@@ -44,14 +50,12 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
     if ((payload.ref || '') !== `refs/heads/${BRANCH}`)
       return res.status(202).send('ignored branch');
 
-    // جلوگیری از ران موازی
-    if (app.locals.__deploying) return res.status(202).send('deploy already running ok');
+    if (app.locals.__deploying) return res.status(202).send('deploy already running');
     app.locals.__deploying = true;
 
-    // مسیرها را از env بگیر (بهتر و قابل تغییر)
     const HOME = process.env.HOME || '/home/metaches';
     const REPO_PATH = process.env.DEPLOY_REPO_PATH || '/home/metaches/metaMain';
-    const NODE_BIN = process.env.NODE_BIN || '/home/metaches/.nvm/versions/node/v22.14.0/bin';
+    const NODE_BIN = process.env.NODE_BIN || '/home/metaches/.nvm/versions/node/v16.14.0/bin';
 
     const script = `
       set -e
