@@ -4,21 +4,19 @@
   <div class="container">
     <div class="text-right col-lg-7 mx-auto">
       <div class="wg-box">
-        <div class="wg-title h4"><%- user.trans('Register') %>:</div>
+        <div class="wg-title h4">Register:</div>
         <div class="wg-inner">
           <div class="mb-3 mx-3 row">
             <li id="formErrors" class="h6 d-none text-danger"></li>
           </div>
           <div class="mb-3 row">
-            <label for="userName" class="form-label col-sm-3">
-              <%- user.trans('User Name') %>:
-            </label>
+            <label for="userName" class="form-label col-sm-3"> User Name: </label>
             <div class="col-sm-9">
               <input type="text" class="form-control dir-ltr" id="userName" />
             </div>
           </div>
           <div class="mb-3 row">
-            <label for="email" class="form-label col-sm-3"> <%- user.trans('Email') %>: </label>
+            <label for="email" class="form-label col-sm-3"> Email: </label>
             <div class="col-sm-9">
               <input
                 type="email"
@@ -29,9 +27,7 @@
             </div>
           </div>
           <div class="mb-3 row">
-            <label for="password" class="form-label col-sm-3">
-              <%- user.trans('Password') %>:
-            </label>
+            <label for="password" class="form-label col-sm-3"> Password: </label>
             <div class="col-sm-9">
               <input type="password" class="form-control dir-ltr" id="password" placeholder="" />
             </div>
@@ -42,7 +38,7 @@
             Please don't take help from database chess engines or other players while playing. Also,
             be careful that creating multiple user accounts is against the principles of the site.
           </p>
-          <h3 class="mb-3"><%- user.trans('Agreements') %>:</h3>
+          <h3 class="mb-3">Agreements:</h3>
           <div class="mb-3 d-flex justify-content-start">
             <div class="form-check form-switch">
               <input class="form-check-input float-none" type="checkbox" id="cheat" />
@@ -62,14 +58,14 @@
             class="btn btn-primary mb-3"
             style="width: 100%"
           >
-            <%- user.trans('Register') %>
+            Register
           </button>
         </div>
         <div class="wg-footer">
           <div class="mb-3 mx-4 fs-5" style="">
-            <a href="/user/recovery/"> <%- user.trans(' Forget Password ') %> </a>
+            <a href="/user/recovery/"> Forget Password </a>
             <br />
-            <!-- <a> <%- user.trans(' Login With mail') %> </a> -->
+            <!-- <a>  Login With mail </a> -->
           </div>
         </div>
       </div>

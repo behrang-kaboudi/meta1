@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const ut = require('../utility');
-const jwt = require('jsonwebtoken');
+
 const config = require('config');
 const { tour } = require('../swiss/data');
 const userSchema = new mongoose.Schema({
@@ -45,21 +45,6 @@ User.creatNewUser = async function (user) {
   return ans;
 };
 
-User.setUserObjFromCookies = function (mainCoockis) {
-  let userToken = '';
-  if (!mainCoockis) return userToken;
-  let coockis = mainCoockis.split(';');
-
-  coockis.forEach((element) => {
-    if (element.indexOf('user=') > -1) {
-      userToken = element.split('=')[1];
-      if (userToken) {
-        userToken = jwt.verify(userToken, config.get('jwt'));
-      }
-    }
-  });
-  return userToken;
-};
 User.setOnline = function (userName, state) {
   User.updateOne({ userName }, { $set: { online: state } }).then(function (user) {
     // console.log(user);

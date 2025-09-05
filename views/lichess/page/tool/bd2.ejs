@@ -15,17 +15,15 @@ template="lichess" %>
           <div class="card mt-4 shadow">
             <div class="m-2">
               <select class="form-control" id="sel1">
-                <option><%- user.trans('White Turn ') %></option>
-                <option><%- user.trans(' Black Turn ') %></option>
+                <option>White Turn</option>
+                <option>Black Turn</option>
               </select>
               <div class="mt-3 text-right">
-                <label for="usr" class="text-right"> <%- user.trans(' Castling') %> </label>
+                <label for="usr" class="text-right"> Castling </label>
                 <div class="row">
                   <div class="col">
                     <div class="form-check">
-                      <label class="form-check-label" for="check1">
-                        <%- user.trans('White') %>
-                      </label>
+                      <label class="form-check-label" for="check1"> White </label>
                       <label class="form-check-label mr-5 ml-1" for="check1"> o-o </label>
                       <input
                         type="checkbox"
@@ -44,9 +42,7 @@ template="lichess" %>
                       />
                     </div>
                     <div class="form-check">
-                      <label class="form-check-label" for="check1">
-                        <%- user.trans('Black') %>
-                      </label>
+                      <label class="form-check-label" for="check1"> Black </label>
                       <label class="form-check-label mr-5 ml-1" for="check1"> o-o </label>
                       <input
                         type="checkbox"
@@ -90,32 +86,30 @@ template="lichess" %>
             </style>
 
             <a class="variants btn text-right text-primary" onclick="bd2.clearPosition() ">
-              <i class="fa fa-trash" aria-hidden="true"></i> <%- user.trans(' Clear Board ') %>
+              <i class="fa fa-trash" aria-hidden="true"></i> Clear Board
             </a>
             <a
               class="variants btn text-right text-primary"
               onclick="bd2.setPosition(bkChessBoardConsts.startFen) "
             >
-              <i class="fas fa-recycle"></i> <%- user.trans(' StartPositions ') %>
+              <i class="fas fa-recycle"></i> StartPositions
             </a>
             <a class="variants btn text-right text-primary" onclick="bd2.flipBoard()">
-              <i class="fas fa-sync"></i> <%- user.trans(' Rotate Board ') %>
+              <i class="fas fa-sync"></i> Rotate Board
             </a>
             <a
               class="variants btn text-right text-primary"
               onclick="bd2.clearArrows();bd2.removeMasks()"
             >
-              <i class="fa fa-trash" aria-hidden="true"></i> <%- user.trans(' Clear Signs ') %>
+              <i class="fa fa-trash" aria-hidden="true"></i> Clear Signs
             </a>
             <a class="variants btn text-right text-primary">
-              <i class="fas fa-sync fa-microscope"></i> <%- user.trans(' Analyze Position ') %>
+              <i class="fas fa-sync fa-microscope"></i> Analyze Position
             </a>
             <!-- <a class="variants btn text-right text-primary">
                                     <i class="fas fa-forward"></i> ادامه بازی از پوزیسیون
                                 </a> -->
-            <a class="variants btn text-right text-primary">
-              <i class="fas fa-book"></i> <%- user.trans(' Study ') %>
-            </a>
+            <a class="variants btn text-right text-primary"> <i class="fas fa-book"></i> Study </a>
           </div>
         </div>
       </div>

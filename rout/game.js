@@ -1,39 +1,37 @@
-const { express, io } = require('./mainRout');
+const hub = require('./hub');
 const Events = require('events');
 const ut = require('../module/utility');
 const { Chess } = require('chess.js');
 const config = require('config');
 const user = require('../module/user/user');
-const userRout = require('./user');
+const { router: userRout } = require('./user');
 const chalenge = require('../module/chalenge/chalenge');
 const game = require('../module/game/game');
 const e = require('cors');
-const { object } = require('joi');
-const rout = express.Router();
+const { Router } = require('express');
+const router = Router();
 const primeryDelayTime = game.timeToStart;
-rout.event = new Events();
-rout.event.on('gameFinished', function (gm) {
+router.event = new Events();
+router.event.on('gameFinished', function (gm) {
   // todo
-  // io.to(JSON.stringify({root:'game',id:gm_id})).emit('gm')
+  // hub.to(JSON.stringify({root:'game',id:gm_id})).emit('gm')
 });
 // let gameInterVals = [];
-rout.get('/play/:id', async (req, res) => {
-  let gm = await rout.io.getGameData({ _id: req.params.id.trim() });
+router.get('/play/:id', async (req, res) => {
+  let gm = await router.io.getGameData({ _id: req.params.id.trim() });
   if (!gm) {
     res.redirect('/');
   } else {
     res.render(config.get('template') + '/page/game/play/play', {
-      user: req.user,
       gameId: req.params.id.trim(),
       game: JSON.stringify(gm),
     });
   }
 });
-rout.get('/tournament/:id', (req, res) => {
-  rout.io.getGameData({ _id: req.params.id.trim() }).then((gm) => {
+router.get('/tournament/:id', (req, res) => {
+  router.io.getGameData({ _id: req.params.id.trim() }).then((gm) => {
     if (gm) {
       res.render(config.get('template') + '/page/game/play/play', {
-        user: req.user,
         gameId: req.params.id.trim(),
         game: JSON.stringify(gm),
       });
@@ -42,13 +40,12 @@ rout.get('/tournament/:id', (req, res) => {
     }
   });
 });
-rout.get('/:id/', (req, res) => {
+router.get('/:id/', (req, res) => {
   chalenge.findOne({ _id: req.params.id, status: 'waiting' }).then((ch) => {
     if (ch) {
       ch = ut.copyObj(ch);
       ch.gameTimeControll = ut.gameTimeControll(ch);
       res.render(config.get('template') + '/page/game/chalenge', {
-        user: req.user,
         chalenge: ch,
       });
     } else {
@@ -58,30 +55,30 @@ rout.get('/:id/', (req, res) => {
 });
 
 setInterval(async function () {
-  //rout.io.getGameData
+  //router.io.getGameData
   let games = await game.find().and([{ whiteResult: null }, { result: '' }]);
   games.forEach(async (g) => {
-    await rout.io.getGameData(g.id);
+    await router.io.getGameData(g.id);
   });
 }, 10000);
-rout.io = {};
+router.io = {};
 
-rout.io.userSwissGames = async function (tour) {
+router.io.userSwissGames = async function (tour) {
   let games = await game
     .find({ tournamentId: tour.id })
     .or([{ blackUserName: tour.userName }, { whiteUserName: tour.userName }]);
   return games;
 };
-rout.io.getLiveGames = async function (userName = null) {
+router.io.getLiveGames = async function (userName = null) {
   let games = await game.getLiveGames(userName);
   return games;
 };
-rout.io.getTopLiveGame = async function () {
+router.io.getTopLiveGame = async function () {
   let gm = await game.findOne({ blackResult: null, whiteResult: null, result: '' });
   return gm;
 };
 
-rout.io.getUsersFromDbWhithPublicData = async function (userName) {
+router.io.getUsersFromDbWhithPublicData = async function (userName) {
   let users = await user.find({ userName: { $regex: '.*' + userName + '.*' } }).limit(10);
   let pubUsers = [];
   users.forEach((u) => {
@@ -89,7 +86,7 @@ rout.io.getUsersFromDbWhithPublicData = async function (userName) {
   });
   return pubUsers;
 };
-rout.io.createNewFromChalenge = async function (chalenge) {
+router.io.createNewFromChalenge = async function (chalenge) {
   let newGame = {};
   newGame.rated = chalenge.rated;
   if (chalenge.selectedColor == 'wb') {
@@ -118,13 +115,13 @@ rout.io.createNewFromChalenge = async function (chalenge) {
   newGame.whiteRate = white[timeControll];
   return await game.createNew(newGame);
 };
-rout.io.updateLastMove = async function (move) {
+router.io.updateLastMove = async function (move) {
   //todo convert to Func
   let gm = await game.findById(move.gameId);
   if (gm.whiteResult || gm.blackResult) {
     return false;
   }
-  let gmForTiming = await rout.io.getGameData(move.gameId);
+  let gmForTiming = await router.io.getGameData(move.gameId);
 
   gm.offerDrawBy = null;
   let gm2 = addParamsToGame(gm);
@@ -190,7 +187,7 @@ rout.io.updateLastMove = async function (move) {
   gm = await gm.save();
   return addParamsToGame(gm);
 };
-rout.io.getGameData = async function (gameId) {
+router.io.getGameData = async function (gameId) {
   let gm = {};
   try {
     gm = await game.findById(gameId);
@@ -217,7 +214,7 @@ rout.io.getGameData = async function (gameId) {
       }
 
       gm.whiteRemainingTime = gm.blackRemainingTime = gm.primeryTime;
-      // rout.event.emit('gameFinished', addParamsToGame(gm))
+      // router.event.emit('gameFinished', addParamsToGame(gm))
       return await upDateInDb();
     }
   }
@@ -228,7 +225,7 @@ rout.io.getGameData = async function (gameId) {
   gm = await upDateInDb();
   return gm;
 };
-rout.io.searchInGames = async (data) => {
+router.io.searchInGames = async (data) => {
   let games = [];
   if ((!data.blackPlayers[0] && !data.whitePlayers[0]) || data.opponent == 'computer') return games;
   function craetPlayersQueryArray(players, sideUserName) {
@@ -297,7 +294,7 @@ rout.io.searchInGames = async (data) => {
   return games;
 };
 
-rout.io.resign = async function (gameId, userName) {
+router.io.resign = async function (gameId, userName) {
   let gm = await game.findById(gameId);
 
   gm.whiteResult = 0;
@@ -312,13 +309,13 @@ rout.io.resign = async function (gameId, userName) {
   await setForEndGame(gm, 'resign');
   return gm;
 };
-rout.io.offerDraw = async function (gameId, userName) {
+router.io.offerDraw = async function (gameId, userName) {
   let gm = await game.findById(gameId);
   gm.offerDrawBy = userName;
   gm = await gm.save();
   return gm;
 };
-rout.io.acceptDraw = async function (gameId, userName) {
+router.io.acceptDraw = async function (gameId, userName) {
   let gm = await game.findById(gameId);
   gm.whiteResult = gm.blackResult = 1 / 2;
   gm = await gm.save();
@@ -326,7 +323,9 @@ rout.io.acceptDraw = async function (gameId, userName) {
   await setForEndGame(gm, 'acceptDraw');
   return gm;
 };
-rout.io.setMessage = async function (message) {
+router.io.setMessage = async function (message) {
+  console.log('ssss');
+
   let mess = {
     message: message.message,
     userName: message.userName,
@@ -334,8 +333,8 @@ rout.io.setMessage = async function (message) {
   mess = JSON.stringify(mess);
   let up = await game.updateOne({ _id: message.gameId }, { $push: { chats: mess } });
 };
-rout.api = {};
-rout.api.getSimullGame = async function (simull, user) {
+router.api = {};
+router.api.getSimullGame = async function (simull, user) {
   let wUser, bUser;
   if (simull.color == 'w') {
     wUser = simull.creatorUserName;
@@ -352,36 +351,36 @@ rout.api.getSimullGame = async function (simull, user) {
   });
   return gm;
 };
-rout.api.getTourLiveGame = async function (gameData) {
+router.api.getTourLiveGame = async function (gameData) {
   let gm = await game.findOne(gameData);
   return gm;
 };
-rout.api.create = async function (gm) {
+router.api.create = async function (gm) {
   return await game.createNew(gm);
 };
-rout.api.getTournamentGames = async function (tourId, lean) {
+router.api.getTournamentGames = async function (tourId, lean) {
   if (lean) return await game.find({ tournamentId: tourId }).lean();
   return await game.find({ tournamentId: tourId });
 };
-rout.api.getTournamentRdGames = async function (tourId, rd) {
+router.api.getTournamentRdGames = async function (tourId, rd) {
   return await game.find({ tournamentId: tourId, tournamentRound: rd });
 };
-rout.api.getTournamentOpenGames = async function (tourId) {
+router.api.getTournamentOpenGames = async function (tourId) {
   return await game.find({ tournamentId: tourId, blackResult: null, result: '' });
 };
-rout.api.getTournamentGame = async function (p1, p2) {
+router.api.getTournamentGame = async function (p1, p2) {
   return await game.find({ tournamentId: tourId }, { blackResult: null }, { result: '' });
 };
-rout.api.getTournamentOneGame = async function (tourId, rd) {
+router.api.getTournamentOneGame = async function (tourId, rd) {
   return await game.findOne({ tournamentId: tourId, tournamentRound: rd });
 };
-rout.api.userSwissGames = async function (tourId, userName) {
+router.api.userSwissGames = async function (tourId, userName) {
   let games = await game
     .find({ tournamentId: tourId })
     .or([{ blackUserName: userName }, { whiteUserName: userName }]);
   return games;
 };
-module.exports = rout;
+module.exports = { path: '/game/', router };
 
 function addParamsToGame(game) {
   let gm2 = JSON.parse(JSON.stringify(game));
@@ -440,7 +439,7 @@ async function setForEndGame(game1, sender) {
   let dbGame = await game.findById(gm._id);
   // if (dbGame.result !== gm.result && dbGame.blackResult !== gm.blackResult) {
   gm.sender = sender;
-  rout.event.emit('gameFinished', gm);
+  router.event.emit('gameFinished', gm);
   // }
 }
 
@@ -493,7 +492,7 @@ function setTimer(game, side) {
   // let gameIntervalObj = {
   //     gameId: game._id,
   //     interval: setTimeout(function () {
-  //        await rout.io.getGameData(game._id);
+  //        await router.io.getGameData(game._id);
   //     }, time)
   // }
   // gameInterVals.push(gameIntervalObj);

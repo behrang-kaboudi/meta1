@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-<% if (dev) { %>
+<% if (isDevEnv) { %>
   <% const VITE_URL  = 'http://localhost:5173'; %>
   <% const VITE_BASE = '/assets/'; %>
 
@@ -26,8 +26,7 @@
 
 
 <% let template="lichess" %>
-  <% user.trans=function (word){ if(!('dbProps' in user)) return word; return lang.getPhrase(word,user.lang); }
-    %>
+
 
     <head>
       <meta charset="utf-8" />
