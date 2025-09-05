@@ -11,7 +11,8 @@ const pairing = require('../module/swiss/pairing');
 const pairPlayers = require('../module/swiss/pairPlayers');
 const { route } = require('./user');
 const { json } = require('express');
-const rout = express.Router();
+const { Router } = require('express');
+const router = Router();
 let eventsNames = {
   create: 'create',
   register: 'register',
@@ -70,18 +71,18 @@ pairing.event.on('gameFinished', async function (tour) {
   });
 });
 
-rout.event = new Events();
-rout.event.on(eventsNames.create, async (tour) => {
+router.event = new Events();
+router.event.on(eventsNames.create, async (tour) => {
   // io.in(JSON.stringify({ root: 'swiss' })).emit('swiss', ut.json({ event: eventsNames.create, data: tour }));
   io.in('swiss').emit('update', { root: 'swiss' });
 });
-// rout.event.on(eventsNames.register, async (tour)=> {
+// router.event.on(eventsNames.register, async (tour)=> {
 //     io.in(JSON.stringify({root:'swiss',id:tour._id})).emit('swiss',{event:eventsNames.register,data:tour});
 // })
-// rout.event.on(eventsNames.withdraw, async (tour)=> {
+// router.event.on(eventsNames.withdraw, async (tour)=> {
 //     io.in(JSON.stringify({root:'swiss',id:tour._id})).emit('swiss',{event:eventsNames.withdraw,data:tour});
 // })
-rout.event.on(eventsNames.changed, async (tour) => {
+router.event.on(eventsNames.changed, async (tour) => {
   io.in('swiss-' + tour._id).emit('data', {
     root: 'swiss-' + tour._id,
     data: await sendDataCreator(tour),
@@ -89,20 +90,18 @@ rout.event.on(eventsNames.changed, async (tour) => {
   io.in('swiss').emit('update', { root: 'swiss' });
 });
 
-rout.get('/edit/:id', async (req, res) => {
+router.get('/edit/:id', async (req, res) => {
   if (req.user.role != 'admin') {
     res.redirect('/');
     return;
   }
   let sw = await swissTournament.findById(req.params.id);
-  res.render(config.get('template') + '/page/game/swiss/edit', { user: req.user, swiss: sw });
+  res.render(config.get('template') + '/page/game/swiss/edit', { swiss: sw });
 });
-rout.get('/test', async (req, res) => {
-  res.render(config.get('template') + '/page/game/swiss/test', {
-    user: req.user,
-  });
+router.get('/test', async (req, res) => {
+  res.render(config.get('template') + '/page/game/swiss/test', {});
 });
-rout.get('/tournaments/', async (req, res) => {
+router.get('/tournaments/', async (req, res) => {
   let torns = await swissTournament.getNotStartedTounnaments();
   torns.reverse();
   torns = JSON.stringify(torns);
@@ -117,33 +116,30 @@ rout.get('/tournaments/', async (req, res) => {
   });
 
   res.render(config.get('template') + '/page/game/swiss/trournaments', {
-    user: req.user,
     tournaments: torns,
   });
 });
-rout.get('/tournament/:id', async (req, res) => {
+router.get('/tournament/:id', async (req, res) => {
   let sw = await swissTournament.findById(req.params.id).lean();
   // let swFull = await sendDataCreator(sw);
-  // console.log("🚀 ~ file: swiss.js ~ line 116 ~ rout.get ~ swFull", swFull)
+  // console.log("🚀 ~ file: swiss.js ~ line 116 ~ router.get ~ swFull", swFull)
   res.render(config.get('template') + '/page/game/swiss/swiss', {
-    user: req.user,
     tournament: sw,
     // standing: JSON.stringify(swFull.standing),
     // games: JSON.stringify(swFull.games)
     // registerd
   });
 });
-rout.get('/tournaments/regulation/:id', async (req, res) => {
+router.get('/tournaments/regulation/:id', async (req, res) => {
   let sw = await swissTournament.api.getTournamentById(req.params.id);
   let registerd = sw.players.includes(req.user.userName) ? true : false;
 
   res.render(config.get('template') + '/page/game/swiss/regulation', {
-    user: req.user,
     tournament: sw,
     registerd,
   });
 });
-rout.post('/register/', async (req, res) => {
+router.post('/register/', async (req, res) => {
   if (!req.user.login) {
     res.redirect('/user/login');
     return;
@@ -171,33 +167,33 @@ rout.post('/register/', async (req, res) => {
 
   // let sw = await swissTournament.getTournamentById(req.params.id);
   // res.render(config.get('template') + '/page/game/swiss/regulation', {
-  //     user: req.user,
+  //
   //     tournament: sw,
   // });
 });
-rout.get('/tournaments/RoundsInfo/:id', async (req, res) => {
+router.get('/tournaments/RoundsInfo/:id', async (req, res) => {
   // let sw = await swissTournament.getTournamentById(req.params.id);
   // res.render(config.get('template') + '/page/game/swiss/regulation', {
-  //     user: req.user,
+  //
   //     tournament: sw,
   // });
 });
 
-rout.io = {};
+router.io = {};
 
-rout.api = {};
-rout.ioF = async function (data, ack, userData) {
+router.api = {};
+router.ioF = async function (data, ack, userData) {
   if (!data) return;
 
   try {
-    let ans = await rout.io[data.signal](data.data, ack, userData);
+    let ans = await router.io[data.signal](data.data, ack, userData);
     if (ans && ack) ack(ans);
   } catch (error) {
     console.log('data.signal', data.signal, error);
   }
 };
 
-rout.io.tour = async (data, ack, userData) => {
+router.io.tour = async (data, ack, userData) => {
   let tour = await swissTournament.findById(data.id);
   // let standing = await swissFuncs.getStandings(data.id);
   // console.log('ss', standing[1]['Buc' + 1]);
@@ -206,13 +202,13 @@ rout.io.tour = async (data, ack, userData) => {
   // io.in(userData.socket.id).emit(JSON.stringify({ root: 'swiss', event: 'data' }), ut.json({ tour, standing }));
   // io.in(userData.socket.id).emit(JSON.stringify({ root: 'swiss', event: 'data' }), { tour, standing });
   io.in(userData.socket.id).emit('data', {
-    sender: 'rout.io.tour',
+    sender: 'router.io.tour',
     root: 'swiss-' + data.id,
     data: await sendDataCreator(tour),
   });
 };
 
-// rout.io.join = async function (data, ack, userData) {
+// router.io.join = async function (data, ack, userData) {
 
 //     // todo remove swiss room
 //     // if(!data.room)
@@ -223,7 +219,7 @@ rout.io.tour = async (data, ack, userData) => {
 //     ack(true);
 // }
 
-rout.io.register = async function (data, ack, userData) {
+router.io.register = async function (data, ack, userData) {
   if (!userData || !userData.userName) {
     // ack({ status: false, data: '/user/login' })
     return;
@@ -249,12 +245,12 @@ rout.io.register = async function (data, ack, userData) {
   tour.markModified('players');
   await tour.save();
   io.to('swiss' + data.id).emit('swiss' + '-standings');
-  // rout.event.emit(eventsNames.register, tour)
-  rout.event.emit(eventsNames.changed, tour);
+  // router.event.emit(eventsNames.register, tour)
+  router.event.emit(eventsNames.changed, tour);
   // ack({ status: true })
   return;
 };
-rout.io.withdraw = async function (data, ack, userData) {
+router.io.withdraw = async function (data, ack, userData) {
   if (!userData || !userData.userName) {
     ack({ status: false, data: '/user/login' });
     return;
@@ -268,13 +264,13 @@ rout.io.withdraw = async function (data, ack, userData) {
       tour.markModified('players');
       await tour.save();
       //todo
-      // rout.event.emit(eventsNames.withdraw, tour);
-      rout.event.emit(eventsNames.changed, tour);
+      // router.event.emit(eventsNames.withdraw, tour);
+      router.event.emit(eventsNames.changed, tour);
     }
   }
 };
 
-rout.io.create = async function (data, ack, userData) {
+router.io.create = async function (data, ack, userData) {
   let newSwiss = data;
   newSwiss.registerTime = Date.now();
   newSwiss.creator = userData.userName;
@@ -282,54 +278,54 @@ rout.io.create = async function (data, ack, userData) {
   let dbSwiss = new swissTournament(newSwiss);
   dbSwiss.rdStartTimes[0] = data.startTime;
   let tour = await dbSwiss.save();
-  rout.event.emit(eventsNames.create, tour);
+  router.event.emit(eventsNames.create, tour);
   ack(tour);
 };
-rout.io.playersCountInTour = async function (data, ack, userData) {
+router.io.playersCountInTour = async function (data, ack, userData) {
   // let tours = await swissTournament.find({status:'open',
   //     players: { "$in" : [userData.userName]}});
   // ack('xx');
 };
-rout.io.myOpens = async function (data, ack, userData) {
+router.io.myOpens = async function (data, ack, userData) {
   let tours = await swissTournament.find({
     status: { $ne: 'finished' },
     players: { $in: [userData.userName] },
   });
   io.in(userData.socket.id).emit('myOpens', { root: 'swiss', data: tours });
 };
-rout.io.finished = async function (data, ack, userData) {
+router.io.finished = async function (data, ack, userData) {
   let tours = await swissTournament.find({ status: 'finished' }).sort({ startTime: -1 }).limit(5);
   //todo emit all data by standard  userData.socket.id
   io.in(userData.socket.id).emit('finished', { root: 'swiss', data: tours });
   return tours;
 };
-rout.io.myTours = async function (data, ack, userData) {
+router.io.myTours = async function (data, ack, userData) {
   let tours = await swissTournament.find();
   ack(tours);
 };
-rout.io.upComing = async function (data, ack, userData) {
+router.io.upComing = async function (data, ack, userData) {
   let tours = await swissTournament.find({
     status: 'open',
     players: { $nin: [userData.userName] },
   });
   io.in(userData.socket.id).emit('upComing', { root: 'swiss', data: tours });
 };
-rout.io.onGoing = async function (data, ack, userData) {
+router.io.onGoing = async function (data, ack, userData) {
   let tours = await swissTournament.find({
     status: 'closed',
     players: { $nin: [userData.userName] },
   });
   io.in(userData.socket.id).emit('onGoing', { root: 'swiss', data: tours });
 };
-rout.io.list = async function (data, ack, userData) {
+router.io.list = async function (data, ack, userData) {
   let tours = await swissTournament.find({ status: 'open' });
   ack(tours);
 };
-rout.io.putUsersIndb = async function (data, ack, userData) {
+router.io.putUsersIndb = async function (data, ack, userData) {
   let sw = await swissTournament.findById(data.id);
   pairing.putUsersIndb(sw);
 };
-rout.io.pair = async function (data, ack, userData) {
+router.io.pair = async function (data, ack, userData) {
   let sw = await pairing.getPairingObj(data.id);
   if (sw) {
     await sw.pair();
@@ -338,11 +334,11 @@ rout.io.pair = async function (data, ack, userData) {
   // ack(tours);
 };
 
-rout.io.onProcess = async function (data, ack, userData) {
+router.io.onProcess = async function (data, ack, userData) {
   let tours = await swissTournament.find();
   ack(tours);
 };
-rout.io.myGames = async function (data, ack, userData) {
+router.io.myGames = async function (data, ack, userData) {
   if (!userData) {
     ack(null);
     return;
@@ -368,10 +364,10 @@ rout.io.myGames = async function (data, ack, userData) {
 
 //todo remove below functions
 
-// rout.io.standings = async function (data, ack, userData) {
+// router.io.standings = async function (data, ack, userData) {
 //     ack(await swissFuncs.getStandings(data.id))
 // }
-rout.io.liveGame = async function (data, ack, userData) {
+router.io.liveGame = async function (data, ack, userData) {
   let newSwiss = await swissTournament.findById(data.id);
   let game = await rtGame.api.getTourLiveGame({
     tournamentId: data.id,
@@ -409,10 +405,10 @@ swissFuncs.getStandings = async (tourOrId) => {
   return players;
 };
 // todo experimental
-rout.io.reset = async function (data, ack, userData) {
+router.io.reset = async function (data, ack, userData) {
   await Game.deleteMany({ tournamentId: data.id });
   await swissPlayers.deleteMany({ tournamentId: data.id });
   await swissTournament.updateOne({ _id: data.id }, { round: 0, status: 'open' });
 };
 
-module.exports = rout;
+module.exports = { path: '/swiss/', router };

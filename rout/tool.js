@@ -1,18 +1,19 @@
-const { express } = require('./mainRout')
+const { express } = require('./mainRout');
 const config = require('config');
-const rout = express.Router();
+const { Router } = require('express');
+const router = Router();
 //pages
-rout.get('/editor/', (req, res) => {
-    res.render(config.get('template') + '/page/tool/bd2', { user: req.user });
+router.get('/editor/', (req, res) => {
+  res.render(config.get('template') + '/page/tool/bd2');
 });
-rout.get('/editor/bd1', (req, res) => {
-    res.render(config.get('template') + '/page/tool/bd1');
+router.get('/editor/bd1', (req, res) => {
+  res.render(config.get('template') + '/page/tool/bd1');
 });
 
-rout.get('/analysis/', (req, res) => {
-    res.render(config.get('template') + '/page/tool/analysis', { user: req.user });
+router.get('/analysis/', (req, res) => {
+  res.render(config.get('template') + '/page/tool/analysis');
 });
-rout.get('/search/', (req, res) => {
-    res.render(config.get('template') + '/page/tool/search', { user: req.user });
+router.get('/search/', (req, res) => {
+  res.render(config.get('template') + '/page/tool/search');
 });
-module.exports = rout;
+module.exports = { path: '/tool/', router };

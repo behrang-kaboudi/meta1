@@ -1,55 +1,49 @@
-const express = require('express');
 const puzzle = require('./puzzle');
-const swiss = require('./swiss');
 const fileUpload = require('express-fileupload');
 const config = require('config');
-const userValidator = require('../module/user/validate');
-const jwt = require('jsonwebtoken');
-const ut = require('../module/utility');
-const user = require('../module/user/user');
-const preregister = require('../module/user/preregister');
 const Static = require('../module/static/static');
-const rout = express.Router();
+const { Router } = require('express');
+const router = Router();
 
-rout.get('/', (req, res) => {
+router.get('/', (req, res) => {
   if (req.user.role != 'admin') {
     res.redirect('/');
     return;
   }
-  res.render(config.get('template') + '/page/admin/dashboard', { user: req.user });
+  res.render(config.get('template') + '/page/admin/dashboard');
 });
 
-rout.get('/createStaticPage', (req, res) => {
+router.get('/createStaticPage', (req, res) => {
   if (req.user.role != 'admin') {
     res.redirect('/');
     return;
   }
-  res.render(config.get('template') + '/page/admin/createStaticPage', { user: req.user });
+  res.render(config.get('template') + '/page/admin/createStaticPage');
 });
-rout.get('/staticPageList', async (req, res) => {
+router.get('/staticPageList', async (req, res) => {
   if (req.user.role != 'admin') {
     res.redirect('/');
     return;
   }
   let pages = await Static.find();
-  res.render(config.get('template') + '/page/admin/staticPageList', { user: req.user, pages });
+  res.render(config.get('template') + '/page/admin/staticPageList', { pages });
 });
-rout.get('/staticEdit/:id', async (req, res) => {
+router.get('/staticEdit/:id', async (req, res) => {
   if (req.user.role != 'admin') {
     res.redirect('/');
     return;
   }
   let content = await Static.findById(req.params.id);
-  res.render(config.get('template') + '/page/admin/editStaticPage', { user: req.user, content });
+  res.render(config.get('template') + '/page/admin/editStaticPage', { content });
 });
-rout.get('/puzzlesUpload', (req, res) => {
+router.get('/puzzlesUpload', (req, res) => {
   if (req.user.role != 'admin') {
     res.redirect('/');
     return;
   }
-  res.render(config.get('template') + '/page/admin/puzzlesUpload', { user: req.user });
+  res.render(config.get('template') + '/page/admin/puzzlesUpload');
 });
-rout.post('/puzzlesUpload', function (req, res) {
+router.post('/puzzlesUpload', function (req, res) {
   let pgn = req.files.pgn;
   let file = process.env.mainDir + '/public/uploads/pgns/' + Date.now() + '.pgn';
   pgn.mv(file, function (err) {
@@ -61,24 +55,24 @@ rout.post('/puzzlesUpload', function (req, res) {
 
   // console.log(req.files); // the uploaded file object
 });
-rout.get('/createSwissTournament', (req, res) => {
+router.get('/createSwissTournament', (req, res) => {
   if (req.user.role != 'admin') {
     res.redirect('/');
     return;
   }
-  res.render(config.get('template') + '/page/game/swiss/createSwissTournament', { user: req.user });
+  res.render(config.get('template') + '/page/game/swiss/createSwissTournament');
 });
-rout.post('/createSwissTournament/', function (req, res) {
+router.post('/createSwissTournament/', function (req, res) {
   // swiss.api.creatSwissTournament(req.body);
 });
-rout.io = {};
-rout.io.creatStaticPage = async function (data) {
+router.io = {};
+router.io.creatStaticPage = async function (data) {
   let static = new Static(data);
   await static.save();
   return true;
   // console.log('d', data);
 };
-rout.io.editStaticPage = async function (data) {
+router.io.editStaticPage = async function (data) {
   // let page = await Static.findById(data.id);
   let ans = await Static.updateOne(
     { _id: data.id },
@@ -92,4 +86,4 @@ rout.io.editStaticPage = async function (data) {
   // console.log('d', data);
 };
 
-module.exports = rout;
+module.exports = { path: '/admin/', router };

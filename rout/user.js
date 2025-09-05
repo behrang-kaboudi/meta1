@@ -1,33 +1,30 @@
-const { express, io } = require('./mainRout');
 const Event = require('events');
 const sendmail = require('sendmail')();
 var nodemailer = require('nodemailer');
 const config = require('config');
 const userValidator = require('../module/user/validate');
-const jwt = require('jsonwebtoken');
 const ut = require('../module//utility');
 const user = require('../module/user/user');
 const preregister = require('../module/user/preregister');
-const { func } = require('joi');
 const rateLimit = require('express-rate-limit');
 const { hashPassword, verifyPassword, needsRehash } = require('../module/security/password');
-const { log } = require('console');
-const rout = express.Router();
+const { Router } = require('express');
+const router = Router();
 
-rout.events = new Event();
-rout.get('/admin/', (req, res) => {
+router.events = new Event();
+router.get('/admin/', (req, res) => {
   // to do roles
-  res.render(config.get('template') + '/page/user/admin', { user: req.user });
+  res.render(config.get('template') + '/page/user/admin');
 });
 
-rout.get('/logout/', (req, res) => {
+router.get('/logout/', (req, res) => {
   if (!req.user.login) return res.redirect('/');
-  rout.events.emit('userLogOut', req.user);
+  router.events.emit('userLogOut', req.user);
   res.clearCookie('user');
   res.redirect('/');
 });
-rout.get('/login/', (req, res) => {
-  res.render(config.get('template') + '/page/user/login', { user: req.user });
+router.get('/login/', (req, res) => {
+  res.render(config.get('template') + '/page/user/login');
 });
 const loginLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
@@ -42,7 +39,7 @@ const loginLimiter = rateLimit({
     });
   },
 });
-rout.post('/login/', loginLimiter, async (req, res) => {
+router.post('/login/', loginLimiter, async (req, res) => {
   let myRes = userValidator.validator(req.body);
   if (!myRes.state) {
     return res.send(JSON.stringify(myRes));
@@ -64,12 +61,10 @@ rout.post('/login/', loginLimiter, async (req, res) => {
   // todo [{email: req.body.emailUser}, {userName: req.body.emailUser}]
   //if key is not exist returns true//   s//  .and ([{password: req.body.password}])
 });
-rout.get('/recovery/', (req, res) => {
-  res.render(config.get('template') + '/page/user/recovery1', {
-    user: req.user,
-  });
+router.get('/recovery/', (req, res) => {
+  res.render(config.get('template') + '/page/user/recovery1', {});
 });
-rout.post('/recovery/', (req, res) => {
+router.post('/recovery/', (req, res) => {
   let myRes = userValidator.validator(req.body);
   if (!myRes.state) {
     return res.send(JSON.stringify(myRes));
@@ -124,7 +119,7 @@ rout.post('/recovery/', (req, res) => {
     });
   });
 });
-rout.get('/recovery/:link', (req, res) => {
+router.get('/recovery/:link', (req, res) => {
   let link = req.params.link.trim();
   let time = link.split('tt-tt');
   time = Number(time[time.length - 1]);
@@ -132,9 +127,7 @@ rout.get('/recovery/:link', (req, res) => {
 
   user.findOne({ recoveryLink: link }).then((dbUser) => {
     if (dbUser) {
-      res.render(config.get('template') + '/page/user/recovery2', {
-        user: req.user,
-      });
+      res.render(config.get('template') + '/page/user/recovery2', {});
     } else {
       onErr();
     }
@@ -143,12 +136,11 @@ rout.get('/recovery/:link', (req, res) => {
   function onErr() {
     res.render(config.get('template') + '/page/user/note', {
       note: 'Your email link has expired, and if you have just registered, your user account has been confirmed and you can log in.', //" یا مدت زمان لینک ایمیل شما منقضی شده و اگر به تازگی ثبت نام کرده اید کاربری شما تایید شده و از قمت ورود اقدام کنید.",
-      user: req.user,
     });
   }
   // res.send (;
 });
-rout.post('/recovery/:link', (req, res) => {
+router.post('/recovery/:link', (req, res) => {
   let myRes = userValidator.validator(req.body);
   if (!myRes.state) {
     return res.send(JSON.stringify(myRes));
@@ -179,26 +171,10 @@ rout.post('/recovery/:link', (req, res) => {
     return;
   }
 });
-rout.setReqUser = function () {
-  return async function (req, res, next) {
-    let userToken = user.setUserObjFromCookies(req.headers.cookie);
-    req.user = {};
-    //   req.user.role = 'guest';
-    //   req.user.id = null;
-    if (userToken) {
-      req.user = { ...userToken };
-      req.user.login = true;
-    } else {
-      req.user.login = false;
-    }
-    next();
-  };
-};
-rout.get('/register/', (req, res) => {
+
+router.get('/register/', (req, res) => {
   if (req.user.login) return res.redirect('/');
-  res.render(config.get('template') + '/page/user/register', {
-    user: req.user,
-  });
+  res.render(config.get('template') + '/page/user/register', {});
 });
 const registerLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
@@ -214,7 +190,7 @@ const registerLimiter = rateLimit({
   },
 });
 
-rout.post('/register/', registerLimiter, (req, res) => {
+router.post('/register/', registerLimiter, (req, res) => {
   req.body.email = req.body.email.toLowerCase();
   req.body.userName = req.body.userName.toLowerCase().trim();
   req.body.password = req.body.password.trim();
@@ -319,7 +295,7 @@ rout.post('/register/', registerLimiter, (req, res) => {
     }
   });
 });
-rout.get('/register/:link', (req, res) => {
+router.get('/register/:link', (req, res) => {
   preregister.getFromLink(req.params.link).then((dbUser) => {
     if (dbUser) {
       let userForDb = {
@@ -340,14 +316,13 @@ rout.get('/register/:link', (req, res) => {
     } else {
       res.render(config.get('template') + '/page/user/note', {
         note: 'Your email link has expired.', //"مدت زمان لینک ایمیل شما منقضی شده.",
-        user: req.user,
       });
     }
   });
 
   // res.send (;
 });
-rout.get('/note/:note', (req, res) => {
+router.get('/note/:note', (req, res) => {
   let note = req.params.note;
   let noteObj = {};
   switch (note) {
@@ -364,11 +339,10 @@ rout.get('/note/:note', (req, res) => {
       break;
   }
   res.render(config.get('template') + '/page/user/note', {
-    user: req.user,
     note: noteObj.note,
   });
 });
-rout.get('/profile/', (req, res) => {
+router.get('/profile/', (req, res) => {
   // preregister.getFromLink(req.params.link).then(dbUser => {
   //     if (dbUser) {
   //         let userForDb = {
@@ -388,18 +362,16 @@ rout.get('/profile/', (req, res) => {
   //     } else {
   //         res.render(config.get('template') + '/page/user/note', {
   //             note: 'مدت زمان لینک ایمیل شما منقضی شده.',
-  //             user: req.user,
+  //
   //         });
   //     }
   // });
 
   // res.send (;
-  res.render(config.get('template') + '/page/profile/dashboard', {
-    user: req.user,
-  });
+  res.render(config.get('template') + '/page/profile/dashboard', {});
 });
-rout.io = {};
-rout.io.getUsersFromDbWhithPublicData = async function (userName) {
+router.io = {};
+router.io.getUsersFromDbWhithPublicData = async function (userName) {
   let users = await user.find({ userName: { $regex: '.*' + userName + '.*' } }).limit(10);
   let pubUsers = [];
   users.forEach((u) => {
@@ -407,28 +379,20 @@ rout.io.getUsersFromDbWhithPublicData = async function (userName) {
   });
   return pubUsers;
 };
-rout.io.getUserPublicData = async function (userName) {
+router.io.getUserPublicData = async function (userName) {
   let dbuser = await user.findOne({ userName: userName });
   dbuser = user.setUserPublicData(dbuser);
   return dbuser;
 };
-rout.api = {};
+router.api = {};
 
-rout.api.updatePuzzleRating = async function (userName, change) {
+router.api.updatePuzzleRating = async function (userName, change) {
   let dbuser = await user.findOne({ userName: userName });
   dbuser.puzzle = dbuser.puzzle + change;
   console.log(await dbuser.save());
 };
-rout.setUserLanguage = async function (userData, lang) {
+router.setUserLanguage = async function (userData, lang) {
   let up = await user.updateOne({ _id: userData.id }, { $set: { lang: lang } });
 };
-// rout.tS = 0;
-io.on('connect', function (socket) {
-  socket.on('search', function (user, ack) {
-    rout.io.getUsersFromDbWhithPublicData(user).then((ansers) => {
-      ack(ansers);
-    });
-  });
-});
 
-module.exports = rout;
+module.exports = { path: '/user/', router };

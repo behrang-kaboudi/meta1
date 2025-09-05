@@ -7,7 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "start": "NODE_ENV=production node index.js",
     "prestart": "npm run build",
     "dev": "concurrently -k -n VITE,API \"vite\" \"NODE_ENV=development nodemon index.js\"",
@@ -61,6 +61,8 @@
     "sendmail": "^1.6.1",
     "socket.io": "^4.8.1",
     "stockfish": "^12.0.0",
+    "supertest": "^7.1.4",
+    "vitest": "^3.2.4",
     "winston": "^3.17.0"
   },
   "devDependencies": {
