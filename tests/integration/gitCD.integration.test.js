@@ -1,10 +1,44 @@
-// // test/integration/webhook.int.test.js
-// import { describe, it, expect, beforeEach, vi } from 'vitest';
-// import request from 'supertest';
+import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
+import request from 'supertest';
+import { createApp } from '../../rout/server/app'; // مسیر را با ساختار خودت هماهنگ کن
+import crypto from 'node:crypto';
+let app;
+beforeAll(() => {
+  app = createApp(); // بدون listen
+});
+console.log('--- webhook.int.test.ts???????????????????? ---??');
 
-// import { app } from '../../rout/mainRout';
-// import { root } from '../../rout/git';
-// console.log('--- webhook.int.test.ts ---??');
+describe('POST /api/data', () => {
+  beforeEach(() => {
+    process.env.GH_WEBHOOK_SECRET = '1234';
+    process.env.DEPLOY_BRANCH = 'main';
+  });
+  //   it('should create resource', async () => {
+  //     const res = await request(app)
+  //       .post('/webhooks/git') // مسیر واقعی رو بگذار
+  //       .set('Content-Type', 'application/json')
+  //       .send({ name: 'Behrank', age: 30 });
+  //     console.log('Response:', res.body);
+
+  //     // expect(res.status).toBe(201); // با خروجی خودت هماهنگ کن
+  //     expect(res.body).toMatchObject({ ok: true });
+  //   });
+  it('accepts valid signature', async () => {
+    const payload = { ref: 'refs/heads/main' };
+    const bodyStr = JSON.stringify(payload);
+    const sig =
+      'sha256=' +
+      crypto.createHmac('sha256', process.env.GH_WEBHOOK_SECRET).update(bodyStr).digest('hex');
+
+    await request(app)
+      .post('/webhooks/git') // مسیر واقعی رو بگذار
+      .set('Content-Type', 'application/json')
+      .set('X-GitHub-Event', 'push')
+      .set('X-Hub-Signature-256', sig)
+      .send(bodyStr) // حتماً رشته؛ نه آبجکت!
+      .expect(200);
+  });
+});
 
 // describe('git test', () => {
 //   it('works', () => {
@@ -33,11 +67,6 @@
 // }
 
 // describe('POST /webhook', () => {
-//   beforeEach(() => {
-//     process.env.NODE_ENV = 'test';
-//     process.env.GH_WEBHOOK_SECRET = 'testsecret';
-//     process.env.DEPLOY_BRANCH = 'main';
-//   });
 
 //   it('accepts valid push to main and triggers deploy', async () => {
 //     const payload = {

@@ -11,6 +11,10 @@ const list = [
   require('./puzzle'),
   require('./swiss'),
   require('./simull'),
+  require('./webhooks'),
+  // require('./tournament'),
+  // require('./forum'),
+  // require('./news'),
 ];
 
 // app.get('/livegames/', (req, res) => {
