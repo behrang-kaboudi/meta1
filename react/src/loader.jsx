@@ -6,7 +6,7 @@ const registry = {
   Hi: { load: () => import('./islands/Hi.jsx') },
   PlayerSearch: { load: () => import('./islands/PlayerSearch/PlayerSearch.jsx') },
   HomeBtn: { load: () => import('./islands/Btns/HomeBtn.jsx') },
-  RChessboard: { load: () => import('./islands/Chessboards/Chessboard.jsx') },
+  RChessboard: { load: () => import('./islands/chessBoards/ChessboardOuterNotation.jsx') },
   PgnViewer: { load: () => import('./islands/chess/PgnViewer/PgnViewer.jsx') },
 };
 
