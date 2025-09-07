@@ -32,9 +32,27 @@ router.post('/git', function (req, res) {
       return res.status(401).send('Invalid signature');
     }
 
-    const evt = req.get('X-GitHub-Event'); // مثلا "push"
-    console.log('req.body?.ref', req.body?.ref, evt);
-    if (evt === 'push' && req.body?.ref === `refs/heads/${BRANCH}`) {
+    const event = req.get('X-GitHub-Event');
+    const ref = req.body?.ref;
+    const pr = req.body?.pull_request;
+
+    const mergedToMainByPush = event === 'push' && ref === 'refs/heads/main';
+
+    const mergedToMainByPR =
+      event === 'pull_request' &&
+      req.body?.action === 'closed' &&
+      pr?.merged === true &&
+      pr?.base?.ref === 'main';
+
+    console.log(
+      'req.body?.ref',
+      req.body?.ref,
+      'mergedToMainByPush',
+      mergedToMainByPush,
+      'mergedToMainByPR',
+      mergedToMainByPR,
+    );
+    if (mergedToMainByPush || mergedToMainByPR) {
       // if (process.env.NODE_ENV === 'production') {
       // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
       res.status(200).json({ ok: true });
