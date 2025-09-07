@@ -68,7 +68,7 @@ async function runDeploy() {
   try {
     console.log('runDeploy2 .....');
     const boot = await ensureRepo(); // ← بار اول را مدیریت می‌کند
-    console.log('runDeploy3', boot);
+    console.log('runDeploy3 ......', boot);
     // همیشه به آخرین وضعیتِ ریموت سنک شو
     await run('git', ['fetch', '--all', '--prune'], { cwd: REPO });
     await run('git', ['reset', '--hard', `origin/${BRANCH}`], { cwd: REPO });
