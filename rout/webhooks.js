@@ -64,8 +64,6 @@ module.exports = { path: '/webhooks/', router };
 
 // ---------------------- Deploy ----------------------
 
-// ---------------------- Deploy ----------------------
-
 async function runDeploy() {
   console.log('runDeploy1 .....');
   if (deploying) {
@@ -80,13 +78,13 @@ async function runDeploy() {
   try {
     console.log('runDeploy2 .... .');
     const boot = await ensureRepo(); // ← بار اول را مدیریت می‌کند
-    console.log('runDeploy3 ......', boot);
+    console.log('runDeploy3 ......', REPO);
 
     // همیشه به آخرین وضعیتِ ریموت سنک شو
     await run('git', ['fetch', '--all', '--prune'], { cwd: REPO });
     await run('git', ['reset', '--hard', `origin/${BRANCH}`], { cwd: REPO });
 
-    await run(npm, ['i', '--ignore-scripts']);
+    await run(npm, ['i', '--ignore-scripts'], { cwd: REPO });
     // await run(npm, ['run', 'build'], { cwd: REPO });//
 
     // PM2: بار اول start، دفعات بعد startOrReload/reload
