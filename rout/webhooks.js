@@ -53,7 +53,7 @@ router.post('/git', function (req, res) {
       (event === 'workflow_job' && action === 'completed');
 
     console.log(
-      'req.body?.ref',
+      'req.body?.ref ',
       req.body?.ref,
       'mergedToMainByPush',
       mergedToMainByPush,
