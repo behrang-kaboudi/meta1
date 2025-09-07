@@ -31,9 +31,9 @@ router.post('/git', function (req, res) {
       console.log('in git invalid !!!!!!!!!!!! !!!!!!!!!');
       return res.status(401).send('Invalid signature');
     }
-    console.log('req.body?.ref', req.body?.ref);
 
     const evt = req.get('X-GitHub-Event'); // مثلا "push"
+    console.log('req.body?.ref', req.body?.ref, evt);
     if (evt === 'push' && req.body?.ref === `refs/heads/${BRANCH}`) {
       // if (process.env.NODE_ENV === 'production') {
       // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
