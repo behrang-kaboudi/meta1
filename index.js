@@ -2,7 +2,7 @@ process.env.mainDir = __dirname;
 process.env.TemplateNumber = '25';
 // require('events').EventEmitter.prototype._maxListeners = 100;
 process.setMaxListeners(2000);
-console.log('cdTest s');
+console.log('cdTest2');
 
 require('events').EventEmitter.prototype._maxListeners = 100;
 (async () => {
