@@ -31,16 +31,15 @@ router.post('/git', function (req, res) {
       console.log('in git invalid !!!!!!!!!!!!!!!!!!!!');
       return res.status(401).send('Invalid signature');
     }
+    console.log('req.body?.ref', req.body?.ref);
 
     const evt = req.get('X-GitHub-Event'); // مثلا "push"
     if (evt === 'push' && req.body?.ref === `refs/heads/${BRANCH}`) {
-      if (process.env.NODE_ENV === 'production') {
-        // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
-        res.status(200).json({ ok: true });
-        return queueMicrotask(() =>
-          runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)),
-        );
-      }
+      // if (process.env.NODE_ENV === 'production') {
+      // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
+      res.status(200).json({ ok: true });
+      return queueMicrotask(() => runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)));
+      // }
     }
 
     return res.status(200).json({ ok: true });
