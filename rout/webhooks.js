@@ -104,55 +104,10 @@ async function runDeploy() {
     await run('git', ['fetch', '--all', '--prune'], { cwd: REPO });
     await run('git', ['reset', '--hard', `origin/${BRANCH}`], { cwd: REPO });
 
-    // --- نصب ریشه: بدون dev و بدون اجرای اسکریپت‌ها (prepare/husky)
-    // نصب ریشه: بدون dev و بدون اجرای هرگونه اسکریپت (prepare/husky)
-    const hasLock = fs.existsSync(path.join(REPO, 'package-lock.json'));
-    const rootEnv = {
-      ...process.env,
-      HUSKY: '0',
-      HUSKY_SKIP_INSTALL: '1',
-      CI: 'true',
-      npm_config_ignore_scripts: 'true',
-    };
-    try {
-      if (hasLock) {
-        await run(npm, ['ci', '--omit=dev', '--ignore-scripts'], { cwd: REPO, env: rootEnv });
-      } else {
-        await run(npm, ['install', '--omit=dev', '--ignore-scripts'], { cwd: REPO, env: rootEnv });
-      }
-    } catch {
-      console.warn('npm ci failed, trying npm install…');
-      await run(npm, ['install', '--omit=dev', '--ignore-scripts'], { cwd: REPO, env: rootEnv });
-    }
 
-    // نصب و بیلد React برای ساخت manifest.json
-    const REACT_DIR = path.join(REPO, 'react');
-    if (fs.existsSync(path.join(REACT_DIR, 'package.json'))) {
-      if (fs.existsSync(path.join(REACT_DIR, 'package-lock.json'))) {
-        await run(npm, ['ci'], { cwd: REACT_DIR }); // devDependencies لازم است
-      } else {
-        await run(npm, ['install'], { cwd: REACT_DIR });
-      }
-      await run(npm, ['run', 'build'], { cwd: REACT_DIR }); // react/dist/manifest.json تولید می‌شود
-    } else {
-      console.warn('react/package.json not found — skipping React build.');
-    }
+    await run(npm, ['ci', '--omit=dev', '--ignore-scripts']);
+    // await run(npm, ['run', 'build'], { cwd: REPO });
 
-    // --- React: نصب با dev (بدون ignore-scripts)، سپس build تا manifest بسازد
-    if (fs.existsSync(path.join(REACT_DIR, 'package.json'))) {
-      const reactLock = fs.existsSync(path.join(REACT_DIR, 'package-lock.json'));
-      if (reactLock) {
-        await run(npm, ['ci'], { cwd: REACT_DIR }); // devDeps نصب شود
-      } else {
-        await run(npm, ['install'], { cwd: REACT_DIR });
-      }
-      await run(npm, ['run', 'build'], { cwd: REACT_DIR }); // باید react/dist/manifest.json تولید شود
-    } else {
-      console.warn('react/package.json not found — skipping React build.');
-    }
-
-    // --- (اختیاری) build ریشه اگر داری
-    await run(npm, ['run', 'build'], { cwd: REPO });
 
     // PM2: بار اول start، دفعات بعد startOrReload/reload
     const ecosystemExists = fs.existsSync(path.join(REPO, ECOSYS));
