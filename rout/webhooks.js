@@ -44,13 +44,11 @@ router.post('/git', function (req, res) {
 
     console.log('mergedToMainByPush', mergedToMainByPush);
     if (mergedToMainByPush) {
-
       // if (process.env.NODE_ENV === 'production') {
       // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
       res.status(200).json({ ok: true });
       return queueMicrotask(() => runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)));
       // }
-
     }
 
     return res.status(200).json({ ok: true });
@@ -108,6 +106,7 @@ async function runDeploy() {
 
     // await run(pm2, ['save']); // اگر نیاز به بقا بعد از ریبوت داری
     console.log('✅ Deploy finished');
+    deploying = false;
   } finally {
     deploying = false;
   }
