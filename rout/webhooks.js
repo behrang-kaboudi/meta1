@@ -104,8 +104,10 @@ async function runDeploy() {
     await run('git', ['fetch', '--all', '--prune'], { cwd: REPO });
     await run('git', ['reset', '--hard', `origin/${BRANCH}`], { cwd: REPO });
 
+
     await run(npm, ['i', '--ignore-scripts']);
     // await run(npm, ['run', 'build'], { cwd: REPO });//
+
 
     // PM2: بار اول start، دفعات بعد startOrReload/reload
     const ecosystemExists = fs.existsSync(path.join(REPO, ECOSYS));
