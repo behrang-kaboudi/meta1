@@ -47,7 +47,7 @@ router.post('/git', function (req, res) {
       // if (process.env.NODE_ENV === 'production') {
       // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
       res.status(200).json({ ok: true });
-      return queueMicrotask(() => runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)));
+      // return queueMicrotask(() => runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)));
       // }
     }
 
@@ -63,7 +63,7 @@ module.exports = { path: '/webhooks/', router };
 // ---------------------- Deploy ----------------------
 
 async function runDeploy() {
-  console.log('runDeploy1 .....');
+  console.log('runDeploy1 .....', process.env.mainDir);
   if (deploying) {
     console.log('Deploy already running, skipping…');
     return;
