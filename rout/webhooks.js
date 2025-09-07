@@ -59,7 +59,7 @@ router.post('/git', function (req, res) {
       mergedToMainByPush,
       'mergedToMainByPR',
       mergedToMainByPR,
-      'endOfPipeline',
+      'endOfPipeline  ',
       endOfPipeline,
     );
     if (mergedToMainByPush || mergedToMainByPR || endOfPipeline) {
