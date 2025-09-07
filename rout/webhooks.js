@@ -28,7 +28,7 @@ router.post('/git', function (req, res) {
     const expectedSig = `sha256=${hmac}`;
 
     if (sig !== expectedSig) {
-      console.log('in git invalid !!!!!!!!!!!!!!!!!!!!');
+      console.log('in git invalid !!!!!!!!!!!!!!!!!!!!!');
       return res.status(401).send('Invalid signature');
     }
     console.log('req.body?.ref', req.body?.ref);
