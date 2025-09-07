@@ -26,7 +26,7 @@ router.post('/git', function (req, res) {
       .update(bodyStr)
       .digest('hex');
     const expectedSig = `sha256=${hmac}`;
-    console.log('process.env.GH_WEBHOOK_SECRET5', process.env.GH_WEBHOOK_SECRET);
+
     if (sig !== expectedSig) {
       console.log('in git invalid !!!!!!!!!!!!!!!!!!!!');
       return res.status(401).send('Invalid signature');
@@ -66,7 +66,7 @@ async function runDeploy() {
 
   try {
     const boot = await ensureRepo(); // ← بار اول را مدیریت می‌کند
-
+    console.log('process.env.GH_WEBHOOK_SECRET boot', boot);
     // همیشه به آخرین وضعیتِ ریموت سنک شو
     await run('git', ['fetch', '--all', '--prune'], { cwd: REPO });
     await run('git', ['reset', '--hard', `origin/${BRANCH}`], { cwd: REPO });
@@ -156,6 +156,7 @@ async function ensureRepo() {
 }
 
 function run(cmd, args, opts) {
+  console.log('run ...');
   return new Promise((resolve, reject) => {
     console.log(`$ ${cmd} ${args.join(' ')}`);
     const p = spawn(cmd, args, { stdio: 'inherit', shell: false, ...opts });
