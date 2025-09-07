@@ -28,19 +28,46 @@ router.post('/git', function (req, res) {
     const expectedSig = `sha256=${hmac}`;
 
     if (sig !== expectedSig) {
-      console.log('in git invalid !!!!!!!!!!!!!!!!!!!!');
+      console.log('in git invalid !!!!!!!!!!!! !!!!!!!!!');
       return res.status(401).send('Invalid signature');
     }
 
-    const evt = req.get('X-GitHub-Event'); // مثلا "push"
-    if (evt === 'push' && req.body?.ref === `refs/heads/${BRANCH}`) {
-      if (process.env.NODE_ENV === 'production') {
-        // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
-        res.status(200).json({ ok: true });
-        return queueMicrotask(() =>
-          runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)),
-        );
-      }
+    const event = req.get('X-GitHub-Event');
+    const action = req.body?.action;
+
+    console.log('evt=%s action=%s', event, action);
+
+    // شرط قبلی‌هات برای push/merge به main
+    const ref = req.body?.ref;
+    const pr = req.body?.pull_request;
+    const mergedToMainByPush = event === 'push' && ref === 'refs/heads/main';
+    const mergedToMainByPR =
+      event === 'pull_request' &&
+      action === 'closed' &&
+      pr?.merged === true &&
+      pr?.base?.ref === 'main';
+
+    // شرط جدید: وقتی jobهای CI تموم شد
+    const endOfPipeline =
+      (event === 'check_suite' && action === 'completed') ||
+      (event === 'workflow_job' && action === 'completed');
+
+    console.log(
+      'req.body?.ref ',
+      req.body?.ref,
+      'mergedToMainByPush',
+      mergedToMainByPush,
+      'mergedToMainByPR',
+      mergedToMainByPR,
+      'endOfPipeline  ',
+      endOfPipeline,
+    );
+    if (mergedToMainByPush || mergedToMainByPR || endOfPipeline) {
+      // if (process.env.NODE_ENV === 'production') {
+      // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
+      res.status(200).json({ ok: true });
+      return queueMicrotask(() => runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)));
+      // }
     }
 
     return res.status(200).json({ ok: true });
@@ -55,6 +82,7 @@ module.exports = { path: '/webhooks/', router };
 // ---------------------- Deploy ----------------------
 
 async function runDeploy() {
+  console.log('runDeploy1 .....');
   if (deploying) {
     console.log('Deploy already running, skipping…');
     return;
@@ -65,8 +93,9 @@ async function runDeploy() {
   const pm2 = NODE_BIN ? path.join(NODE_BIN, 'pm2') : 'pm2';
 
   try {
+    console.log('runDeploy2 .....');
     const boot = await ensureRepo(); // ← بار اول را مدیریت می‌کند
-
+    console.log('runDeploy3 ......', boot);
     // همیشه به آخرین وضعیتِ ریموت سنک شو
     await run('git', ['fetch', '--all', '--prune'], { cwd: REPO });
     await run('git', ['reset', '--hard', `origin/${BRANCH}`], { cwd: REPO });
@@ -156,6 +185,7 @@ async function ensureRepo() {
 }
 
 function run(cmd, args, opts) {
+  console.log('run .....');
   return new Promise((resolve, reject) => {
     console.log(`$ ${cmd} ${args.join(' ')}`);
     const p = spawn(cmd, args, { stdio: 'inherit', shell: false, ...opts });
