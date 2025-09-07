@@ -63,11 +63,11 @@ router.post('/git', function (req, res) {
       endOfPipeline,
     );
     if (mergedToMainByPush || mergedToMainByPR || endOfPipeline) {
-      // if (process.env.NODE_ENV === 'production') {
-      // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
-      res.status(200).json({ ok: true });
-      return queueMicrotask(() => runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)));
-      // }
+      // // if (process.env.NODE_ENV === 'production') {
+      // // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
+      // res.status(200).json({ ok: true });
+      // return queueMicrotask(() => runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)));
+      // // }
     }
 
     return res.status(200).json({ ok: true });
@@ -93,7 +93,6 @@ async function runDeploy() {
 
   const npm = NODE_BIN ? path.join(NODE_BIN, 'npm') : 'npm';
   const pm2 = NODE_BIN ? path.join(NODE_BIN, 'pm2') : 'pm2';
-  const REACT_DIR = path.join(REPO, 'react');
 
   try {
     console.log('runDeploy2 .... .');
@@ -107,25 +106,24 @@ async function runDeploy() {
     await run(npm, ['i', '--ignore-scripts']);
     // await run(npm, ['run', 'build'], { cwd: REPO });//
 
-
     // PM2: بار اول start، دفعات بعد startOrReload/reload
-    const ecosystemExists = fs.existsSync(path.join(REPO, ECOSYS));
-    if (ecosystemExists) {
-      if (boot.startedFresh) {
-        await run(pm2, ['start', ECOSYS], { cwd: REPO });
-      } else {
-        await run(pm2, ['startOrReload', ECOSYS], { cwd: REPO });
-      }
-    } else {
-      const entry = path.join(REPO, 'index.js');
-      if (boot.startedFresh) {
-        await run(pm2, ['start', entry, '--name', APP_NAME], { cwd: REPO });
-      } else {
-        await run(pm2, ['reload', APP_NAME], { cwd: REPO }).catch(() =>
-          run(pm2, ['start', entry, '--name', APP_NAME], { cwd: REPO }),
-        );
-      }
-    }
+    // const ecosystemExists = fs.existsSync(path.join(REPO, ECOSYS));
+    // if (ecosystemExists) {
+    //   if (boot.startedFresh) {
+    //     await run(pm2, ['start', ECOSYS], { cwd: REPO });
+    //   } else {
+    //     await run(pm2, ['startOrReload', ECOSYS], { cwd: REPO });
+    //   }
+    // } else {
+    //   const entry = path.join(REPO, 'index.js');
+    //   if (boot.startedFresh) {
+    //     await run(pm2, ['start', entry, '--name', APP_NAME], { cwd: REPO });
+    //   } else {
+    //     await run(pm2, ['reload', APP_NAME], { cwd: REPO }).catch(() =>
+    //       run(pm2, ['start', entry, '--name', APP_NAME], { cwd: REPO }),
+    //     );
+    //   }
+    // }
 
     // await run(pm2, ['save']); // اگر نیاز به بقا بعد از ریبوت داری
     console.log('✅ Deploy finished');
