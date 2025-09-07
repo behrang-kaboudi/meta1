@@ -103,7 +103,7 @@ async function runDeploy() {
     await run('git', ['fetch', '--all', '--prune'], { cwd: REPO });
     await run('git', ['reset', '--hard', `origin/${BRANCH}`], { cwd: REPO });
 
-    await run(npm, ['ci']);
+    await run(npm, ['ci', '--omit=dev', '--ignore-scripts']);
     await run(npm, ['run', 'build'], { cwd: REPO });
 
     // PM2: بار اول start، دفعات بعد startOrReload/reload
