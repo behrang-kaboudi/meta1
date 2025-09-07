@@ -107,6 +107,7 @@ async function runDeploy() {
     await run(npm, ['i', '--ignore-scripts']);
     // await run(npm, ['run', 'build'], { cwd: REPO });//
 
+
     // PM2: بار اول start، دفعات بعد startOrReload/reload
     const ecosystemExists = fs.existsSync(path.join(REPO, ECOSYS));
     if (ecosystemExists) {
