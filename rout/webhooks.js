@@ -26,7 +26,7 @@ router.post('/git', function (req, res) {
       .update(bodyStr)
       .digest('hex');
     const expectedSig = `sha256=${hmac}`;
-
+    console.log('in git invalid !!!!!!!!!!!!!!!!!!!!', process.env.GH_WEBHOOK_SECRET);
     if (sig !== expectedSig) {
       console.log('in git invalid !!!!!!!!!!!!!!!!!!!!');
       return res.status(401).send('Invalid signature');
