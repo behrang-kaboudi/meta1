@@ -81,6 +81,8 @@ module.exports = { path: '/webhooks/', router };
 
 // ---------------------- Deploy ----------------------
 
+// ---------------------- Deploy ----------------------
+
 async function runDeploy() {
   console.log('runDeploy1 .....');
   if (deploying) {
@@ -91,29 +93,65 @@ async function runDeploy() {
 
   const npm = NODE_BIN ? path.join(NODE_BIN, 'npm') : 'npm';
   const pm2 = NODE_BIN ? path.join(NODE_BIN, 'pm2') : 'pm2';
+  const REACT_DIR = path.join(REPO, 'react');
 
   try {
     console.log('runDeploy2 .....');
     const boot = await ensureRepo(); // ← بار اول را مدیریت می‌کند
     console.log('runDeploy3 ......', boot);
+
     // همیشه به آخرین وضعیتِ ریموت سنک شو
     await run('git', ['fetch', '--all', '--prune'], { cwd: REPO });
     await run('git', ['reset', '--hard', `origin/${BRANCH}`], { cwd: REPO });
 
-    // نصب پکیج‌ها (ci اگر قفل داشت؛ وگرنه install)
+    // --- نصب ریشه: بدون dev و بدون اجرای اسکریپت‌ها (prepare/husky)
+    // نصب ریشه: بدون dev و بدون اجرای هرگونه اسکریپت (prepare/husky)
     const hasLock = fs.existsSync(path.join(REPO, 'package-lock.json'));
+    const rootEnv = {
+      ...process.env,
+      HUSKY: '0',
+      HUSKY_SKIP_INSTALL: '1',
+      CI: 'true',
+      npm_config_ignore_scripts: 'true',
+    };
     try {
       if (hasLock) {
-        await run(npm, ['ci', '--omit=dev'], { cwd: REPO });
+        await run(npm, ['ci', '--omit=dev', '--ignore-scripts'], { cwd: REPO, env: rootEnv });
       } else {
-        await run(npm, ['install', '--omit=dev'], { cwd: REPO });
+        await run(npm, ['install', '--omit=dev', '--ignore-scripts'], { cwd: REPO, env: rootEnv });
       }
     } catch {
       console.warn('npm ci failed, trying npm install…');
-      await run(npm, ['install', '--omit=dev'], { cwd: REPO });
+      await run(npm, ['install', '--omit=dev', '--ignore-scripts'], { cwd: REPO, env: rootEnv });
     }
 
-    // بیلد
+    // نصب و بیلد React برای ساخت manifest.json
+    const REACT_DIR = path.join(REPO, 'react');
+    if (fs.existsSync(path.join(REACT_DIR, 'package.json'))) {
+      if (fs.existsSync(path.join(REACT_DIR, 'package-lock.json'))) {
+        await run(npm, ['ci'], { cwd: REACT_DIR }); // devDependencies لازم است
+      } else {
+        await run(npm, ['install'], { cwd: REACT_DIR });
+      }
+      await run(npm, ['run', 'build'], { cwd: REACT_DIR }); // react/dist/manifest.json تولید می‌شود
+    } else {
+      console.warn('react/package.json not found — skipping React build.');
+    }
+
+    // --- React: نصب با dev (بدون ignore-scripts)، سپس build تا manifest بسازد
+    if (fs.existsSync(path.join(REACT_DIR, 'package.json'))) {
+      const reactLock = fs.existsSync(path.join(REACT_DIR, 'package-lock.json'));
+      if (reactLock) {
+        await run(npm, ['ci'], { cwd: REACT_DIR }); // devDeps نصب شود
+      } else {
+        await run(npm, ['install'], { cwd: REACT_DIR });
+      }
+      await run(npm, ['run', 'build'], { cwd: REACT_DIR }); // باید react/dist/manifest.json تولید شود
+    } else {
+      console.warn('react/package.json not found — skipping React build.');
+    }
+
+    // --- (اختیاری) build ریشه اگر داری
     await run(npm, ['run', 'build'], { cwd: REPO });
 
     // PM2: بار اول start، دفعات بعد startOrReload/reload
@@ -135,8 +173,7 @@ async function runDeploy() {
       }
     }
 
-    // اختیاری: برای بقا بعد از ریبوت
-    // await run(pm2, ['save']);
+    // await run(pm2, ['save']); // اگر نیاز به بقا بعد از ریبوت داری
     console.log('✅ Deploy finished');
   } finally {
     deploying = false;
@@ -159,7 +196,6 @@ async function ensureRepo() {
   if (!fs.existsSync(gitDir)) {
     if (!REMOTE) throw new Error('DEPLOY_REMOTE_URL is required for first-time setup');
     console.log('📦 First-time setup: cloning repository…');
-    // clone در فولدر والد
     await run('git', ['clone', '--branch', BRANCH, '--single-branch', REMOTE, REPO], {
       cwd: parent,
     });
@@ -185,7 +221,9 @@ async function ensureRepo() {
 }
 
 function run(cmd, args, opts) {
-  console.log('run .....');
+
+  console.log('run .....', cmd);
+
   return new Promise((resolve, reject) => {
     console.log(`$ ${cmd} ${args.join(' ')}`);
     const p = spawn(cmd, args, { stdio: 'inherit', shell: false, ...opts });
