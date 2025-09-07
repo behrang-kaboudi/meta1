@@ -221,7 +221,9 @@ async function ensureRepo() {
 }
 
 function run(cmd, args, opts) {
+
   console.log('run .....', cmd);
+
   return new Promise((resolve, reject) => {
     console.log(`$ ${cmd} ${args.join(' ')}`);
     const p = spawn(cmd, args, { stdio: 'inherit', shell: false, ...opts });

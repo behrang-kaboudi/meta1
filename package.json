@@ -13,7 +13,9 @@
     "dev": "concurrently -k -n VITE,API \"vite\" \"NODE_ENV=development nodemon index.js\"",
     "build": "vite build",
     "debug": "nodemon --inspect index.js",
+
     "prepare": "node .husky/install.mjs",
+
     "lint": "eslint --cache index.js app.js module/**/*.js rout/**/*.js",
     "lint:fix": "eslint --cache --fix index.js app.js module/**/*.js rout/**/*.js",
     "lint:ci": "eslint --cache --no-warn-ignored --quiet --rule 'no-undef:0' --rule 'no-unused-vars:0' --rule 'n/no-missing-require:0' index.js app.js module/**/*.js rout/**/*.js",
