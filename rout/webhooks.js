@@ -40,29 +40,10 @@ router.post('/git', function (req, res) {
     // شرط قبلی‌هات برای push/merge به main
     const ref = req.body?.ref;
     const pr = req.body?.pull_request;
-    const mergedToMainByPush = event === 'push' && ref === 'refs/heads/main';
-    const mergedToMainByPR =
-      event === 'pull_request' &&
-      action === 'closed' &&
-      pr?.merged === true &&
-      pr?.base?.ref === 'main';
+    const mergedToMainByPush = event === 'workflow_job' && action === 'completed';
 
-    // شرط جدید: وقتی jobهای CI تموم شد
-    const endOfPipeline =
-      (event === 'check_suite' && action === 'completed') ||
-      (event === 'workflow_job' && action === 'completed');
-
-    console.log(
-      'req.body?.ref ',
-      req.body?.ref,
-      'mergedToMainByPush',
-      mergedToMainByPush,
-      'mergedToMainByPR',
-      mergedToMainByPR,
-      'endOfPipeline  ',
-      endOfPipeline,
-    );
-    if (mergedToMainByPush || mergedToMainByPR || endOfPipeline) {
+    console.log('mergedToMainByPush', mergedToMainByPush);
+    if (mergedToMainByPush) {
       // // if (process.env.NODE_ENV === 'production') {
       // // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
       // res.status(200).json({ ok: true });
