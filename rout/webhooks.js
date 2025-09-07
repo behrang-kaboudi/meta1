@@ -55,6 +55,7 @@ module.exports = { path: '/webhooks/', router };
 // ---------------------- Deploy ----------------------
 
 async function runDeploy() {
+  console.log('runDeploy1 .....');
   if (deploying) {
     console.log('Deploy already running, skipping…');
     return;
@@ -65,8 +66,9 @@ async function runDeploy() {
   const pm2 = NODE_BIN ? path.join(NODE_BIN, 'pm2') : 'pm2';
 
   try {
+    console.log('runDeploy2 .....');
     const boot = await ensureRepo(); // ← بار اول را مدیریت می‌کند
-    console.log('process.env.GH_WEBHOOK_SECRET boot', boot);
+    console.log('runDeploy3', boot);
     // همیشه به آخرین وضعیتِ ریموت سنک شو
     await run('git', ['fetch', '--all', '--prune'], { cwd: REPO });
     await run('git', ['reset', '--hard', `origin/${BRANCH}`], { cwd: REPO });
