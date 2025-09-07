@@ -44,11 +44,13 @@ router.post('/git', function (req, res) {
 
     console.log('mergedToMainByPush', mergedToMainByPush);
     if (mergedToMainByPush) {
+
       // if (process.env.NODE_ENV === 'production') {
       // پاسخ سریع بده، دیپلوی را بنداز عقبِ event loop
       res.status(200).json({ ok: true });
       return queueMicrotask(() => runDeploy().catch((err) => console.error('DEPLOY ERROR:', err)));
       // }
+
     }
 
     return res.status(200).json({ ok: true });
