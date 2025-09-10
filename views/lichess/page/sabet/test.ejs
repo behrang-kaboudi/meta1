@@ -136,115 +136,7 @@ template="lichess" %>
     font-size: 0.8rem;
   }
 </style>
-<section class="secTeam" style="direction: ltr">
-  <div class="teamHeader">
-    <h1 class="section-heading">Meet the Minds Behind MetaMind</h1>
-  </div>
-  <div class="teamBeh">
-    <div class="card1 mx-auto">
-      <div class="chess-icon1">♞</div>
-      <img class="avatar1" src="/public/img/team/behrang.jpeg" alt="Behrang Kaboudi" />
-      <div class="name1">Behrang Kaboudi</div>
-      <div class="role1">CEO - Developer</div>
-      <div class="tags1">
-        <div class="tag1">Node.js</div>
-        <div class="tag1">Socket.IO</div>
-        <div class="tag1">MongoDB</div>
-      </div>
-      <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35">
-        Behrang, known as the 'Knight of Code', profesional chess player and coach is a passionate
-        back-end developer with deep expertise in JavaScript, scalable APIs, and real-time apps. He
-        powers MetaMind's infrastructure and loves solving chess challenges through code.
-        <br />
-      </p>
-      <a
-        href="https://www.linkedin.com/in/behrangkaboudi/"
-        target="_blank"
-        style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem"
-        >LinkedIn Profile</a
-      >
-    </div>
-  </div>
-  <div class="teamEli">
-    <div class="card1 mx-auto">
-      <div class="chess-icon1">♛</div>
-      <img class="avatar1" src="/public/img/team/elham.jpeg" alt="Elham Shourabi" />
-      <div class="name1">Elham Shourabi</div>
-      <div class="role1">CMO-Chief Marketing Officer</div>
-      <div class="tags1">
-        <div class="tag1">Marketing</div>
-        <div class="tag1">Strategy</div>
-        <div class="tag1">Branding</div>
-      </div>
-      <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35">
-        Elham, known as the 'Queen of MetaMind', is a strategic marketing expert. She leads
-        MetaMind’s brand vision, international outreach, and community development. She has mentored
-        more than 50 startup teams, judged innovation events, and developed bilingual digital
-        platforms.
-        <br />
-      </p>
-      <a
-        href="https://www.linkedin.com/in/ellie-shourabi/"
-        target="_blank"
-        style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem"
-        >LinkedIn Profile</a
-      >
-    </div>
-  </div>
-  <div class="teamMoh">
-    <div class="card1 mx-auto">
-      <div class="chess-icon1">♝</div>
-      <img class="avatar1" src="/public/img/team/khodaii.jpeg" alt="Mohammadreza Khodaie" />
-      <div class="name1">Mohammadreza Khodaie</div>
-      <div class="role1">Product Manager</div>
-      <div class="tags1">
-        <div class="tag1">Strategy</div>
-        <div class="tag1">Roadmap</div>
-        <div class="tag1">User Insight</div>
-      </div>
-      <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35">
-        Mohammadreza, the 'Bishop of vision', connects insight with execution. With over a decade in
-        product management, he aligns market needs with engineering excellence to ensure
-        impact-driven delivery.
-        <br />
-      </p>
-      <a
-        href="https://www.linkedin.com/in/mohammad-reza-khodaei/"
-        target="_blank"
-        style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem"
-        >LinkedIn Profile</a
-      >
-    </div>
-  </div>
-  <div class="teamRaz">
-    <div class="card1 mx-auto">
-      <div class="chess-icon1">♜</div>
-      <img class="avatar1" src="/public/img/team/razieh.jpeg" alt="Razieh Malekzadeh" />
-      <div class="name1">Razieh Malekzadeh</div>
-      <div class="role1">HR/Recruiter Specialist</div>
-      <div class="tags1">
-        <div class="tag1">Talent</div>
-        <div class="tag1">Hiring</div>
-        <div class="tag1">People Ops</div>
-      </div>
 
-      <p style="margin-top: 1rem; font-size: 0.9rem; color: #5a4a35">
-        <br />
-        <br />
-        Razieh, the 'Rook of Culture', ensures that MetaMind recruits the right minds and nurtures
-        their growth. With 9 years in HR, she drives structure, trust, and sustainable people-first
-        strategies.
-        <br />
-      </p>
-      <a
-        href="https://www.linkedin.com/in/razie-malekzade-a5384a294/"
-        target="_blank"
-        style="color: #7e5c2f; text-decoration: underline; font-size: 0.85rem"
-        >LinkedIn Profile</a
-      >
-    </div>
-  </div>
-</section>
 
 <p style="margin-top: 30px"></p>
 <!-- <div data-island="Hi" data-props="{}"></div>
@@ -255,9 +147,20 @@ template="lichess" %>
 
 <div data-island="Hi" data-props='{"who":"HI"}'></div>
 <div
-  data-island="PgnViewer"
-  data-props='{"pgnText":"1. e4 e5 2. d4 (2. f3 g6 (2... c6 3. d4) 3. h3 h5) (2. Nc3 b6) 2... exd4 (2... c5 3. dxc5 h6) 3. c3 f6"}'
+  data-island="PgnViewer" 
+  data-props='{
+    "pgnText": "1. e4 e5 2. d4 (2. f3 g6 (2... c6 3. d4) 3. h3 h5) (2. Nc3 b6) 2... exd4 (2... c5 3. dxc5 h6) 3. c3 f6"
+
+  }'
 ></div>
+<div
+  data-island="PgnViewer" 
+  data-props='{
+    "pgnText": "1. e4 e5 2. d4 (2. f3 g6 (2... c6 3. d4) 3. h3 h5) (2. Nc3 b6) 2... exd4 (2... c5 3. dxc5 h6) 3. c3 f6",
+    "view": "linear"
+  }'
+></div>
+
 <!-- <div
   data-island="PgnViewer"
   data-props='{"pgnText":'
@@ -356,17 +259,6 @@ he needed one the most} *
 
 "}'
 ></div> 
-<!-- <% if (dev) { %> -->
-<!-- React Refresh preamble (ضروری برای $RefreshSig$) -->
-<!-- <script type="module">
-    import RefreshRuntime from 'http://localhost:5173/@react-refresh';
-    RefreshRuntime.injectIntoGlobalHook(window);
-    window.$RefreshReg$ = () => {};
-    window.$RefreshSig$ = () => (type) => type;
-    window.__vite_plugin_react_preamble_installed__ = true;
-  </script> -->
-<!-- Vite HMR client -->
-<!-- <script type="module" src="http://localhost:5173/@vite/client"></script>
-<% } %> -->
+
 
 <%- include('../../share/superfooter') -%>
