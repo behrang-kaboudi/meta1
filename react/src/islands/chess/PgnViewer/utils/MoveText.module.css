@@ -1,0 +1,10 @@
+/* MoveText.css */
+.moveText {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.moveText .figurine {
+  /* اگر بخواهی اندازه نمادها کمی بزرگ‌تر باشد */
+  font-size: 2em;
+  line-height: 1;
+}

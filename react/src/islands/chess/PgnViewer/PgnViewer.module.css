@@ -111,3 +111,41 @@
 .paren {
   color: #374151;
 }
+
+/* لیست و ردیف‌های نمای خطی */
+.linearList {
+  padding: 6px 8px;
+}
+
+.linearMainRow {
+  padding: 4px 6px;
+}
+.linearMainRow > * {
+  font-weight: 600;
+  padding: 0 3px;
+}
+
+.linearMainRowMoves {
+  cursor: pointer;
+  color: #111827;
+}
+.linearVariation {
+  grid-column: 2 / -1; /* زیر هر دو ستون حرکت می‌افتد */
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* background: #ffffff; */
+  /* border: 1px solid #d1d5db; */
+  /* border-bottom: 1px solid #222; */
+  padding: 6px 6px;
+  /* border-radius: 6px; */
+  color: #111827;
+  font-weight: 400;
+}
+.linearVarMove {
+  display: inline-block;
+  /* background: #f9fafb; */
+  /* border: 1px solid #e5e7eb; */
+  /* border-radius: 6px; */
+  font-size: 15px;
+  cursor: pointer;
+  margin-inline: 1px;
+}

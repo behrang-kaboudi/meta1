@@ -1,162 +1,13 @@
 // react/src/islands/chess/PgnViewer/PgnViewer.jsx
 import { memo, useMemo, useCallback, useEffect } from 'react';
 import { enrichPgn, addMoveAfterParent } from '@shared/chess/enrichPgn.js';
+import { sanWithNags, getComment, collectVariations } from './utils/pgnView.helpers.js';
+import setTableView from './views/Table.jsx';
+import setLineView from './views/Line.jsx';
 import styles from './PgnViewer.module.css';
+import MoveText from './utils/MoveText.jsx';
 
-/** نگاشت NAGهای رایج به نماد */
-const NAG_TO_SYMBOL = {
-  1: '!',
-  2: '?',
-  3: '!!',
-  4: '??',
-  5: '!?',
-  6: '?!',
-  10: '⟳',
-  14: '⟲',
-  18: '↑',
-  19: '→',
-  20: '↗︎',
-  21: '⇄',
-};
-
-function sanWithNags(move) {
-  const san = move?.enriched?.san ?? move?.notation?.notation ?? '';
-  const nags = (move?.enriched?.nags ?? move?.nags ?? [])
-    .map((n) => NAG_TO_SYMBOL[n] ?? '')
-    .join('');
-  return san + nags;
-}
-function getComment(move) {
-  const c = move?.enriched?.comment ?? move?.comment ?? '';
-  return (c || '').trim();
-}
-
-function numberLabel(move) {
-  const n = move?.enriched?.moveNo ?? move?.moveNumber ?? null;
-  if (!n) return '…';
-  return move?.enriched?.side === 'w' ? `${n}.` : '...';
-}
-function firstMoveLabelInVariation(move) {
-  const n = move?.enriched?.moveNo ?? move?.moveNumber ?? null;
-  if (move?.enriched?.side === 'w') return n ? `${n}.` : '…';
-  return n ? `${n}...` : '...';
-}
-
-/** کامنت‌های همه عمق‌ها برای یک خط واریانت */
-function gatherCommentsRecursive(line, set) {
-  if (!Array.isArray(line)) return;
-  for (const m of line) {
-    const c = getComment(m);
-    if (c) set.add(c);
-    if (Array.isArray(m?.variations) && m.variations.length) {
-      for (const sub of m.variations) gatherCommentsRecursive(sub, set);
-    }
-  }
-}
-function collectVariations(move) {
-  const out = [];
-  if (!Array.isArray(move?.variations)) return out;
-  for (const line of move.variations) {
-    if (!Array.isArray(line) || !line.length) continue;
-    const comments = new Set();
-    gatherCommentsRecursive(line, comments);
-    out.push({ line, comments: Array.from(comments) });
-  }
-  return out;
-}
-
-/* ------------------- UI ------------------- */
-
-function VariationLine({ line, onClick }) {
-  if (!Array.isArray(line) || !line.length) return null;
-  return (
-    <>
-      {line.map((m, i) => {
-        const key = m?.enriched?.path ?? `mv_${i}`;
-        const isFirst = i === 0;
-        const prefix = isFirst
-          ? firstMoveLabelInVariation(m)
-          : m?.enriched?.side === 'w'
-            ? numberLabel(m)
-            : null;
-        return (
-          <span key={key} className={styles.varChunk}>
-            {prefix ? <span className={styles.varNum}>{prefix}&nbsp;</span> : null}
-            <span
-              className={styles.varMove}
-              onClick={() => onClick(m)}
-              title={m?.enriched?.fenAfter || ''}
-            >
-              {sanWithNags(m)}
-            </span>
-            {Array.isArray(m?.variations) && m.variations.length
-              ? m.variations.map((sub, si) => (
-                  <span key={`${key}_sub_${si}`} className={styles.paren}>
-                    {' ('}
-                    <VariationLine line={sub} onClick={onClick} />
-                    {')'}
-                  </span>
-                ))
-              : null}{' '}
-          </span>
-        );
-      })}
-    </>
-  );
-}
-
-/** ردیفِ جفتی: شماره حرکت + ستون سفید + ستون سیاه */
-function RowPair({ moveNo, white, black, onClick }) {
-  return (
-    <div className={styles.pairRow}>
-      <div className={styles.colNumber}>{moveNo ?? '…'}</div>
-      <div className={styles.colMove}>
-        {white ? (
-          <span
-            className={styles.cellBtn}
-            onClick={() => onClick(white)}
-            title={white?.enriched?.fenAfter || ''}
-          >
-            {sanWithNags(white)}
-          </span>
-        ) : (
-          <span className={styles.ellipsis}>…</span>
-        )}
-      </div>
-      <div className={styles.colMove}>
-        {black ? (
-          <span
-            className={styles.cellBtn}
-            onClick={() => onClick(black)}
-            title={black?.enriched?.fenAfter || ''}
-          >
-            {sanWithNags(black)}
-          </span>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-function RowVariation({ line, onClick }) {
-  return (
-    <div className={styles.variation}>
-      (<VariationLine line={line} onClick={onClick} />)
-    </div>
-  );
-}
-function RowComment({ text, indent = 0 }) {
-  if (!text) return null;
-  return (
-    <div className={styles.comment} style={{ marginInlineStart: indent }}>
-      {text}
-    </div>
-  );
-}
-
-/* ------------------- Main ------------------- */
-
-function PgnViewer({ pgnText }) {
+function PgnViewer({ pgnText, view = 'grid', figurines = true, figurineColor = 'auto' }) {
   const game = useMemo(() => {
     try {
       return enrichPgn(pgnText) ?? { moves: [], tags: {}, gameComment: null };
@@ -250,8 +101,31 @@ function PgnViewer({ pgnText }) {
         }
       }
     }
+    console.log(out);
+
     return out;
   }, [moves]);
+
+  const renderSAN = useCallback(
+    (m) => {
+      const s = sanWithNags(m); // SAN + NAG
+      if (!figurines) return s;
+
+      // انتخاب رنگ نماد: auto (مطابق حرکتِ سفید/سیاه) یا اجباراً سفید/سیاه
+      const which =
+        figurineColor === 'auto'
+          ? m?.enriched?.side === 'b'
+            ? 'b'
+            : 'w'
+          : figurineColor === 'black'
+            ? 'b'
+            : 'w';
+
+      return toFigurineSANText(s, which);
+    },
+    [figurines, figurineColor],
+  );
+
   useEffect(() => {
     if (!game?.game) return;
     addMoveAfterParent({ game: game.game, parentId: 'm_j0syfo', move: 'a6' });
@@ -262,38 +136,17 @@ function PgnViewer({ pgnText }) {
     console.log(m);
     console.log('[clicked SAN]:', m?.enriched?.san || m?.notation?.notation || '');
   }, []);
+
   return (
-    <div className={styles.viewer}>
-      {game?.gameComment && <div className={styles.gameComment}>{game.gameComment}</div>}
-
-      <div className={styles.list}>
-        {rows.map((r, i) => {
-          if (r.kind === 'pair')
-            return (
-              <RowPair
-                key={r.key}
-                moveNo={r.moveNo}
-                white={r.white}
-                black={r.black}
-                onClick={handleClickMove}
-              />
-            );
-          if (r.kind === 'comment')
-            return <RowComment key={r.key} text={r.text} indent={r.indent} />;
-          if (r.kind === 'variation') {
-            const nextIsVf = rows[i + 1]?.kind === 'pair';
-            const style = nextIsVf ? { borderBottom: '1px solid black' } : undefined;
-            return (
-              <div key={r.key} style={style}>
-                <RowVariation line={r.line} onClick={handleClickMove} />
-              </div>
-            );
-          }
-
-          return null;
-        })}
+    <>
+      <div className={styles.viewer}>
+        {game?.gameComment && <div className={styles.gameComment}>{game.gameComment}</div>}
+        {view === 'grid'
+          ? setTableView({ rows, onClick: handleClickMove })
+          : setLineView({ rows, onClick: handleClickMove })}
       </div>
-    </div>
+      <MoveText san="Nf3" />
+    </>
   );
 }
 
