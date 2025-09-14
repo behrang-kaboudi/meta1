@@ -144,8 +144,19 @@ template="lichess" %>
 <!-- <div style="padding-left: 11px"> -->
 
 <!-- </div> -->
+<div>
+  <div id="pv1"></div>
 
-<div data-island="Hi" data-props='{"who":"HI"}'></div>
+<script src="https://cdn.jsdelivr.net/npm/@mliebelt/pgn-viewer@1.6.11/lib/dist.js"></script>
+<script>
+  const pgn = `[Event "Example"]\n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 *`;
+  // حالت نمایش استاندارد:
+  PGNV.pgnView('pv1', { pgn, pieceStyle: 'merida', layout: 'left' });
+  // حالت‌های دیگر: pgnEdit, pgnBoard, pgnPrint, pgnPuzzle
+</script>
+
+</div>
+<!-- <div data-island="Hi" data-props='{"who":"HI"}'></div>
 <div
   data-island="PgnViewer" 
   data-props='{
@@ -159,7 +170,7 @@ template="lichess" %>
     "pgnText": "1. e4 e5 2. d4 (2. f3 g6 (2... c6 3. d4) 3. h3 h5) (2. Nc3 b6) 2... exd4 (2... c5 3. dxc5 h6) 3. c3 f6",
     "view": "linear"
   }'
-></div>
+></div> -->
 
 <!-- <div
   data-island="PgnViewer"

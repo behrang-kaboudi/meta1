@@ -8,6 +8,7 @@ const registry = {
   HomeBtn: { load: () => import('./islands/Btns/HomeBtn.jsx') },
   RChessboard: { load: () => import('./islands/chessBoards/ChessboardOuterNotation.jsx') },
   PgnViewer: { load: () => import('./islands/chess/PgnViewer/PgnViewer.jsx') },
+  Analyze: { load: () => import('./islands/pages/analyze/Analyze.jsx') },
 };
 
 function mount(el) {
