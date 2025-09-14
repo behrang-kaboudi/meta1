@@ -37,8 +37,9 @@ function enrichLine(moves = [], fenAtStart, path = 'm.', map = {}, parent = null
   const chess = new Chess(fenAtStart);
   for (let i = 0; i < moves.length; i++) {
     const m = moves[i];
-    const preMove = i > 0 ? moves[i - 1] : parent;
-    let nextMainMove = i + 1 == moves.length ? null : moves[i + 1];
+    const index = i;
+    // const preMove = i > 0 ? moves[i - 1] : parent;
+    // let nextMainMove = i + 1 == moves.length ? null : moves[i + 1];
     const plyBefore = chess.history().length;
     const fenBefore = chess.fen();
     const { side, moveNo } = metaFromFEN(fenBefore); // ← به‌جای history-based
@@ -48,8 +49,9 @@ function enrichLine(moves = [], fenAtStart, path = 'm.', map = {}, parent = null
     const id = makeId([fenBefore, san, `${path}${i}`, String(plyBefore + 1)]);
     const en = {
       id,
-      preMove,
-      nextMainMove,
+      index,
+      // preMove,
+      // nextMainMove,
       line: moves,
       path: `${path}${i}`,
       plyInLine: plyBefore + 1,
@@ -158,26 +160,24 @@ export function enrichPgn(pgnText = '') {
     return false;
   }
 }
-
-function makeMoveObject({ fenBefore, move, parent, game, path }) {
+// add New Move Section
+function makeMoveObject({ fenBefore, move, moveIndexInLine, moveLine, path }) {
+  // { fenBefore, move, moveIndexInLine,moveLine, path }
   const chess = new Chess(fenBefore);
-
   const san = typeof move === 'string' ? move : move.notation?.notation;
   const res = chess.move(san, { sloppy: true });
   if (!res) throw new Error(`illegal move: ${san} after ${fenBefore}`);
-
   const fenAfter = chess.fen();
   const plyBefore = chess.history().length - 1;
   const id = makeId([fenBefore, san, path, String(plyBefore + 1)]);
-  let line = parent ? parent.enriched.line : game.moves;
-  console.log('line', line, parent);
 
   const enriched = {
     id,
-    parent,
-    preMove: parent || null,
+    // parent,
+    // preMove: parent || null,
     //TODO اگر بازی خالی هم باشد آید آرایه حرکات اول ایجاد میشود یا خیر؟؟؟؟
-    line,
+    index: moveIndexInLine,
+    line: moveLine,
     nextMainMove: null,
     path,
     plyInLine: plyBefore + 1,
@@ -204,91 +204,59 @@ function makeMoveObject({ fenBefore, move, parent, game, path }) {
       fig: san[0].toUpperCase() === san[0] ? san[0] : '',
       notation: san,
     },
+    variations: [],
+    moveNumber: metaFromFEN(fenBefore).moveNo,
+    turn: metaFromFEN(fenBefore).side,
   };
 }
-
+function getPreMoveAnswers(moveLine, moveIndex) {
+  //main answer is bigSibling other answers are in variants of big sibling
+  let bigSiblingIndex = moveIndex + 1;
+  let map = new Map();
+  if (moveLine[bigSiblingIndex]) {
+    map.set(moveLine[bigSiblingIndex].enriched.san);
+    moveLine[bigSiblingIndex].variations.forEach((v) => {
+      map.set(v[0].enriched.san, v[0]);
+    });
+  }
+  return map;
+}
 /**
  * move = san
  * اگر پرنت آیدی نبود در اولین حرکت بازی جستجو کند
  */
 export function addMoveAfterParent({ enrichedPgn, parentId, move }) {
+  //parent means the move before new in move's line means previous move for new move
   let game = enrichedPgn.game;
   if (!game) throw new Error('game is required (from enrichPgn)');
   if (!game.moves) throw new Error('game.moves not found');
-
-  let parent, fenBefore;
-  if (parentId) {
-    parent = enrichedPgn.map[parentId];
-    if (!parent) throw new Error(`parentId=${parentId} not found`);
-    fenBefore = parent.enriched.fenAfter;
-  } else {
-    parent = null;
-    fenBefore = game?.tags?.FEN || 'startpos';
-  }
-  //next means Big Brother of new move
-  let next;
-  if (parent) {
-    next = parent.enriched?.nextMainMove ?? null;
-  } else {
-    next = Array.isArray(game.moves) && game.moves.length > 0 ? game.moves[0] : null;
-    console.log('next', next, move);
-  }
-  if (next?.enriched?.san === move) {
-    return {
-      id: next.enriched.id,
-      existed: true,
-    };
+  let preMove = parentId && enrichedPgn.map[parentId];
+  let preMoveIndexInLine = parentId ? preMove.enriched.index : -1;
+  let preMovesline = parentId ? preMove.enriched.line : game.moves;
+  let siblings = getPreMoveAnswers(preMovesline, preMoveIndexInLine);
+  if (siblings.has(move)) return { enrichedPgn, existed: true, newMoveObj: siblings.get(move) };
+  //set defaults for next move in line: means add new move to the end of variant. if there is no sibling
+  let moveIndexInLine = preMoveIndexInLine + 1;
+  let moveLine = preMovesline;
+  // if we have big Sibling for our move
+  if (siblings.size > 0) {
+    moveIndexInLine = 0;
+    moveLine = [];
+    // add new line to main siblings variants
+    preMovesline[preMoveIndexInLine + 1].variations.push(moveLine);
   }
 
-  // ۲) بررسی واریانت‌ها
-  if (Array.isArray(next?.enriched?.variations)) {
-    for (const vLine of next.enriched.variations) {
-      const first = vLine[0];
-      if (first?.enriched?.san === move) {
-        return {
-          id: first.enriched.id,
-          existed: true,
-        };
-      }
-    }
-  }
-
-  const path = parent
-    ? `${parent.enriched.path}v${parent.enriched.variations?.length || 0}`
+  const path = preMove
+    ? `${preMove.enriched.path}v${preMove.enriched.variations?.length || 0}`
     : `m.${game.moves.length}`;
+  const fenBefore = preMove ? preMove.enriched.fenAfter : game.tags.FEN;
+  const newMoveObj = makeMoveObject({ fenBefore, move, moveIndexInLine, moveLine, path });
+  moveLine.push(newMoveObj);
 
-  const newMoveObj = makeMoveObject({ fenBefore, move, parent, game, path });
-
-  /// حرکتی که پوش میشود اگر در ابتدا باشد باید
-  if (parent) {
-    if (!next) {
-      // parent آخرین حرکت → اضافه کن
-      newMoveObj.enriched.line.push(newMoveObj);
-    } else {
-      let newLine = [newMoveObj];
-      newMoveObj.enriched.line[0].variations.push(newLine);
-      newMoveObj.enriched.line = newLine;
-    }
-  } else {
-    if (!next) {
-      // بازی خالی → اولین حرکت
-      //TODO test
-
-      newMoveObj.enriched.line.moves.push(newMoveObj);
-    } else {
-      // شروع بازی ولی next موجوده → prepend
-      let newLine = [newMoveObj];
-      newMoveObj.enriched.line[0].variations.push(newLine);
-      newMoveObj.enriched.line = newLine;
-    }
-  }
-
-  const id = newMoveObj?.enriched?.id;
-
-  enrichedPgn.map[id] = newMoveObj;
+  enrichedPgn.map[newMoveObj.enriched.id] = newMoveObj;
   //TODO پی جی ان اشتباه است از محل مناسبی نمیخواند
   console.log('enrichedPgneeeee', enrichedPgn, enrichedToPgn(enrichedPgn));
-  return { id, enrichedPgn, existed: false };
+  return { enrichedPgn, existed: false, newMoveObj };
 }
 
 // کمکی: از FEN، نوبت و شماره حرکت را درآور

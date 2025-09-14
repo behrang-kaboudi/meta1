@@ -23,8 +23,9 @@ export default function Analyze(props) {
   const [FEN, setFEN] = useState();
   const [enrichedMove, setEnrichedMove] = useState();
 
-  let [PGNImportDialogShow, setPGNImportDialogShow] = useState(false);
-  let [enrichedPgn, setEnrichedPgn] = useState();
+  const [PGNImportDialogShow, setPGNImportDialogShow] = useState(false);
+  const [enrichedPgn, setEnrichedPgn] = useState();
+  const [pgnViewerVersion, setPgnViewerVersion] = useState(0);
   useEffect(() => {
     // فقط برای تست
     // if (enrichedPgn) console.log('enrichedPgn changed:', enrichedPgn);
@@ -47,8 +48,6 @@ export default function Analyze(props) {
   }
   let onMoveClick = useCallback((m) => {
     setEnrichedMove(m);
-
-    console.log(m);
     // console.log('[clicked SAN]:', m?.enriched?.san || m?.notation?.notation || '');
     // '1. e4 e5 2. d4 (2. f3 g6 (2... c6 3. d4) 3. h3 h5) (2. Nc3 b6) 2... exd4 (2... c5 3. dxc5 h6) 3. c3 f6',
     //1. e4 e5 2. d4 (2. f3 g6 (2... c6 3. d4) 3. h3 h5) (2. Nc3 b6) 2... exd4 (2... c5 3. dxc5 h6) 3. c3 f6
@@ -64,17 +63,9 @@ export default function Analyze(props) {
       setEnrichedMove(enrichedPgn.map[changed.id]);
       return;
     }
-
     setEnrichedPgn(changed.enrichedPgn);
-    setEnrichedPgn((prev) => ({
-      ...prev,
-      game: {
-        ...prev.game,
-        // اگر moves داخلش mutate شده، رفرنس جدید بساز:
-        moves: [...prev.game.moves],
-      },
-    }));
-    setEnrichedMove(changed.enrichedPgn.map[changed.id]);
+    setEnrichedMove(changed.enrichedPgn.map[changed.newMoveObj.enriched.id]);
+    setPgnViewerVersion((x) => x + 1);
     //todo set enriched move and PGN
   }
   return (
@@ -110,7 +101,7 @@ export default function Analyze(props) {
             <button>btn5</button>
           </div>
           <div>
-            <PgnViewer enrichPgn={enrichedPgn} onClick={onMoveClick} />
+            <PgnViewer key={pgnViewerVersion} enrichPgn={enrichedPgn} onClick={onMoveClick} />
           </div>
         </div>
       </div>

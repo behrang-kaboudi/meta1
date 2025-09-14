@@ -120,26 +120,6 @@ function PgnViewer({
     return out;
   }, [moves]);
 
-  const renderSAN = useCallback(
-    (m) => {
-      const s = sanWithNags(m); // SAN + NAG
-      if (!figurines) return s;
-
-      // انتخاب رنگ نماد: auto (مطابق حرکتِ سفید/سیاه) یا اجباراً سفید/سیاه
-      const which =
-        figurineColor === 'auto'
-          ? m?.enriched?.side === 'b'
-            ? 'b'
-            : 'w'
-          : figurineColor === 'black'
-            ? 'b'
-            : 'w';
-
-      return convertToFigurineSAN(s, which);
-    },
-    [figurines, figurineColor],
-  );
-
   const handleClickMove = useCallback(
     (m) => {
       onClick(m);
