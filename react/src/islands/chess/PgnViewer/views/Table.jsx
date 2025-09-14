@@ -7,7 +7,6 @@ function VariationLine({ line, onClick, renderSAN }) {
   return (
     <>
       {line.map((m, i) => {
-        console.log('variation line', m);
         const key = m?.enriched?.path ?? `mv_${i}`;
         const isFirst = i === 0;
         const prefix = isFirst
@@ -43,8 +42,6 @@ function VariationLine({ line, onClick, renderSAN }) {
 
 /** ردیفِ جفتی: شماره حرکت + ستون سفید + ستون سیاه */
 function RowPair({ moveNo, white, black, onClick }) {
-  console.log('row view');
-
   return (
     <div className={styles.pairRow}>
       <div className={styles.colNumber}>{moveNo ?? '…'}</div>

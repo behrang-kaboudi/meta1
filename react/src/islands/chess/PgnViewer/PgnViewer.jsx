@@ -1,21 +1,36 @@
 // react/src/islands/chess/PgnViewer/PgnViewer.jsx
 import { memo, useMemo, useCallback, useEffect } from 'react';
-import { enrichPgn, addMoveAfterParent } from '@shared/chess/enrichPgn.js';
+
 import { sanWithNags, getComment, collectVariations } from './utils/pgnView.helpers.js';
 import setTableView from './views/Table.jsx';
 import setLineView from './views/Line.jsx';
 import styles from './PgnViewer.module.css';
-import MoveText from './utils/MoveText.jsx';
+// import MoveText from './utils/MoveText.jsx';
 
-function PgnViewer({ pgnText, view = 'grid', figurines = true, figurineColor = 'auto' }) {
-  const game = useMemo(() => {
-    try {
-      return enrichPgn(pgnText) ?? { moves: [], tags: {}, gameComment: null };
-    } catch {
-      return { moves: [], tags: {}, gameComment: null };
-    }
-  }, [pgnText]);
-  const moves = game?.game?.moves ?? [];
+// Helper function to convert SAN notation to figurine notation
+function convertToFigurineSAN(san, color) {
+  if (!san) return san;
+
+  const pieceMap = {
+    K: color === 'w' ? '♔' : '♚',
+    Q: color === 'w' ? '♕' : '♛',
+    R: color === 'w' ? '♖' : '♜',
+    B: color === 'w' ? '♗' : '♝',
+    N: color === 'w' ? '♘' : '♞',
+  };
+
+  // Replace piece letters with figurines
+  return san.replace(/[KQRBN]/g, (match) => pieceMap[match] || match);
+}
+
+function PgnViewer({
+  enrichPgn,
+  view = 'grid',
+  onClick,
+  figurines = true,
+  figurineColor = 'auto',
+}) {
+  const moves = enrichPgn?.game?.moves ?? [];
   /** ساخت «ردیف‌ها» به‌صورت جفتی (white | black)
    *  - اگر white واریانت/کامنت داشته باشد: اول ردیف سفید، بعد واریانت‌ها، سپس ردیف سیاه.
    *  - در غیر این صورت: هر دو در یک ردیف.
@@ -101,7 +116,6 @@ function PgnViewer({ pgnText, view = 'grid', figurines = true, figurineColor = '
         }
       }
     }
-    console.log(out);
 
     return out;
   }, [moves]);
@@ -121,31 +135,28 @@ function PgnViewer({ pgnText, view = 'grid', figurines = true, figurineColor = '
             ? 'b'
             : 'w';
 
-      return toFigurineSANText(s, which);
+      return convertToFigurineSAN(s, which);
     },
     [figurines, figurineColor],
   );
 
-  useEffect(() => {
-    if (!game?.game) return;
-    addMoveAfterParent({ game: game.game, parentId: 'm_j0syfo', move: 'a6' });
-    addMoveAfterParent({ game: game.game, parentId: 'm_1qhagr9', move: 'a3' });
-  }, [game]);
-
-  const handleClickMove = useCallback((m) => {
-    console.log(m);
-    console.log('[clicked SAN]:', m?.enriched?.san || m?.notation?.notation || '');
-  }, []);
+  const handleClickMove = useCallback(
+    (m) => {
+      onClick(m);
+    },
+    [onClick],
+  );
 
   return (
     <>
       <div className={styles.viewer}>
-        {game?.gameComment && <div className={styles.gameComment}>{game.gameComment}</div>}
+        {enrichPgn?.gameComment && (
+          <div className={styles.gameComment}>{enrichPgn.gameComment}</div>
+        )}
         {view === 'grid'
           ? setTableView({ rows, onClick: handleClickMove })
           : setLineView({ rows, onClick: handleClickMove })}
       </div>
-      <MoveText san="Nf3" />
     </>
   );
 }

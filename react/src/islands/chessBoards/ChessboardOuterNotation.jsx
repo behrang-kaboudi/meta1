@@ -1,17 +1,18 @@
 import { useMemo, useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { Chessboard } from 'react-chessboard';
 import './outer-notation.css';
-
-export default function ChessboardOuterNotation() {
-  const [orientation, setOrientation] = useState('black');
+// add
+export default function ChessboardOuterNotation(props) {
+  const [orientation, setOrientation] = useState(props.boardOrientation || 'white');
   const [showNotation, setShowNotation] = useState(true);
   const [boardWidth, setBoardWidth] = useState(0);
   const [gutter, setGutter] = useState(0);
 
   const outerRef = useRef(null); // والد flex
   const innerRef = useRef(null); // رپرِ shrink-wrap
-  // console.log(orientation, initialOrientation);
-
+  useEffect(() => {
+    if (props.boardOrientation) setOrientation(props.boardOrientation);
+  }, [props.boardOrientation]);
   useEffect(() => {
     const checkSize = () => {
       // اگر بزرگتر از 768px (مثلاً تبلت و دسکتاپ) → نوتیشن خاموش
@@ -49,35 +50,6 @@ export default function ChessboardOuterNotation() {
     };
   }, []);
 
-  // useLayoutEffect(() => {
-  //   // let preW = width;
-  //   console.log('inside 1', boardWidth);
-  //   if (!innerRef.current) return;
-  //   const target = outerRef.current;
-
-  //   const update = (entry) => {
-  //     // if(preW ==)
-  //     const width = Math.round(entry.contentRect.width);
-  //     if (boardWidth == width) return;
-  //     console.log('inside observer (live):', boardWidth, width, entry.contentRect.height);
-  //     setBoardWidth(width);
-  //     setGutter(Math.floor(width / 26));
-  //   };
-
-  //   const onResize = (entries) => {
-  //     const entry = entries[0];
-  //     update(entry);
-  //   };
-
-  //   const ro = new ResizeObserver(onResize);
-
-  //   ro.observe(target);
-
-  //   return () => {
-  //     ro.disconnect();
-  //   };
-  // }, [boardWidth]);
-
   const files = useMemo(
     () =>
       orientation === 'white'
@@ -92,9 +64,10 @@ export default function ChessboardOuterNotation() {
         : ['1', '2', '3', '4', '5', '6', '7', '8'],
     [orientation],
   );
+
   const chessboardOptions = {
     showNotation: showNotation,
-    id: 'show-notation',
+    // id: 'show-notation',
     boardStyle: {
       //   borderRadius: '10px',
       boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.5)',
@@ -108,6 +81,12 @@ export default function ChessboardOuterNotation() {
     },
   };
 
+  const onBoardMouseDownCapture = (e) => {
+    const el = e.target.closest('[data-square]');
+
+    if (!el || !props.onBoardMouseDownCapture) return;
+    props?.onBoardMouseDownCapture(el.getAttribute('data-square'));
+  };
   return (
     <div className="cb-wrap-parent">
       <div
@@ -116,8 +95,14 @@ export default function ChessboardOuterNotation() {
       >
         <div ref={outerRef} className="cb-board">
           {/* رپر داخلی: shrink-wrap تا اندازه به اندازه‌ی واقعی برد شود */}
-          <div ref={innerRef} className="cb-inner">
-            <Chessboard options={{ ...chessboardOptions, boardOrientation: orientation }} />
+          <div ref={innerRef} className="cb-inner" onMouseDownCapture={onBoardMouseDownCapture}>
+            <Chessboard
+              options={{
+                ...props,
+                ...chessboardOptions,
+                boardOrientation: orientation,
+              }}
+            />
           </div>
         </div>
         {/* <div className="mt-2 text-xs">board width: {boardWidth}px</div> */}

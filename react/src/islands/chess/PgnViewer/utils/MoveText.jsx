@@ -54,6 +54,15 @@ export default function MoveText({
 
   ...rest
 }) {
+  if (san.includes('O-'))
+    return (
+      <span>
+        <span className={`${styles.moveText}`} dir="ltr" {...rest}>
+          {san}
+        </span>
+      </span>
+    );
+
   const txt = toFigurineSAN(san, { color, addPawn });
   return (
     <span>

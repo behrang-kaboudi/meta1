@@ -13,9 +13,7 @@
     "dev": "concurrently -k -n VITE,API \"vite\" \"NODE_ENV=development nodemon index.js\"",
     "build": "vite build",
     "debug": "nodemon --inspect index.js",
-
     "prepare": "node .husky/install.mjs",
-
     "lint": "eslint --cache index.js app.js module/**/*.js rout/**/*.js",
     "lint:fix": "eslint --cache --fix index.js app.js module/**/*.js rout/**/*.js",
     "lint:ci": "eslint --cache --no-warn-ignored --quiet --rule 'no-undef:0' --rule 'no-unused-vars:0' --rule 'n/no-missing-require:0' index.js app.js module/**/*.js rout/**/*.js",
@@ -38,11 +36,17 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^29.2.0",
     "@ckeditor/ckeditor5-upload": "^29.2.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@mliebelt/pgn-parser": "^1.4.18",
     "@mliebelt/pgn-reader": "^1.2.30",
+    "@mliebelt/pgn-writer": "^1.0.5",
+    "@mui/icons-material": "^7.3.2",
+    "@mui/material": "^7.3.2",
     "bcryptjs": "^3.0.2",
     "bootstrap": "^5.3.8",
     "chess.js": "^0.11.0",
+    "clsx": "^2.1.1",
     "config": "^3.3.3",
     "consolidate": "^0.16.0",
     "dotenv": "^17.2.1",

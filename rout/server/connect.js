@@ -4,7 +4,7 @@ const { MONGO_URI, ENV } = require('../../config/env');
 
 async function connectToMongo() {
   await mongoose.connect(MONGO_URI);
-  //todo: check connection
+  //TODO: check connection
   //   mongoose
   //   .connect(MONGO_URI)
   //   .then(() => console.log(`[mongo] connected (${ENV})`))
