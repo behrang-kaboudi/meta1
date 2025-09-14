@@ -8,217 +8,207 @@
 <script src="/public/js/gauge.js"></script>
 <script src="/public/components/bk-pgn/pgn.js">
 </script>
-<div class="d-flex">
-  <div style="width: 50%;">
-    <div class="mt-1">
-      <div class="container-fluid ">
-        <div class="row">
-          <!-- <div class="col-lg-1"></div> -->
-          <div class="col-lg-4 order-2 order-lg-1  dir-ltr">
-            <div id='analysePgnPart' class="" style="height: 500px;">
-              <div class="d-flex rounded-top align-items-center" style="height: 10%; background-color: #f1f0ef;">
+
+<div class="mt-1">
+  <div class="container-fluid ">
+    <div class="row">
+      <!-- <div class="col-lg-1"></div> -->
+      <div class="col-lg-4 order-2 order-lg-1  dir-ltr">
+        <div id='analysePgnPart' class="" style="height: 500px;">
+          <div class="d-flex rounded-top align-items-center" style="height: 10%; background-color: #f1f0ef;">
 
 
-                <span id="cpAnalyse" class="fw-bold fs-4 mx-2" style="min-width: 10%;">0.0</span>
+            <span id="cpAnalyse" class="fw-bold fs-4 mx-2" style="min-width: 10%;">0.0</span>
 
-                <span id="depthSpan" class=" fs-6 mx-2" style="min-width: 10%;"></span>
-                <!-- <div class="d-flex flex-column mx-2 ms-auto py-0"> -->
-                <span class="text-center pointer ms-auto me-3" onclick="addDepth(+1)">
-                  <i class="fas fa-plus "></i>
-                </span>
-                <!-- <span class="text-center  p-0 pointer" onclick="addDepth(-1)">
-                                                <i class="fas fa-minus mt-0 py-0"></i>
-                                            </span> -->
-                <!-- </div> -->
-                <span class="" style="min-width: 10%;">Stockfish 12+ </span>
-                <span id="threat" class=" mx-1 me-3 fs-3 pointer d-none" onclick="showThreat()">
-                  <i id="threatOn" class="fas fa-bullseye fs-4"></i>
-                  <i id="threatOff" class="fas fa-bullseye fs-4  text-danger d-none"></i>
-                  <!-- <i id="analyseOff" class="fa fa-toggle-off" aria-hidden="true"></i>
-                                            <i id="analyseOn"  class="fas fa-toggle-on text-success d-none"></i> -->
-                </span>
-                <span class=" mx-1 me-3 fs-3 pointer" onclick="togAnalyse()">
-                  <i id="analyseOff" class="fa fa-toggle-off" aria-hidden="true"></i>
-                  <i id="analyseOn" class="fas fa-toggle-on text-success d-none"></i>
-                </span>
-                <!-- <input type="text" class="form-control" placeholder="ویراشگر" disabled /> -->
-              </div>
-              <div id="analyseData" class="bg-light py-1 px-2 float-start fw-normal w-100" style="font-size: 14px; overflow-y: auto;height: 10%;">
-
-              </div>
-
-              <div id="pgnViwer" class="fw-bold py-1 px-2 float-start fw-normal w-100" style="font-size: 16px; background-color: #f1f0ef;height: 80%;; overflow-y: auto;">
-
-              </div>
-              <style>
-                .pgn-nav-icon {
-                  cursor: pointer;
-                  min-width: 20%;
-                  text-align: center;
-                  padding: 5px;
-                }
-
-                .pgn-nav-icon:hover {
-                  background-color: #2fa535;
-                }
-              </style>
-              <div class="d-flex justify-content-between px-2 ">
-
-                <div class="d-flex justify-content-between py-1 px-2 " style="font-size: 26px;width: 20%;">
-
-                  <span class="pgn-nav-icon rounded">
-                    <i class="fas fa-book"></i>
-                  </span>
-                  <span class="pgn-nav-icon rounded">
-                    <i class="fas fa-bullseye"></i>
-                  </span>
-                </div>
-                <div class="d-flex justify-content-between py-1 px-2 " style="font-size: 26px;width: 65%;">
-                  <span class="pgn-nav-icon rounded" onclick="getStartMove()">
-                    <i class="far fa-arrow-circle-left"></i>
-                  </span>
-                  <span class="pgn-nav-icon rounded" onclick="getPreMove()">
-                    <i class="far fa-chevron-circle-left"></i>
-                  </span>
-                  <span class="pgn-nav-icon rounded">
-                    <i class="far fa-chevron-circle-right" onclick="getNextMove()"></i>
-                  </span>
-                  <span class="pgn-nav-icon rounded" onclick="getEndMove()">
-                    <i class="far fa-arrow-circle-right"></i>
-                  </span>
-                  <span class="pgn-nav-icon rounded">
-                    <i class="fas fa-bars"></i>
-                  </span>
-                </div>
-
-              </div>
-              <!-- <div class="d-flex justify-content-between  px-2 ">
-
-                                        <div class="d-flex justify-content-between   px-2 " style="font-size: 26px;width: 65%;">
-                                            <span class="pgn-nav-icon rounded" onclick="getStartMove()">
-                                          <i class="far fa-arrow-circle-left"></i>
-                                        </span>
-                                            <span class="pgn-nav-icon rounded" onclick="getPreMove()">
-                                            <i class="far fa-chevron-circle-left"></i>
-                                        </span>
-                                            <span class="pgn-nav-icon rounded">
-                                            <i class="far fa-chevron-circle-right" onclick="getNextMove()"></i>
-                                        </span>
-                                            <span class="pgn-nav-icon rounded" onclick="getEndMove()">
-                                          <i class="far fa-arrow-circle-right"></i>
-                                        </span>
-                                            <span class="pgn-nav-icon rounded">
-                                          <i class="fas fa-bars"></i>
-                                        </span>
-                                        </div>
-
-                                    </div> -->
-
-
-            </div>
+            <span id="depthSpan" class=" fs-6 mx-2" style="min-width: 10%;"></span>
+            <!-- <div class="d-flex flex-column mx-2 ms-auto py-0"> -->
+            <span class="text-center pointer ms-auto me-3" onclick="addDepth(+1)">
+              <i class="fas fa-plus "></i>
+            </span>
+            <!-- <span class="text-center  p-0 pointer" onclick="addDepth(-1)">
+                                            <i class="fas fa-minus mt-0 py-0"></i>
+                                        </span> -->
+            <!-- </div> -->
+            <span class="" style="min-width: 10%;">Stockfish 12+ </span>
+            <span id="threat" class=" mx-1 me-3 fs-3 pointer d-none" onclick="showThreat()">
+              <i id="threatOn" class="fas fa-bullseye fs-4"></i>
+              <i id="threatOff" class="fas fa-bullseye fs-4  text-danger d-none"></i>
+              <!-- <i id="analyseOff" class="fa fa-toggle-off" aria-hidden="true"></i>
+                                        <i id="analyseOn"  class="fas fa-toggle-on text-success d-none"></i> -->
+            </span>
+            <span class=" mx-1 me-3 fs-3 pointer" onclick="togAnalyse()">
+              <i id="analyseOff" class="fa fa-toggle-off" aria-hidden="true"></i>
+              <i id="analyseOn" class="fas fa-toggle-on text-success d-none"></i>
+            </span>
+            <!-- <input type="text" class="form-control" placeholder="ویراشگر" disabled /> -->
           </div>
-          <div class="col-lg-5 order-1 order-lg-2 " id="board-part">
-            <div class="ms-auto" style="width: 90%;">
+          <div id="analyseData" class="bg-light py-1 px-2 float-start fw-normal w-100" style="font-size: 14px; overflow-y: auto;height: 10%;">
 
-              <div class="d-flex">
-                <div id="gauge" style=""></div>
-                <div class="board" id="board"></div>
-
-              </div>
-
-              <div style="direction: ltr" class="mt-4">
-
-                <div class="input-group mb-3">
-                  <span class="input-group-text" id="basic-addon3"> FEN</span>
-                  <input placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" type="text" class="form-control" id="baseFen" style="font-size: 14px;" />
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="col-lg-3 order-3 order-lg-3  dir-ltr">
-            <select class="form-select" aria-label="Default select example">
-              <option selected>Standard</option>
-              <!-- <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option> -->
-            </select>
-            <div class="container-fluid bg-light my-2">
-              <div class="d-flex justify-content-around">
-                <div class="d-flex flex-column text-center  my-3 pointer  w-50" onclick="flipBoard()">
-                  <i class="fas fa-sync fs-1 my-1"></i>
-                  <span>
-                    Flip Board
-                  </span>
-                </div>
-                <!-- <a href="/public/tool/editor" style="color: inherit;"> -->
-                <div class="d-flex flex-column text-center  my-3 pointer  w-50" onclick="goToEditor()">
-                  <i class="fa fa-pencil my-1 fs-1" aria-hidden="true"></i>
-                  <span>
-                    Board Editor
-                  </span>
-                </div>
-                <!-- </a> -->
-              </div>
-              <div class="d-flex justify-content-around">
-                <div class="d-flex flex-column text-center  my-3 pointer w-50" onclick="">
-                  <i class="fas fa-swords-laser fs-1 my-1"></i>
-                  <span>
-                    Continue from here
-                  </span>
-                </div>
-                <div class="d-flex flex-column text-center  my-3 pointer  w-50" onclick="">
-                  <i class="fas fa-game-board-alt my-1 fs-1"></i>
-                  <span>
-                    Study
-                  </span>
-                </div>
-              </div>
-              <hr>
-              <div class="my-2">
-                <div class="form-check form-switch dir-ltr px-0">
-                  <label class="form-check-label float-start" for="bestMoveArrow">Best move
-                    arrow</label>
-                  <input class="form-check-input float-end" type="checkbox" id="bestMoveArrow" checked>
-                </div>
-              </div>
-              <div class="my-2">
-                <div class="form-check form-switch dir-ltr px-0">
-                  <label class="form-check-label float-start" for="bestMoveArrow">Evaluation
-                    gauge</label>
-                  <input class="form-check-input float-end" type="checkbox" id="evaluationGauge" checked>
-                </div>
-              </div>
-              <div class="my-2">
-                <div class="form-check form-switch dir-ltr px-0">
-                  <label class="form-check-label float-start" for="bestMoveArrow">Infinite
-                    analysis</label>
-                  <input class="form-check-input float-end" type="checkbox" id="infinit">
-                </div>
-              </div>
-              <div>
-                <label for="customRange2" class="form-label">CPUs: </label>
-                <label id="cpuCount">1</label>
-                <label>/5</label>
-              </div>
-              <input type="range" class="form-range" min="0" max="4" id="cpuRange" value="0">
-              <div>
-                <label for="customRange2" class="form-label">Memory:</label>
-                <label id="ramCount">128</label>
-                <label> MB</label>
-              </div>
 
-              <input type="range" class="form-range mb-2" min="0" max="3" id="ramRange" value="0">
+          <div id="pgnViwer" class="fw-bold py-1 px-2 float-start fw-normal w-100" style="font-size: 16px; background-color: #f1f0ef;height: 80%;; overflow-y: auto;">
+
+          </div>
+          <style>
+            .pgn-nav-icon {
+              cursor: pointer;
+              min-width: 20%;
+              text-align: center;
+              padding: 5px;
+            }
+
+            .pgn-nav-icon:hover {
+              background-color: #2fa535;
+            }
+          </style>
+          <div class="d-flex justify-content-between px-2 ">
+
+            <div class="d-flex justify-content-between py-1 px-2 " style="font-size: 26px;width: 20%;">
+
+              <span class="pgn-nav-icon rounded">
+                <i class="fas fa-book"></i>
+              </span>
+              <span class="pgn-nav-icon rounded">
+                <i class="fas fa-bullseye"></i>
+              </span>
+            </div>
+            <div class="d-flex justify-content-between py-1 px-2 " style="font-size: 26px;width: 65%;">
+              <span class="pgn-nav-icon rounded" onclick="getStartMove()">
+                <i class="far fa-arrow-circle-left"></i>
+              </span>
+              <span class="pgn-nav-icon rounded" onclick="getPreMove()">
+                <i class="far fa-chevron-circle-left"></i>
+              </span>
+              <span class="pgn-nav-icon rounded">
+                <i class="far fa-chevron-circle-right" onclick="getNextMove()"></i>
+              </span>
+              <span class="pgn-nav-icon rounded" onclick="getEndMove()">
+                <i class="far fa-arrow-circle-right"></i>
+              </span>
+              <span class="pgn-nav-icon rounded">
+                <i class="fas fa-bars"></i>
+              </span>
+            </div>
+
+          </div>
+          <!-- <div class="d-flex justify-content-between  px-2 ">
+
+                                    <div class="d-flex justify-content-between   px-2 " style="font-size: 26px;width: 65%;">
+                                        <span class="pgn-nav-icon rounded" onclick="getStartMove()">
+                                       <i class="far fa-arrow-circle-left"></i>
+                                    </span>
+                                        <span class="pgn-nav-icon rounded" onclick="getPreMove()">
+                                        <i class="far fa-chevron-circle-left"></i>
+                                    </span>
+                                        <span class="pgn-nav-icon rounded">
+                                        <i class="far fa-chevron-circle-right" onclick="getNextMove()"></i>
+                                    </span>
+                                        <span class="pgn-nav-icon rounded" onclick="getEndMove()">
+                                       <i class="far fa-arrow-circle-right"></i>
+                                    </span>
+                                        <span class="pgn-nav-icon rounded">
+                                      <i class="fas fa-bars"></i>
+                                    </span>
+                                    </div>
+
+                                </div> -->
+
+
+        </div>
+      </div>
+      <div class="col-lg-5 order-1 order-lg-2 " id="board-part">
+        <div class="ms-auto" style="width: 90%;">
+
+          <div class="d-flex">
+            <div id="gauge" style=""></div>
+            <div class="board" id="board"></div>
+
+          </div>
+
+          <div style="direction: ltr" class="mt-4">
+
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon3"> FEN</span>
+              <input placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" type="text" class="form-control" id="baseFen" style="font-size: 14px;" />
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  dssd
-  <div style="width: 50%;">
-    <div data-island="Analyze" data-props='{}'>
+      <div class="col-lg-3 order-3 order-lg-3  dir-ltr">
+        <select class="form-select" aria-label="Default select example">
+          <option selected>Standard</option>
+          <!-- <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option> -->
+        </select>
+        <div class="container-fluid bg-light my-2">
+          <div class="d-flex justify-content-around">
+            <div class="d-flex flex-column text-center  my-3 pointer  w-50" onclick="flipBoard()">
+              <i class="fas fa-sync fs-1 my-1"></i>
+              <span>
+                Flip Board
+              </span>
+            </div>
+            <!-- <a href="/public/tool/editor" style="color: inherit;"> -->
+            <div class="d-flex flex-column text-center  my-3 pointer  w-50" onclick="goToEditor()">
+              <i class="fa fa-pencil my-1 fs-1" aria-hidden="true"></i>
+              <span>
+                Board Editor
+              </span>
+            </div>
+            <!-- </a> -->
+          </div>
+          <div class="d-flex justify-content-around">
+            <div class="d-flex flex-column text-center  my-3 pointer w-50" onclick="">
+              <i class="fas fa-swords-laser fs-1 my-1"></i>
+              <span>
+                Continue from here
+              </span>
+            </div>
+            <div class="d-flex flex-column text-center  my-3 pointer  w-50" onclick="">
+              <i class="fas fa-game-board-alt my-1 fs-1"></i>
+              <span>
+                Study
+              </span>
+            </div>
+          </div>
+          <hr>
+          <div class="my-2">
+            <div class="form-check form-switch dir-ltr px-0">
+              <label class="form-check-label float-start" for="bestMoveArrow">Best move
+                arrow</label>
+              <input class="form-check-input float-end" type="checkbox" id="bestMoveArrow" checked>
+            </div>
+          </div>
+          <div class="my-2">
+            <div class="form-check form-switch dir-ltr px-0">
+              <label class="form-check-label float-start" for="bestMoveArrow">Evaluation
+                gauge</label>
+              <input class="form-check-input float-end" type="checkbox" id="evaluationGauge" checked>
+            </div>
+          </div>
+          <div class="my-2">
+            <div class="form-check form-switch dir-ltr px-0">
+              <label class="form-check-label float-start" for="bestMoveArrow">Infinite
+                analysis</label>
+              <input class="form-check-input float-end" type="checkbox" id="infinit">
+            </div>
+          </div>
+          <div>
+            <label for="customRange2" class="form-label">CPUs: </label>
+            <label id="cpuCount">1</label>
+            <label>/5</label>
+          </div>
+          <input type="range" class="form-range" min="0" max="4" id="cpuRange" value="0">
+          <div>
+            <label for="customRange2" class="form-label">Memory:</label>
+            <label id="ramCount">128</label>
+            <label> MB</label>
+          </div>
 
-
+          <input type="range" class="form-range mb-2" min="0" max="3" id="ramRange" value="0">
+        </div>
+      </div>
     </div>
   </div>
 </div>

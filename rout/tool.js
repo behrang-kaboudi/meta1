@@ -16,4 +16,4 @@ router.get('/analysis/', (req, res) => {
 router.get('/search/', (req, res) => {
   res.render(config.get('template') + '/page/tool/search');
 });
-module.exports = { path: '/tool/', router };
+module.exports = { path: '/tool', router };

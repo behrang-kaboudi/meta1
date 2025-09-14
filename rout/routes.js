@@ -12,11 +12,15 @@ const list = [
   require('./swiss'),
   require('./simull'),
   require('./webhooks'),
+
   // require('./tournament'),
   // require('./forum'),
   // require('./news'),
 ];
 
+if (process.env.NODE_ENV !== 'production') {
+  list.push(require('./test'));
+}
 // app.get('/livegames/', (req, res) => {
 //   res.render(config.get('template') + '/page/game/games/liveGames', {
 //
