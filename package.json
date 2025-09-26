@@ -68,8 +68,9 @@
     "socket.io": "^4.8.1",
     "stockfish": "^12.0.0",
     "supertest": "^7.1.4",
-    "vitest": "^3.2.4",
-    "winston": "^3.17.0"
+    "throttle-debounce": "^5.0.2",
+    "use-resize-observer": "^9.1.0",
+    "vitest": "^3.2.4"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.2",

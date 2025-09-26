@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { Chess } from 'chess.js';
-import ChessboardOuterNotation from './ChessboardOuterNotation';
+import ChessboardOuterNotation from './ChessboardOuterNotation/ChessboardOuterNotation';
 import { defaultPieces as chessPieces } from 'react-chessboard';
 
-export default function ChessJSBoard(props) {
+export default function ChessJsBoard(props) {
   const gameRef = useRef(new Chess());
-  const [FEN, setFEN] = useState(props.position);
+  const [FEN, setFEN] = useState(); // inclues initial position and enriched move
   const [squareStyles, setSquareStyles] = useState({});
   const [promoArrows, setPromoArrows] = useState([]);
   const [showAnimations, setShowAnimations] = useState(true);
@@ -14,11 +14,29 @@ export default function ChessJSBoard(props) {
 
   // ✅ پروموشن در انتظار انتخاب: { from, to, color: 'w'|'b' }
   const [pendingPromo, setPendingPromo] = useState(null);
-
+  // to check if we receive same move or not, to avoid re-rendering the board on same move
+  const mainMove = useRef(null);
   // ----- effects همگام‌سازی‌ها -----
   useEffect(() => {
-    if (props.enrichedMove) {
-      const m = props.enrichedMove;
+    // console.log('ChessJsBoard props.enrichedMove:', props.enrichedMove);
+    // debugger;
+    if (!props?.moveObj?.enrichedMove && !props?.moveObj?.position) return;
+
+    if (props.moveObj.enrichedMove) {
+      let prevMove = mainMove.current;
+      mainMove.current = props.moveObj.enrichedMove;
+      const m = props.moveObj.enrichedMove;
+      // //TODO: useCallback for onClick not to recreate it on each render if we have same move
+      //       if (prevMove.current && prevMove.current.enriched.id === m.enriched.id) {
+      //         // کلیک مکربه برای انتخاب یک نقطه باقی ا��ت
+      //         return;
+      //       }
+
+      if (prevMove && prevMove?.enriched.fenBefore === m.enriched.fenAfter) {
+        setMoveColor(m.enriched.from, m.enriched.to);
+        setFEN(m.enriched.fenAfter);
+        return;
+      }
       setFEN(m.enriched.fenBefore);
       setShowAnimations(false);
       setTimeout(() => {
@@ -26,15 +44,11 @@ export default function ChessJSBoard(props) {
         setShowAnimations(true);
         setFEN(m.enriched.fenAfter);
       }, 200);
-    }
-  }, [props.enrichedMove]);
-
-  useEffect(() => {
-    if (props.position) {
-      setFEN(props.position);
+    } else if (props.moveObj.position) {
+      setFEN(props.moveObj.position);
       setSquareStyles({});
     }
-  }, [props.position]);
+  }, [props.moveObj]);
 
   useEffect(() => {
     if (!FEN) return;
@@ -116,14 +130,8 @@ export default function ChessJSBoard(props) {
       setPendingPromo(null);
       return;
     }
-    setFEN(gameRef.current.fen());
-    setMoveColor(from, to);
-    setMoveFrom('');
     setPendingPromo(null);
     setPromoArrows([]);
-    setShowAnimations(false);
-    // یک تیک بعد انیمیشن روشن شود
-    setTimeout(() => setShowAnimations(true), 10);
     afterMove(mv);
   }
 
@@ -151,13 +159,9 @@ export default function ChessJSBoard(props) {
       openPromotion(moveFrom, to);
       return;
     }
-
     // حرکت عادی
     const mv = tryMove(moveFrom, to);
     if (mv) {
-      setFEN(gameRef.current.fen());
-      setMoveFrom('');
-      setMoveColor(moveFrom, to);
       afterMove(mv); // ⟵ لاگ/کال‌بک یکجا
     } else {
       removeFirst();
@@ -186,11 +190,6 @@ export default function ChessJSBoard(props) {
     }
     const mv = tryMove(sourceSquare, targetSquare);
     if (mv) {
-      setMoveFrom('');
-      setShowAnimations(false);
-      setFEN(gameRef.current.fen());
-      setMoveColor(sourceSquare, targetSquare);
-      setTimeout(() => setShowAnimations(true), 10);
       afterMove(mv); // ⟵ اینجا هم
       return true;
     } else {
@@ -204,9 +203,10 @@ export default function ChessJSBoard(props) {
       removeFirst();
     }
   }
+  // در توابع بعد از انتخاب خانه دوم یا دراپ یا ارتقا  هیچ اتفاقی نباید بی افتد. و حرکت در اینجا تحلیل شود
   function afterMove(moveObj) {
     // moveObj خروجی chess.js است: {color, from, to, san, flags, piece, promotion, ...}
-
+    setMoveFrom('');
     props.afterBoardMove(moveObj);
     // اگر خواستی به والد هم خبر بدهی:
     // props.onMoveCommitted?.(moveObj, gameRef.current.fen());
@@ -322,148 +322,3 @@ function PromotionPicker({ color, onPick, onCancel, pieceRenderers, squarePx = 4
     </div>
   );
 }
-
-// import { useEffect, useState, useRef, useCallback } from 'react';
-// import { Chess } from 'chess.js';
-// import ChessboardOuterNotation from './ChessboardOuterNotation';
-// export default function ChessJSBoard(props) {
-//   //   const moveByDragStart = useRef(false);
-//   const gameRef = useRef(new Chess());
-//   const [FEN, setFEN] = useState(props.position);
-//   const [squareStyles, setSquareStyles] = useState({});
-//   const [showAnimations, setShowAnimations] = useState(true);
-//   const [moveFrom, setMoveFrom] = useState('');
-//   const [allowDragging, setAllowDragging] = useState(true);
-//   //تنظم پوزیسیون از کلیک روی حرکت پی جی ان یا دریافت حرکت جدید به صورت انرچ شده
-//   useEffect(() => {
-//     if (props.enrichedMove) {
-//       const m = props.enrichedMove;
-//       setFEN(m.enriched.fenBefore);
-
-//       setShowAnimations(false);
-//       setTimeout(() => {
-//         setMoveColor(m.enriched.from, m.enriched.to);
-//         setShowAnimations(true);
-//         setFEN(m.enriched.fenAfter);
-//       }, 200); // 200ms یا هر مقداری که می‌خوای
-//     }
-//   }, [props.enrichedMove]);
-//   useEffect(() => {
-//     if (props.position) {
-//       setFEN(props.position);
-//       setSquareStyles({});
-//     }
-//   }, [props.position]);
-//   useEffect(() => {
-//     if (!FEN) return;
-//     gameRef.current.load(FEN); // بارگذاری موقعیت فعلی
-//   }, [FEN]);
-//   useEffect(() => {
-//     if (moveFrom) {
-//       console.log('setMoveFrom useEffect', { from: moveFrom }, squareStyles);
-//     } else {
-//       console.log('invalid move:', { from: moveFrom });
-//     }
-//   }, [moveFrom]);
-//   function setMoveColor(from, to) {
-//     const newStyles = {};
-//     newStyles[from] = { backgroundColor: 'rgba(38, 121, 2, 0.25)' };
-//     newStyles[to] = { backgroundColor: 'rgba(237, 6, 6, 0.22)' };
-//     setSquareStyles(newStyles);
-//   }
-//   function setFirstSquare(sq) {
-//     setMoveFrom(sq); // async است؛ برای استایل از from استفاده کن
-//     setSquareStyles((prev) => ({
-//       ...prev,
-//       [sq]: { backgroundColor: 'rgba(184,203,8,.25)' },
-//     }));
-//   }
-//   function removeFirst() {
-//     setSquareStyles((prev) => {
-//       const { [moveFrom]: _removed, ...rest } = prev;
-//       return rest;
-//     });
-//     setMoveFrom('');
-//   }
-
-//   const isMove = (from, to, promotion = 'q') => {
-//     const move = gameRef.current.move({ from, to, promotion });
-//     if (!move) return false; // حرکت غیرقانونی → رد
-//     return true;
-//   };
-
-//   function onSquareClick(sq) {
-//     let to = sq.square;
-//     if (!moveFrom && sq.piece) {
-//       if (sq?.piece?.pieceType[0] !== gameRef.current.turn()) return;
-//       setFirstSquare(to);
-//       return;
-//     }
-//     if (moveFrom === to) {
-//       removeFirst();
-//       return;
-//     }
-//     //to, check if valid move
-//     if (isMove(moveFrom, to)) {
-//       setFEN(gameRef.current.fen()); // UI به‌روز شود
-//       setMoveFrom('');
-//       setMoveColor(moveFrom, to);
-//     } else {
-//       removeFirst();
-//     }
-//   }
-//   function canDragPiece({ piece }) {
-//     return piece.pieceType[0] === gameRef.current.turn(); // فقط سفیدها
-//   }
-
-//   function onPieceDrop(action) {
-//     const { sourceSquare, targetSquare } = action;
-//     if (!targetSquare) return false;
-
-//     if (sourceSquare === targetSquare) {
-//       setFirstSquare(sourceSquare);
-//       return false; // drop واقعی انجام نشده
-//     }
-
-//     if (isMove(sourceSquare, targetSquare)) {
-//       setMoveFrom('');
-//       setShowAnimations(false);
-//       setFEN(gameRef.current.fen());
-//       setMoveColor(sourceSquare, targetSquare);
-//       setTimeout(() => setShowAnimations(true), 10);
-//       return true; // موفق
-//     } else {
-//       return false; // غیرقانونی
-//     }
-//   }
-
-//   function onBoardMouseDownCapture(square) {
-//     const piece = gameRef.current.get(square);
-//     // const pieceType = toPieceType(piece); // مثلا 'wP'
-//     if (moveFrom && piece?.color === gameRef.current.turn()) {
-//       removeFirst();
-//     }
-//   }
-
-//   return (
-//     <div>
-//       {/* Render chess board here */}
-//       <ChessboardOuterNotation
-//         {...props}
-//         squareStyles={squareStyles}
-//         showAnimations={showAnimations}
-//         position={FEN}
-//         dragActivationDistance={1}
-//         // onSquareMouseDown={onSquareMouseDown}
-//         onBoardMouseDownCapture={onBoardMouseDownCapture}
-//         onSquareClick={onSquareClick}
-//         allowDragging={allowDragging}
-//         onPieceDrop={onPieceDrop}
-//         canDragPiece={canDragPiece}
-//         // onMouseOverSquare={(e) => {
-//         //   console.log(e, moveFrom);
-//         // }}
-//       />
-//     </div>
-//   );
-// }

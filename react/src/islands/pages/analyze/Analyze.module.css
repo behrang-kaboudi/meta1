@@ -1,8 +1,11 @@
 .mainDiv {
   display: grid;
 }
+
+@media (max-width: 1024px) {
+}
 @media (min-width: 1024px) {
   .mainDiv {
-    grid-template-columns: 25% 50% 25%;
+    grid-template-columns: 25% 75%;
   }
 }

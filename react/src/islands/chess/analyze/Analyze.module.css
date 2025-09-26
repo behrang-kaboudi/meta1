@@ -1,0 +1,21 @@
+.mainDiv {
+  display: grid;
+}
+.pgnViewer {
+  border-bottom: 2px solid rgb(0, 0, 0);
+}
+.board-part {
+  display: grid;
+  grid-template-columns: 95% 5%;
+}
+@media (max-width: 900px) {
+  .pgnViewer {
+    height: 250px;
+  }
+}
+
+@media (min-width: 900px) {
+  .mainDiv {
+    grid-template-columns: 60% 40%;
+  }
+}

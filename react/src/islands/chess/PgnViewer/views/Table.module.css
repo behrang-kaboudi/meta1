@@ -1,0 +1,52 @@
+.ellipsis {
+  color: #9ca3af;
+  font-style: italic;
+}
+.row {
+  display: grid;
+  grid-template-columns: 14% 43% 43%;
+}
+.row > * {
+  font-weight: bold;
+  background: #f9fafb;
+  border: 1px solid rgb(209, 206, 206);
+}
+.mainNum {
+  font-variant-numeric: tabular-nums;
+  color: #464a52;
+
+  padding-top: 5px;
+  padding-left: 2px;
+  font-size: 16px;
+}
+.mainLineMoveBtn {
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+.mainLineMoveBtn:hover {
+  border-color: #cbd5e1;
+  /* box-shadow: 0 0 0 2px #eef2ff inset; */
+  background-color: #fed7aa;
+  cursor: pointer;
+}
+.variationMoveBtn {
+  display: inline-block;
+  /* background: #f9fafb; */
+  /* border: 1px solid #e5e7eb; */
+  /* border-radius: 6px; */
+  padding: 2px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-inline: 2px;
+}
+.variationMoveBtn:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 0 0 2px #eef2ff inset;
+  background-color: #f3f4f6;
+  cursor: pointer;
+}
+.activeMove {
+  background-color: #fbbf24;
+  color: rgb(71, 183, 30);
+}

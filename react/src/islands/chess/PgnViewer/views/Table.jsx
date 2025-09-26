@@ -1,120 +1,147 @@
-import styles from '../PgnViewer.module.css';
+import styles from './Table.module.css';
+import clsx from 'clsx';
 import MoveText from '../utils/MoveText.jsx';
 import { numberLabel, firstMoveLabelInVariation } from '../utils/pgnView.helpers.js';
-function VariationLine({ line, onClick, renderSAN }) {
-  if (!Array.isArray(line) || !line.length) return null;
 
+/**
+ * Why: Rendering needs contiguous chunks of the same type to keep UI logic simple.
+ * Purpose: Group a flattened move stream into consecutive 'main' vs 'var' fragments
+ * so the table view can render rows (main) and inline branches (variants) predictably.
+ * indexes are for creating the key only.
+ */
+function setFragments(flatten) {
+  let fragments = [];
+  let currentFragment = { kind: 'main', moves: [], startIndex: 0 };
+  fragments.push(currentFragment);
+  flatten.forEach((m, i) => {
+    if (!m) return;
+    if (m.flattened.isMainLine) {
+      if (currentFragment.kind === 'main') {
+        // قبلی هم اصلی بود
+        currentFragment.moves.push(m);
+        return;
+      }
+      // قبلی فرعی بود
+      currentFragment.endIndex = i - 1;
+      currentFragment = { kind: 'main', moves: [m], startIndex: i };
+      fragments.push(currentFragment);
+      return;
+    }
+
+    // حرکت فرعی است
+    if (currentFragment.kind === 'var') {
+      // قبلی هم فرعی بود
+      currentFragment.moves.push(m);
+      return;
+    }
+    // قبلی اصلی بود
+    currentFragment.endIndex = i - 1;
+    currentFragment = { kind: 'var', moves: [m], startIndex: i };
+    fragments.push(currentFragment);
+  });
+  currentFragment.endIndex = currentFragment.moves.length - 1;
+  return fragments[0].moves.length > 0 ? fragments : [];
+}
+const FilledMove = ({ move, onClick, moveBtnStyle, enrichedMove }) => {
   return (
-    <>
-      {line.map((m, i) => {
-        const key = m?.enriched?.path ?? `mv_${i}`;
-        const isFirst = i === 0;
-        const prefix = isFirst
-          ? firstMoveLabelInVariation(m)
-          : m?.enriched?.side === 'w'
-            ? numberLabel(m)
-            : null;
-        return (
-          <span key={key} className={styles.varChunk}>
-            {prefix ? <span className={styles.varNum}>{prefix}&nbsp;</span> : null}
-            <span
-              className={styles.varMove}
-              onClick={() => onClick(m)}
-              title={m?.enriched?.fenAfter || ''}
-            >
-              <MoveText color={m?.enriched?.side} san={m?.enriched.san} />
-            </span>
-            {Array.isArray(m?.variations) && m.variations.length
-              ? m.variations.map((sub, si) => (
-                  <span key={`${key}_sub_${si}`} className={styles.paren}>
-                    {' ('}
-                    <VariationLine line={sub} onClick={onClick} />
-                    {')'}
-                  </span>
-                ))
-              : null}{' '}
-          </span>
-        );
+    <div
+      className={clsx(styles[moveBtnStyle || 'mainLineMoveBtn'], {
+        [styles.activeMove]: enrichedMove?.enriched.id === move?.enriched?.id,
       })}
-    </>
-  );
-}
-
-/** ردیفِ جفتی: شماره حرکت + ستون سفید + ستون سیاه */
-function RowPair({ moveNo, white, black, onClick }) {
-  return (
-    <div className={styles.pairRow}>
-      <div className={styles.colNumber}>{moveNo ?? '…'}</div>
-      <div className={styles.colMove}>
-        {white ? (
-          <span
-            className={styles.cellBtn}
-            onClick={() => onClick(white)}
-            title={white?.enriched?.fenAfter || ''}
-          >
-            <MoveText color={white?.enriched?.side} san={white?.enriched?.san} />
-          </span>
-        ) : (
-          <span className={styles.ellipsis}>…</span>
-        )}
-      </div>
-      <div className={styles.colMove}>
-        {black ? (
-          <span
-            className={styles.cellBtn}
-            onClick={() => onClick(black)}
-            title={black?.enriched?.fenAfter || ''}
-          >
-            <MoveText color={black?.enriched?.side} san={black?.enriched?.san} />
-          </span>
-        ) : null}
-      </div>
+      onClick={() => onClick(move)}
+      title={move?.enriched?.fenAfter || ''}
+    >
+      <MoveText move={move} />
     </div>
   );
-}
+};
 
-function RowVariation({ line, onClick, renderSAN }) {
-  return (
-    <div className={styles.variation}>
-      (<VariationLine line={line} onClick={onClick} />)
-    </div>
-  );
-}
+// if we start with black
+const emptyMove = () => <span className={styles.ellipsis}>…</span>;
+export default function setTableView({ flatten, onClick, enrichedMove }) {
+  let fragments = setFragments(flatten);
 
-function RowComment({ text, indent = 0 }) {
-  if (!text) return null;
-  return (
-    <div className={styles.comment} style={{ marginInlineStart: indent }}>
-      {text}
-    </div>
-  );
-}
+  function setMain(frag) {
+    let rows = [];
 
-export default function setTableView({ rows = [], onClick }) {
+    for (let i = 0; i < frag.moves.length; i++) {
+      const move = frag.moves[i];
+      let moveNumPart = <div className={styles.mainNum}>{move.enriched.moveNo}.&nbsp;</div>;
+      let currMovePart = <FilledMove move={move} onClick={onClick} enrichedMove={enrichedMove} />;
+      let whiteMovePart = null;
+      let blackMovePart = null;
+      if (i === 0 && move.enriched.side === 'b') {
+        whiteMovePart = emptyMove();
+        blackMovePart = currMovePart;
+      } else if (i === frag.moves.length - 1 && move.enriched.side === 'w') {
+        whiteMovePart = currMovePart;
+        blackMovePart = emptyMove();
+      } else {
+        whiteMovePart = currMovePart;
+        blackMovePart = (
+          <FilledMove move={frag.moves[++i]} onClick={onClick} enrichedMove={enrichedMove} />
+        );
+      }
+      rows.push(
+        <div key={i} className={styles.row}>
+          {moveNumPart}
+          {whiteMovePart}
+          {blackMovePart}
+        </div>,
+      );
+    }
+    return rows;
+  }
+  function setVariation(frag) {
+    let parts = [];
+    for (let i = 0; i < frag.moves.length; i++) {
+      const move = frag.moves[i];
+      let parenthesisBefore =
+        move.flattened.isFirstMoveInLine && !move.flattened.isMainLine ? '(' : '';
+
+      let parenthesisAfter =
+        move.flattened.isLastMoveInLine && !move.flattened.isMainLine
+          ? ')'.repeat(move.flattened.separatorEndCount)
+          : '';
+
+      let number = '';
+      if (move.enriched.side === 'w') {
+        number = `${move.enriched.moveNo}. `;
+      } else if (
+        move.flattened.isFirstMoveInLine ||
+        move.flattened.prevPrintedMoveRef.enriched.line !== move.enriched.line
+      ) {
+        number = `${move.enriched.moveNo}. ... `;
+      }
+
+      parts.push(parenthesisBefore + number + ' ');
+      parts.push(
+        <FilledMove
+          key={`varmove_${frag.startIndex}_${i}`}
+          move={move}
+          onClick={onClick}
+          enrichedMove={enrichedMove}
+          moveBtnStyle="variationMoveBtn"
+        />,
+      );
+      parts.push(' ' + parenthesisAfter);
+    }
+    return parts;
+  }
   return (
     <div className={styles.list}>
-      {rows.map((r, i) => {
-        if (r.kind === 'pair')
+      {fragments.map((frag, i) => {
+        if (!frag) return null;
+        if (frag.kind === 'main') {
+          return setMain(frag);
+        }
+        if (frag.kind === 'var') {
           return (
-            <RowPair
-              key={r.key}
-              moveNo={r.moveNo}
-              white={r.white}
-              black={r.black}
-              onClick={onClick}
-            />
-          );
-        if (r.kind === 'comment') return <RowComment key={r.key} text={r.text} indent={r.indent} />;
-        if (r.kind === 'variation') {
-          const nextIsVf = rows[i + 1]?.kind === 'pair';
-          const style = nextIsVf ? { borderBottom: '1px solid black' } : undefined;
-          return (
-            <div key={r.key} style={style}>
-              <RowVariation line={r.line} onClick={onClick} />
+            <div key={`var_${frag.startIndex}`} className={styles.variation}>
+              {setVariation(frag)}
             </div>
           );
         }
-
         return null;
       })}
     </div>

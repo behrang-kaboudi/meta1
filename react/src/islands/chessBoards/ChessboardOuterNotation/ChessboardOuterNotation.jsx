@@ -1,54 +1,56 @@
-import { useMemo, useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
+import clsx from 'clsx';
 import { Chessboard } from 'react-chessboard';
+import useResizeObserver from 'use-resize-observer';
+import { debounce } from 'throttle-debounce';
+import Box from '@mui/material/Box';
+import styles from './styles.js';
 import './outer-notation.css';
 // add
+const boardSizeToHideNotation = 300;
 export default function ChessboardOuterNotation(props) {
   const [orientation, setOrientation] = useState(props.boardOrientation || 'white');
   const [showNotation, setShowNotation] = useState(true);
-  const [boardWidth, setBoardWidth] = useState(0);
   const [gutter, setGutter] = useState(0);
 
-  const outerRef = useRef(null); // والد flex
-  const innerRef = useRef(null); // رپرِ shrink-wrap
+  const { ref: containerRef } = useResizeObserver({
+    onResize: ({ width = 0, height = 0 }) => {
+      latest.current.containerWidth = width;
+      latest.current.containerHeight = height;
+      handleResizeDebounce();
+    },
+  });
+  const latest = useRef({
+    containerWidth: 0,
+    containerHeight: 0,
+  });
   useEffect(() => {
     if (props.boardOrientation) setOrientation(props.boardOrientation);
   }, [props.boardOrientation]);
   useEffect(() => {
     const checkSize = () => {
       // اگر بزرگتر از 768px (مثلاً تبلت و دسکتاپ) → نوتیشن خاموش
-      setShowNotation(window.innerWidth < 768);
     };
     checkSize();
     window.addEventListener('resize', checkSize);
     return () => window.removeEventListener('resize', checkSize);
   }, []);
-  useLayoutEffect(() => {
-    if (!innerRef.current) return;
-    const target = outerRef.current;
-    const prevWidthRef = { current: boardWidth };
 
-    const update = (entry) => {
-      const width = Math.round(entry.contentRect.width);
+  // Derive gutter when width changes
 
-      // اگر اختلاف کمتر از 10 بود، کاری نکن
-      if (Math.abs(width - prevWidthRef.current) < 10) return;
+  const handleResizeDebounce = useMemo(
+    () =>
+      debounce(200, () => {
+        const { containerWidth, containerHeight } = latest.current;
+        // if (Math.abs(containerWidth - prevContainerWidth.current) < 8) return;
+        let gutter = Math.floor(containerWidth / 28);
+        setGutter(gutter);
+        setShowNotation(containerWidth <= boardSizeToHideNotation);
 
-      prevWidthRef.current = width; // به‌روزرسانی مقدار قبلی
-      setBoardWidth(width);
-      setGutter(Math.floor(width / 26));
-    };
-
-    const onResize = (entries) => {
-      update(entries[0]);
-    };
-
-    const ro = new ResizeObserver(onResize);
-    ro.observe(target);
-
-    return () => {
-      ro.disconnect();
-    };
-  }, []);
+        /* derive gutter, set state, etc. */
+      }),
+    [],
+  );
 
   const files = useMemo(
     () =>
@@ -87,15 +89,21 @@ export default function ChessboardOuterNotation(props) {
     if (!el || !props.onBoardMouseDownCapture) return;
     props?.onBoardMouseDownCapture(el.getAttribute('data-square'));
   };
+  let isBig = latest.current.containerWidth > boardSizeToHideNotation;
   return (
-    <div className="cb-wrap-parent">
-      <div
-        className={`cb-wrap`}
-        style={{ '--cb-gutter': `${gutter}px`, '--cb-font': `${(gutter * 135) / 100}px` }}
+    <div ref={containerRef}>
+      <Box
+        className={clsx(`cb-wrap`, isBig ? `cb-wrap-big` : `cb-wrap-small`)}
+        style={{
+          '--cb-horizontal-gutter': `${3.2}%`,
+          '--cb-gutter': `${gutter}px`,
+          '--cb-font': `${(gutter * 135) / 100}px`,
+          '--cb-board-size-to-hide-notation': `${boardSizeToHideNotation}px`,
+        }}
       >
-        <div ref={outerRef} className="cb-board">
+        <div className="cb-board">
           {/* رپر داخلی: shrink-wrap تا اندازه به اندازه‌ی واقعی برد شود */}
-          <div ref={innerRef} className="cb-inner" onMouseDownCapture={onBoardMouseDownCapture}>
+          <div onMouseDownCapture={onBoardMouseDownCapture}>
             <Chessboard
               options={{
                 ...props,
@@ -113,12 +121,17 @@ export default function ChessboardOuterNotation(props) {
             <span key={`t-${f}`}>{f}</span>
           ))}
         </div> */}
-          <div className="cb-files cb-bottom">
+          <div
+            className={clsx(
+              'cb-files cb-bottom',
+              isBig ? 'cb-files-big cb-bottom-big' : 'cb-bottom-small',
+            )}
+          >
             {files.map((f) => (
               <span key={`b-${f}`}>{f}</span>
             ))}
           </div>
-          <div className="cb-ranks cb-left">
+          <div className={clsx('cb-ranks cb-left', isBig ? `cb-ranks-big` : `cb-ranks-small`)}>
             {ranks.map((r, i) => (
               <span key={`l-${r}-${i}`}>{r}</span>
             ))}
@@ -129,7 +142,7 @@ export default function ChessboardOuterNotation(props) {
           ))}
         </div> */}
         </div>
-      </div>
+      </Box>
     </div>
   );
 }
