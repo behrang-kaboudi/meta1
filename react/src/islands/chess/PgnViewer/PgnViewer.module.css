@@ -9,8 +9,9 @@
     sans-serif;
   line-height: 1.35;
   color: #222;
-  border: 1px solid #222;
 }
+/* ////// */
+
 .list {
   display: flex;
   flex-direction: column;

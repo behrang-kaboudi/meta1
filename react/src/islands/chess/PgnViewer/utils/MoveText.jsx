@@ -47,30 +47,24 @@ export function toFigurineSAN(san = '', opts = {}) {
 /**
  * Span component that renders a move with figurines.
  */
-export default function MoveText({
-  san = '',
-  color = 'w', // 'white' | 'black'  → انتخاب نماد سفید/سیاه
-  addPawn = false, // نمایش نماد پیاده برای حرکت‌های پیاده
-
-  ...rest
-}) {
-  if (san.includes('O-'))
+export default function MoveText({ move }) {
+  let enriched = move.enriched;
+  if (enriched.san.includes('O-'))
     return (
       <span>
-        <span className={`${styles.moveText}`} dir="ltr" {...rest}>
-          {san}
-        </span>
+        <span className={`${styles.moveText}`}>{enriched.san}</span>
       </span>
     );
 
-  const txt = toFigurineSAN(san, { color, addPawn });
+  const txt = toFigurineSAN(enriched.san, { color: enriched.side, addPawn: false });
+  //TODO manage NAGs
+  let nag = enriched.nag;
   return (
     <span>
       <span style={{ fontSize: '1.4em', lineHeight: 1 }}>{txt.fig1}</span>
-      <span className={`${styles.moveText}`} dir="ltr" {...rest}>
-        {txt.text}
-      </span>
+      <span className={`${styles.moveText}`}>{txt.text}</span>
       <span style={{ fontSize: '1.4em', lineHeight: 1 }}>{txt.fig2}</span>
+      {nag && <span>{nag}</span>}
     </span>
   );
 }

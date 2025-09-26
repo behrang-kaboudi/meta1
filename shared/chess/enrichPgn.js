@@ -38,7 +38,7 @@ function enrichLine(moves = [], fenAtStart, path = 'm.', map = {}, parent = null
   for (let i = 0; i < moves.length; i++) {
     const m = moves[i];
     const index = i;
-    // const preMove = i > 0 ? moves[i - 1] : parent;
+    const prevMove = i > 0 ? moves[i - 1] : parent;
     // let nextMainMove = i + 1 == moves.length ? null : moves[i + 1];
     const plyBefore = chess.history().length;
     const fenBefore = chess.fen();
@@ -53,6 +53,7 @@ function enrichLine(moves = [], fenAtStart, path = 'm.', map = {}, parent = null
       // preMove,
       // nextMainMove,
       line: moves,
+      parent: prevMove,
       path: `${path}${i}`,
       plyInLine: plyBefore + 1,
       moveNo, // ← از FEN
@@ -147,21 +148,36 @@ function enrichLine(moves = [], fenAtStart, path = 'm.', map = {}, parent = null
 //TODO enrich with FEN
 export function enrichPgn(pgnText = '') {
   let game = null;
+  let games;
   try {
-    const games = parse(pgnText, { startRule: 'games' });
-    if (!games || games.length === 0) return false;
-    game = games[0];
-    game.tags.FEN = game.tags.FEN || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-
-    const { map } = enrichLine(game.moves || [], game.tags.FEN, 'm.', {});
-
-    return { game, map };
+    games = parse(pgnText, { startRule: 'games' });
   } catch (e) {
-    return false;
+    // set if we have fen
+    if (pgnText?.includes('FEN')) {
+      pgnText += ' *';
+    } else {
+      // for fen part only
+      pgnText = `[FEN "${pgnText}"] *`;
+    }
+    try {
+      games = parse(pgnText, { startRule: 'games' });
+    } catch (e) {
+      console.warn('[enrichPgn] parse error:', e);
+      return false;
+    }
   }
+  if (!games) return false;
+  game = games[0];
+  game.tags.FEN = game.tags.FEN || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+  const { map } = enrichLine(game.moves || [], game.tags.FEN, 'm.', {});
+
+  return { game, map };
 }
 // add New Move Section
-function makeMoveObject({ fenBefore, move, moveIndexInLine, moveLine, path }) {
+function makeMoveObject({ fenBefore, move, moveIndexInLine, moveLine, path, preMove }) {
+  console.log(parent);
+
   // { fenBefore, move, moveIndexInLine,moveLine, path }
   const chess = new Chess(fenBefore);
   const san = typeof move === 'string' ? move : move.notation?.notation;
@@ -173,7 +189,7 @@ function makeMoveObject({ fenBefore, move, moveIndexInLine, moveLine, path }) {
 
   const enriched = {
     id,
-    // parent,
+    parent: preMove || null,
     // preMove: parent || null,
     //TODO اگر بازی خالی هم باشد آید آرایه حرکات اول ایجاد میشود یا خیر؟؟؟؟
     index: moveIndexInLine,
@@ -214,7 +230,7 @@ function getPreMoveAnswers(moveLine, moveIndex) {
   let bigSiblingIndex = moveIndex + 1;
   let map = new Map();
   if (moveLine[bigSiblingIndex]) {
-    map.set(moveLine[bigSiblingIndex].enriched.san);
+    map.set(moveLine[bigSiblingIndex].enriched.san, moveLine[bigSiblingIndex]);
     moveLine[bigSiblingIndex].variations.forEach((v) => {
       map.set(v[0].enriched.san, v[0]);
     });
@@ -250,29 +266,89 @@ export function addMoveAfterParent({ enrichedPgn, parentId, move }) {
     ? `${preMove.enriched.path}v${preMove.enriched.variations?.length || 0}`
     : `m.${game.moves.length}`;
   const fenBefore = preMove ? preMove.enriched.fenAfter : game.tags.FEN;
-  const newMoveObj = makeMoveObject({ fenBefore, move, moveIndexInLine, moveLine, path });
+
+  console.log('addMoveAfterParent', { fenBefore, move, moveIndexInLine, path, preMove });
+
+  const newMoveObj = makeMoveObject({ fenBefore, move, moveIndexInLine, moveLine, path, preMove });
   moveLine.push(newMoveObj);
 
   enrichedPgn.map[newMoveObj.enriched.id] = newMoveObj;
-  //TODO پی جی ان اشتباه است از محل مناسبی نمیخواند
-  console.log('enrichedPgneeeee', enrichedPgn, enrichedToPgn(enrichedPgn));
+
   return { enrichedPgn, existed: false, newMoveObj };
 }
 
-// کمکی: از FEN، نوبت و شماره حرکت را درآور
-// function metaFromFEN(fen = '') {
-//   const parts = fen.split(' ');
-//   const side = parts[1] === 'b' ? 'b' : 'w';
-//   const moveNo = Number(parts[5] || 1) || 1;
-//   return { side, moveNo };
-// }
-
-// کمکی: SAN را از هر دو ساختار بگیر
-function pickSAN(m) {
-  return m?.enriched?.san ?? m?.notation?.notation ?? '';
+// فلت کردن حرکت های یک انریچ که آرایه ای از حرکات و جدا کننده واریانت
+// جدا کننده واریانت  شماره واریانت داخلی را دارد و اینکه نوبت حرکت با کی شروع میشه
+export function flattenMoves(enrichedPgn) {
+  if (!enrichedPgn?.game?.moves) return [];
+  let out = [];
+  let lastRealMove = null; // always points to the last real move pushed to `out`
+  let varNumber = 0;
+  function recur(moves) {
+    for (let m of moves) {
+      const flat = {
+        isLastMoveInLine: m.enriched.index === m.enriched.line.length - 1,
+        isFirstMoveInLine: m.enriched.index === 0,
+        isMainLine: varNumber === 0,
+        varLineNumber: varNumber,
+        hasVariations: Array.isArray(m.variations) && m.variations.length > 0,
+        // How many ')' must be printed immediately after this move
+        separatorEndCount: 0,
+        // Link to the previously printed real move (used for numbering decisions)
+        prevPrintedMoveRef: lastRealMove,
+      };
+      m.flattened = flat;
+      out.push(m);
+      lastRealMove = m;
+      if (flat.hasVariations) {
+        for (let v of m.variations) {
+          varNumber++;
+          recur(v);
+          lastRealMove.flattened.separatorEndCount++;
+          // or below is the same but with added complexity: with loop we can know where to put ')' and how many
+          // out.push({ separatorEnd: true });
+          varNumber--;
+        }
+      }
+    }
+  }
+  recur(enrichedPgn.game.moves);
+  return out;
 }
 
+export function enrichedToPgn(enrichedPgn) {
+  let flat = flattenMoves(enrichedPgn);
+  let out = '';
+  for (let i = 0; i < flat.length; i++) {
+    const m = flat[i];
+    if (m.flattened.isFirstMoveInLine && !m.flattened.isMainLine) out = out.trim() + '(';
+
+    const san = m.enriched.san;
+    const cmt = pickComment(m);
+    const nags = pickNags(m);
+    if (m.enriched.side === 'w') {
+      out += `${m.enriched.moveNo}. `;
+    } else if (
+      m.flattened.isFirstMoveInLine ||
+      m.flattened.prevPrintedMoveRef.enriched.line !== m.enriched.line
+    ) {
+      out += `${m.enriched.moveNo}... `;
+    }
+    out += san;
+    if (cmt) out += ` {${cmt}}`;
+    for (const nag of nags) out += ` $${nag}`;
+    if (m.flattened.isLastMoveInLine && !m.flattened.isMainLine)
+      out = out.trim() + ')'.repeat(m.flattened.separatorEndCount);
+
+    out += ' ';
+  }
+  console.log('flattttttoPGN', flat, out.trim());
+
+  return out.trim();
+}
 // کمکی: کامنت
+// TODO ساختار parser: commentMove/commentAfter
+// مدیریت های زیر باید بر عهده انریچ باشد که استاندارد سازی شود
 function pickComment(m) {
   if (m?.enriched?.comment) return m.enriched.comment;
   // ساختار parser: commentMove/commentAfter
@@ -284,107 +360,4 @@ function pickComment(m) {
 function pickNags(m) {
   const n = m?.enriched?.nags ?? m?.nag ?? m?.nags ?? [];
   return Array.isArray(n) ? n : n != null ? [n] : [];
-}
-
-// کمکی: واریانت‌ها را از هر دو مسیر بگیر
-function pickVariations(m) {
-  return m?.enriched?.variations ?? m?.variations ?? [];
-}
-
-// کمکی: «سمتِ حرکت» و «شماره حرکت» نود
-function pickSideMoveNo(m, fallback) {
-  const side = m?.enriched?.side ?? m?.turn ?? fallback.side;
-  const moveNo = m?.enriched?.moveNo ?? m?.moveNumber ?? fallback.moveNo;
-  return { side: side === 'b' ? 'b' : 'w', moveNo: Number(moveNo) || fallback.moveNo };
-}
-
-function enrichedToPgn(enrichedPgn) {
-  const { game } = enrichedPgn;
-  if (!game) throw new Error('no game in enriched PGN');
-
-  // 1) Tags — فقط تگ‌های متنی/ساده را بنویس
-  let out = '';
-  const tags = game.tags || {};
-  const allowed = Object.entries(tags).filter(([k, v]) =>
-    ['string', 'number', 'boolean'].includes(typeof v),
-  );
-  for (const [k, v] of allowed) {
-    out += `[${k} "${String(v)}"]\n`;
-  }
-  out += '\n';
-
-  // context شروع از FEN یا استارت
-  const startFEN = game.tags?.FEN || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-  const { side, moveNo } = metaFromFEN(startFEN);
-
-  // 2) Moves
-  out += movesToString(game.moves || [], { next: side, moveNo });
-
-  // 3) Result
-  out += ' ' + (game.tags?.Result || '*');
-
-  return out.trim();
-}
-
-/**
- * moves: آرایهٔ حرکت‌ها (mainline یا واریانت)
- * ctx: { next: 'w'|'b', moveNo: number } وضعیت لحظه‌ای قبل از اجرای حرکتِ بعدی
- */
-function movesToString(moves, ctx) {
-  let out = '';
-  // کپیِ state محلی تا در recursion خراب نشود
-  let next = ctx?.next ?? 'w';
-  let moveNo = Number(ctx?.moveNo || 1);
-
-  for (let i = 0; i < moves.length; i++) {
-    const m = moves[i];
-
-    // اگر enriched نبود، از ساختار parser بخوان؛ اگر هیچ نبود، رد شو
-    const san = pickSAN(m);
-    if (!san) continue;
-
-    // تعیین side/moveNo برای این حرکت
-    const here = pickSideMoveNo(m, { side: next, moveNo });
-
-    // چاپ شماره حرکت
-    if (here.side === 'w') {
-      out += `${here.moveNo}. `;
-    } else if (i === 0) {
-      // اگر اولین حرکت خطْ نوبتِ سیاه است
-      out += `${here.moveNo}... `;
-    }
-
-    // خود حرکت
-    out += san;
-
-    // کامنت
-    const cmt = pickComment(m);
-    if (cmt) out += ` {${cmt}}`;
-
-    // NAG
-    const nags = pickNags(m);
-    for (const nag of nags) out += ` $${nag}`;
-
-    out += ' ';
-
-    // قبل از جلو بردن state، ctx آغاز واریانت را ذخیره کن
-    const varCtxStart = { next: here.side, moveNo: here.moveNo };
-
-    // واریانت‌ها (از هر دو مسیر)
-    const vlist = pickVariations(m);
-    if (Array.isArray(vlist) && vlist.length) {
-      for (const vLine of vlist) {
-        out += '(' + movesToString(vLine, varCtxStart) + ') ';
-      }
-    }
-
-    // جلو بردن state اصلی پس از بازیِ این حرکت
-    if (here.side === 'w') {
-      next = 'b';
-    } else {
-      next = 'w';
-      moveNo = here.moveNo + 1;
-    }
-  }
-  return out.trim();
 }

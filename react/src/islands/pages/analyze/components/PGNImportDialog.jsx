@@ -19,7 +19,7 @@ export default function PGNImportDialog({ open, onClose, onImport }) {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Paste PGN</DialogTitle>
+      <DialogTitle>Paste PGN Or FEN</DialogTitle>
       <DialogContent>
         <TextField
           fullWidth
@@ -27,7 +27,7 @@ export default function PGNImportDialog({ open, onClose, onImport }) {
           minRows={10}
           value={pgn}
           onChange={(e) => setPgn(e.target.value)}
-          placeholder={`[Event "…"]\n[Site "…"]\n1.e4 e5 2.Nf3 Nc6 …`}
+          placeholder={`rnbqkbnr/pp2p1pp/5p2/2pp4/3P3P/5P2/PPP1P1P1/RNBQKBNR w KQkq - 0 4\n\n OR a game\n\n[Event "…"]\n[Site "…"]\n1.e4 e5 2.Nf3 Nc6 …`}
           margin="dense"
         />
       </DialogContent>

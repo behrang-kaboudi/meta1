@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
-import ChessboardOuterNotation from './ChessboardOuterNotation.jsx';
+import ChessboardOuterNotation from './ChessboardOuterNotation/ChessboardOuterNotation.jsx';
 
 export default function RChessboard() {
   const [game] = useState(() => new Chess());
@@ -33,17 +33,5 @@ export default function RChessboard() {
         animationDurationInMs={200}
       />
     </>
-
-    // <div className="p-4">
-    //   <div className="mb-2 text-sm">FEN: {fen}</div>
-    //   <Chessboard
-    //     position={fen}
-    //     onPieceDrop={onPieceDrop}
-    //     boardOrientation="white"
-    //     customBoardStyle={{ borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,.15)' }}
-    //     // width را معمولاً با CSS کنترل کن، ولی این prop هم مفید است اگر لازم داشتی:
-    //     // boardWidth={480}
-    //   />
-    // </div>
   );
 }

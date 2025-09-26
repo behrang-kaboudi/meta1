@@ -6,9 +6,12 @@ const registry = {
   Hi: { load: () => import('./islands/Hi.jsx') },
   PlayerSearch: { load: () => import('./islands/PlayerSearch/PlayerSearch.jsx') },
   HomeBtn: { load: () => import('./islands/Btns/HomeBtn.jsx') },
-  RChessboard: { load: () => import('./islands/chessBoards/ChessboardOuterNotation.jsx') },
+  RChessboard: {
+    load: () => import('./islands/chessBoards/ChessboardOuterNotation/ChessboardOuterNotation.jsx'),
+  },
   PgnViewer: { load: () => import('./islands/chess/PgnViewer/PgnViewer.jsx') },
   Analyze: { load: () => import('./islands/pages/analyze/Analyze.jsx') },
+  MUImainTheme: { load: () => import('./islands/MUImainTheme.jsx') },
 };
 
 function mount(el) {
