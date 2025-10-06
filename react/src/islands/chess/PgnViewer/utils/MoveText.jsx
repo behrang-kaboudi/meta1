@@ -7,7 +7,7 @@ import styles from './MoveText.module.css';
  * @param {{color?: 'white'|'black', addPawn?: boolean}} opts
  */
 export function toFigurineSAN(san = '', opts = {}) {
-  const { color = 'w', addPawn = true } = opts;
+  const { color = 'w', addPawn = false } = opts;
 
   // Unicode figurines
   const W = { K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙' };
@@ -38,7 +38,8 @@ export function toFigurineSAN(san = '', opts = {}) {
   // Optional: show pawn figurine for pawn moves (SAN without leading piece letter)
   // Examples: "e4" → "♙e4", "exd5" → "♙exd5"
   if (addPawn && /^[a-h]/.test(san) && !/^O-O/.test(san)) {
-    out = { fig: M.P, text: out };
+    fig1 = M.P;
+    // out = { fig: M.P, text: out };
   }
 
   return { fig1, fig2, text: out };

@@ -26,21 +26,17 @@ export default function ChessJsBoard(props) {
       let prevMove = mainMove.current;
       mainMove.current = props.moveObj.enrichedMove;
       const m = props.moveObj.enrichedMove;
-      // //TODO: useCallback for onClick not to recreate it on each render if we have same move
-      //       if (prevMove.current && prevMove.current.enriched.id === m.enriched.id) {
-      //         // کلیک مکربه برای انتخاب یک نقطه باقی ا��ت
-      //         return;
-      //       }
-
-      if (prevMove && prevMove?.enriched.fenBefore === m.enriched.fenAfter) {
-        setMoveColor(m.enriched.from, m.enriched.to);
+      setMoveColor(m.enriched.from, m.enriched.to);
+      if (
+        (prevMove && prevMove?.enriched.fenBefore === m.enriched.fenAfter) ||
+        props.moveObj.type === 'drop'
+      ) {
         setFEN(m.enriched.fenAfter);
         return;
       }
       setFEN(m.enriched.fenBefore);
       setShowAnimations(false);
       setTimeout(() => {
-        setMoveColor(m.enriched.from, m.enriched.to);
         setShowAnimations(true);
         setFEN(m.enriched.fenAfter);
       }, 200);
@@ -189,7 +185,7 @@ export default function ChessJsBoard(props) {
     }
     const mv = tryMove(sourceSquare, targetSquare);
     if (mv) {
-      afterMove(mv); // ⟵ اینجا هم
+      afterMove(mv, 'drop'); // ⟵ اینجا هم
       return true;
     } else {
       return false;
@@ -203,10 +199,10 @@ export default function ChessJsBoard(props) {
     }
   }
   // در توابع بعد از انتخاب خانه دوم یا دراپ یا ارتقا  هیچ اتفاقی نباید بی افتد. و حرکت در اینجا تحلیل شود
-  function afterMove(moveObj) {
+  function afterMove(moveObj, type = 'manual') {
     // moveObj خروجی chess.js است: {color, from, to, san, flags, piece, promotion, ...}
     setMoveFrom('');
-    props.afterBoardMove(moveObj);
+    props.afterBoardMove(moveObj, type);
     // اگر خواستی به والد هم خبر بدهی:
     // props.onMoveCommitted?.(moveObj, gameRef.current.fen());
   }

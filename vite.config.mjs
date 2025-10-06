@@ -25,6 +25,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    manifest: true,
     rollupOptions: {
       input: r('react/src/loader.jsx'),
       output: {

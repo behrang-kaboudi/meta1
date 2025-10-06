@@ -1,0 +1,56 @@
+/* engine-panel.css — classes side (keeps visual rules reusable) */
+.engine-card {
+  border-radius: 12px;
+  background-color: rgb(246, 246, 246);
+}
+.engine-card__content {
+  display: grid;
+  gap: 10px;
+}
+
+.engine-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.engine-header__left {
+}
+.engine-header__right {
+}
+
+.engine-eval {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1;
+}
+.engine-meta {
+  font-size: 12px;
+  opacity: 0.8;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.engine-dot {
+  animation: engine-pulse 1s infinite;
+}
+@keyframes engine-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.engine-pv {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  line-height: 1.45;
+  max-height: calc(1.45em * 3 + 8px); /* up to 3 lines, then scroll */
+  overflow: auto;
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+}

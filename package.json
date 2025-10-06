@@ -69,7 +69,6 @@
     "stockfish": "^12.0.0",
     "supertest": "^7.1.4",
     "throttle-debounce": "^5.0.2",
-    "use-resize-observer": "^9.1.0",
     "vitest": "^3.2.4"
   },
   "devDependencies": {

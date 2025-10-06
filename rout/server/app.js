@@ -26,7 +26,11 @@ function createApp() {
       res.sendFile(reqAddress);
     } else {
       reqAddress = reqAddress.replace('public', 'node_modules');
-      res.sendFile(reqAddress);
+      if (fs.existsSync(reqAddress)) {
+        res.sendFile(reqAddress);
+      } else {
+        res.status(404).send('File not found');
+      }
     }
     // next();
   });
