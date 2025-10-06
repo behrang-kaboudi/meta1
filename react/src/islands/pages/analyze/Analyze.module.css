@@ -1,11 +1,20 @@
-.mainDiv {
+/* .mainDiv {
   display: grid;
+} */
+/* .helpSide {
+  grid-row: 2/3;
 }
-
-@media (max-width: 1024px) {
+.boardContainer {
+  grid-row: 1/2;
+} */
+@media (max-width: 900px) {
 }
-@media (min-width: 1024px) {
-  .mainDiv {
+@media (min-width: 900px) {
+  /* .mainDiv {
     grid-template-columns: 25% 75%;
-  }
+    align-items: center;
+  } */
+  /* .helpSide {
+    grid-row: 1/2;
+  } */
 }

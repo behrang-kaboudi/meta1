@@ -1,5 +1,7 @@
 import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
+// import '@/styles/tailwind.css';
+// import '../index.css'; // دی
 
 /** 2) رجیستری: برای جزیره‌هایی که CSS دارند، مسیر CSS نسبی را بده */
 const registry = {

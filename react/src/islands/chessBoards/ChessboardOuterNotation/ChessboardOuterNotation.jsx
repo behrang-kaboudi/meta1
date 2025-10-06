@@ -1,18 +1,27 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { Chessboard } from 'react-chessboard';
-import useResizeObserver from 'use-resize-observer';
+import useResizeObserver from '../../hooks/useResizeObserver.ts';
 import { debounce } from 'throttle-debounce';
 import Box from '@mui/material/Box';
 import styles from './styles.js';
 import './outer-notation.css';
 // add
-const boardSizeToHideNotation = 300;
+const boardSizeToHideNotation = 350;
 export default function ChessboardOuterNotation(props) {
   const [orientation, setOrientation] = useState(props.boardOrientation || 'white');
   const [showNotation, setShowNotation] = useState(true);
   const [gutter, setGutter] = useState(0);
 
+  // const { ref: containerRef } = useResizeObserver({
+  //   onResize: ({ width = 0, height = 0 }) => {
+  //     console.log(`ChessboardOuterNotation: width: ${width}, height: ${height}`);
+
+  //     latest.current.containerWidth = width;
+  //     latest.current.containerHeight = height;
+  //     handleResizeDebounce();
+  //   },
+  // });
   const { ref: containerRef } = useResizeObserver({
     onResize: ({ width = 0, height = 0 }) => {
       latest.current.containerWidth = width;
@@ -24,6 +33,9 @@ export default function ChessboardOuterNotation(props) {
     containerWidth: 0,
     containerHeight: 0,
   });
+  useEffect(() => {
+    // console.log('Arrows updated:', props.arrows);
+  }, []);
   useEffect(() => {
     if (props.boardOrientation) setOrientation(props.boardOrientation);
   }, [props.boardOrientation]);
@@ -40,7 +52,7 @@ export default function ChessboardOuterNotation(props) {
 
   const handleResizeDebounce = useMemo(
     () =>
-      debounce(200, () => {
+      debounce(20, () => {
         const { containerWidth, containerHeight } = latest.current;
         // if (Math.abs(containerWidth - prevContainerWidth.current) < 8) return;
         let gutter = Math.floor(containerWidth / 28);
@@ -94,6 +106,8 @@ export default function ChessboardOuterNotation(props) {
     <div ref={containerRef}>
       <Box
         className={clsx(`cb-wrap`, isBig ? `cb-wrap-big` : `cb-wrap-small`)}
+        sx={{ bgcolor: '#bca28799' }}
+        // sx={{ bgcolor: '#adadad' }}
         style={{
           '--cb-horizontal-gutter': `${3.2}%`,
           '--cb-gutter': `${gutter}px`,
@@ -109,6 +123,10 @@ export default function ChessboardOuterNotation(props) {
                 ...props,
                 ...chessboardOptions,
                 boardOrientation: orientation,
+                // darkSquareStyle: {
+                //   backgroundColor: '#138550',
+                // },
+                // lightSquareStyle: { backgroundColor: '#E2FAE6' }, // رنگ خانه‌های روشن
               }}
             />
           </div>

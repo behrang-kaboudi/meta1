@@ -169,6 +169,7 @@ export function enrichPgn(pgnText = '') {
   if (!games) return false;
   game = games[0];
   game.tags.FEN = game.tags.FEN || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  game.enrichedData = metaFromFEN(game.tags.FEN);
 
   const { map } = enrichLine(game.moves || [], game.tags.FEN, 'm.', {});
 
@@ -176,8 +177,6 @@ export function enrichPgn(pgnText = '') {
 }
 // add New Move Section
 function makeMoveObject({ fenBefore, move, moveIndexInLine, moveLine, path, preMove }) {
-  console.log(parent);
-
   // { fenBefore, move, moveIndexInLine,moveLine, path }
   const chess = new Chess(fenBefore);
   const san = typeof move === 'string' ? move : move.notation?.notation;
@@ -266,8 +265,6 @@ export function addMoveAfterParent({ enrichedPgn, parentId, move }) {
     ? `${preMove.enriched.path}v${preMove.enriched.variations?.length || 0}`
     : `m.${game.moves.length}`;
   const fenBefore = preMove ? preMove.enriched.fenAfter : game.tags.FEN;
-
-  console.log('addMoveAfterParent', { fenBefore, move, moveIndexInLine, path, preMove });
 
   const newMoveObj = makeMoveObject({ fenBefore, move, moveIndexInLine, moveLine, path, preMove });
   moveLine.push(newMoveObj);

@@ -66,7 +66,9 @@ export default function setTableView({ flatten, onClick, enrichedMove }) {
 
     for (let i = 0; i < frag.moves.length; i++) {
       const move = frag.moves[i];
-      let moveNumPart = <div className={styles.mainNum}>{move.enriched.moveNo}.&nbsp;</div>;
+      let moveNumPart = (
+        <div className={clsx(styles.mainNum, 'ps-2')}>{move.enriched.moveNo}.&nbsp;</div>
+      );
       let currMovePart = <FilledMove move={move} onClick={onClick} enrichedMove={enrichedMove} />;
       let whiteMovePart = null;
       let blackMovePart = null;
@@ -129,7 +131,7 @@ export default function setTableView({ flatten, onClick, enrichedMove }) {
     return parts;
   }
   return (
-    <div className={styles.list}>
+    <div className={styles.list} style={{ backgroundColor: '#e5e5e3' }}>
       {fragments.map((frag, i) => {
         if (!frag) return null;
         if (frag.kind === 'main') {
@@ -137,7 +139,7 @@ export default function setTableView({ flatten, onClick, enrichedMove }) {
         }
         if (frag.kind === 'var') {
           return (
-            <div key={`var_${frag.startIndex}`} className={styles.variation}>
+            <div key={`var_${frag.startIndex}`} className={clsx(styles.variation)}>
               {setVariation(frag)}
             </div>
           );

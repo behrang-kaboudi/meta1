@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const { MONGO_URI, ENV } = require('../../config/env');
 
 async function connectToMongo() {
+  // Set strictQuery to suppress deprecation warning
+  mongoose.set('strictQuery', false);
   await mongoose.connect(MONGO_URI);
   //TODO: check connection
   //   mongoose
