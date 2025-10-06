@@ -7,15 +7,17 @@ export default function ChessJsBoard(props) {
   const gameRef = useRef(new Chess());
   const [FEN, setFEN] = useState(); // inclues initial position and enriched move
   const [squareStyles, setSquareStyles] = useState({});
-  const [promoArrows, setPromoArrows] = useState([]);
+  const [promoArrows, setPromoArrows] = useState(props.arrows || []);
   const [showAnimations, setShowAnimations] = useState(true);
   const [moveFrom, setMoveFrom] = useState('');
   const [allowDragging, setAllowDragging] = useState(true);
-
   // ✅ پروموشن در انتظار انتخاب: { from, to, color: 'w'|'b' }
   const [pendingPromo, setPendingPromo] = useState(null);
   // to check if we receive same move or not, to avoid re-rendering the board on same move
   const mainMove = useRef(null);
+  useEffect(() => {
+    setPromoArrows(props.arrows);
+  }, [props.arrows]);
   // ----- effects همگام‌سازی‌ها -----
   useEffect(() => {
     // console.log('ChessJsBoard props.enrichedMove:', props.enrichedMove);
@@ -112,7 +114,7 @@ export default function ChessJsBoard(props) {
   // بستن دیالوگ بدون اعمال
   function cancelPromotion() {
     setPendingPromo(null);
-    setPromoArrows([]);
+    setPromoArrows(props.arrows);
   }
 
   // نهایی‌سازی پروموشن با مهره انتخاب‌شده: 'q' | 'r' | 'b' | 'n'
@@ -126,7 +128,7 @@ export default function ChessJsBoard(props) {
       return;
     }
     setPendingPromo(null);
-    setPromoArrows([]);
+    setPromoArrows(props.arrows);
     afterMove(mv);
   }
 

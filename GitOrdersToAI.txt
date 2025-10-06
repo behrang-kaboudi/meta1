@@ -1,0 +1,16 @@
+Stage all modified and new files.
+Analyze the current Git working tree and staged changes.
+Generate a concise and meaningful Conventional Commit message.
+
+Requirements:
+- Follow the Conventional Commit format: <type>(<scope>): <summary>
+- Detect the correct type (feat, fix, refactor, style, chore, test, ci, perf, docs)
+- Use imperative mood in the summary ("add", "update", "fix", not "added" or "fixed")
+- Keep the first line under 72 characters
+- If multiple areas are affected, mention the main module as the scope
+- Add 1–3 bullet points summarizing key changes if relevant
+
+Then:
+1. Stage all the changes (`git add -A`).
+2. Commit them using the generated message.
+3. Push the commit to the current remote branch.
