@@ -50,10 +50,21 @@
       password,
     };
 
-    sendJSON(obj, window.location.pathname, ok);
+    // sendJSON(obj, window.location.pathname, ok);
+    fetch(window.location.pathname, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => ok(data));
 
     function ok(res) {
-      let resObj = JSON.parse(res);
+      let resObj = res;
       if (!resObj.state) {
         erElement.innerText = resObj.message;
         erElement.classList.remove('d-none');

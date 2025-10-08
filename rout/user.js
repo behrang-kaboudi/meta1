@@ -12,6 +12,40 @@ const { Router } = require('express');
 const router = Router();
 
 router.events = new Event();
+function sendMailMain(mailObj) {
+  sendmail(mailObj, function (err, reply) {
+    console.log(err && err.stack);
+    // console.dir (reply);
+
+    var transporter = nodemailer.createTransport({
+      host: 'metachessmind.com',
+      // port: 25,
+      // host: 'mail.metachessmind.com',
+      // port: 25,
+      secure: false,
+      auth: {
+        user: 'no-reply@metachessmind.com',
+        pass: 'IG;0zY@3E43bhf',
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+
+      // service: 'localhost',
+    });
+
+    transporter.sendMail(mailObj, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  });
+}
+router.get('/login/', (req, res) => {
+  res.render(config.get('template') + '/page/user/login');
+});
 router.get('/admin/', (req, res) => {
   // to do roles
   res.render(config.get('template') + '/page/user/admin');
@@ -23,9 +57,7 @@ router.get('/logout/', (req, res) => {
   res.clearCookie('user');
   res.redirect('/');
 });
-router.get('/login/', (req, res) => {
-  res.render(config.get('template') + '/page/user/login');
-});
+
 const loginLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   limit: 5,
@@ -42,7 +74,7 @@ const loginLimiter = rateLimit({
 router.post('/login/', loginLimiter, async (req, res) => {
   let myRes = userValidator.validator(req.body);
   if (!myRes.state) {
-    return res.send(JSON.stringify(myRes));
+    return res.status(400).json(myRes);
   }
   req.body.mailUser = req.body.mailUser.toLowerCase().trim();
   req.body.password = req.body.password.trim();
@@ -53,17 +85,27 @@ router.post('/login/', loginLimiter, async (req, res) => {
   if (dbUser) isHash = await verifyPassword(dbUser.passwordHash, req.body.password);
   if (!dbUser || !isHash) {
     myRes.state = false;
-    res.send(JSON.stringify(myRes));
-    return;
+    myRes.message = 'Email/Username or password is incorrect.';
+    return res.status(400).json(myRes);
   }
+
+  myRes.state = true;
   myRes.message = user.getUserLoginCookie(dbUser);
-  res.cookie('user', myRes.message).send(JSON.stringify(myRes));
+  // res.cookie('user', myRes.message).send(JSON.stringify(myRes));
+  res
+    .status(200)
+    .cookie('user', myRes.message, {
+      httpOnly: true,
+      secure: true,
+    })
+    .json(myRes);
   // todo [{email: req.body.emailUser}, {userName: req.body.emailUser}]
   //if key is not exist returns true//   s//  .and ([{password: req.body.password}])
 });
 router.get('/recovery/', (req, res) => {
   res.render(config.get('template') + '/page/user/recovery1', {});
 });
+
 router.post('/recovery/', (req, res) => {
   let myRes = userValidator.validator(req.body);
   if (!myRes.state) {
@@ -83,22 +125,17 @@ router.post('/recovery/', (req, res) => {
     dbUser.save().then((user) => {
       let link = '/user/note/recovery';
       myRes.message = link;
-      if (process.env.isDev) {
+      if (process.env.NODE_ENV === 'development') {
         console.log(`${process.env.HOST}/user/recovery/${user.recoveryLink}`);
-        res.send(
-          JSON.stringify({
-            state: true,
-            message: 'created link is in console.',
-          }),
-        );
+        res.status(200).json(myRes);
         return;
       }
-      sendmail(
-        {
-          from: 'no-reply@metachessmind.com',
-          to: req.body.email,
-          subject: 'Password recovery', // "بازیابی رمز عبور",
-          html: `
+      //beh2ea@gmail.com
+      let mailObj = {
+        from: 'no-reply@metachessmind.com',
+        to: req.body.email,
+        subject: 'Password recovery', // "بازیابی رمز عبور",
+        html: `
                     
                     <h4 >
                      Click on the link below to change the password
@@ -108,14 +145,10 @@ router.post('/recovery/', (req, res) => {
                     ${config.get('base')}/user/recovery/${user.recoveryLink}
                     <a>
                   `,
-        },
-        function (err, reply) {
-          // console.log (err && err.stack);
-          // console.dir (reply);
-        },
-      );
+      };
+      sendMailMain(mailObj);
 
-      res.send(JSON.stringify(myRes));
+      res.status(200).json(myRes);
     });
   });
 });
@@ -154,6 +187,7 @@ router.post('/recovery/:link', (req, res) => {
     if (dbUser) {
       dbUser.passwordHash = await hashPassword(req.body.password);
       dbUser.recoveryLink = '';
+
       dbUser.save().then((bdUser2) => {
         myRes.state = true;
         let message = user.getUserLoginCookie(bdUser2);
@@ -173,7 +207,7 @@ router.post('/recovery/:link', (req, res) => {
 });
 
 router.get('/register/', (req, res) => {
-  if (req.user.login) return res.redirect('/');
+  if (req.user.login) return res.redirect('/'); //TEST
   res.render(config.get('template') + '/page/user/register', {});
 });
 const registerLimiter = rateLimit({
@@ -182,7 +216,7 @@ const registerLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {
-    res.status(200).json({
+    res.status(429).json({
       state: false,
       code: 'RATE_LIMITED',
       message: 'Too many sign-up attempts. Please try later.',
@@ -198,9 +232,8 @@ router.post('/register/', registerLimiter, (req, res) => {
   if (!myRes.state) {
     return res.send(JSON.stringify(myRes));
   }
-  preregister.isInDb(req.body.email, req.body.userName).then(async (dbreg) => {
-    console.log('ssdds', dbreg);
 
+  preregister.isInDb(req.body.email, req.body.userName).then(async (dbreg) => {
     if (dbreg.ans) {
       myRes.state = false;
       myRes.message = dbreg.message;
@@ -215,23 +248,21 @@ router.post('/register/', registerLimiter, (req, res) => {
 
       preregister.createNew(tempUser).then((dbPre) => {
         let link = '/user/note/activfromemail';
-        if (process.env.isDev) {
+        if (process.env.NODE_ENV === 'development') {
           console.log(`${process.env.HOST}/user/register/${dbPre.link}`);
-          res.send(
-            JSON.stringify({
-              state: true,
-              message: 'created link is in console.',
-            }),
-          );
+          res.status(200).json({
+            state: true,
+            message: 'created link is in console.',
+          });
           return;
         }
+        //beh2ea@gmail.com
         myRes.message = link;
-        sendmail(
-          {
-            from: 'no-reply@metachessmind.com',
-            to: req.body.email,
-            subject: 'Email Confirmation', //"تایید ایمیل",
-            html: `
+        let mailObj = {
+          from: 'no-reply@metachessmind.com',
+          to: req.body.email,
+          subject: 'Email Confirmation', //"تایید ایمیل",
+          html: `
                     
                     <h4 >
                     Complete your registration by clicking on the link below
@@ -241,56 +272,9 @@ router.post('/register/', registerLimiter, (req, res) => {
                     ${config.get('base')}/user/register/${dbPre.link}
                     <a>
                   `,
-          },
-          function (err, reply) {
-            console.log(err && err.stack);
-            // console.dir (reply);
-
-            var transporter = nodemailer.createTransport({
-              host: 'metachessmind.com',
-              // port: 25,
-              // host: 'mail.metachessmind.com',
-              // port: 25,
-              secure: false,
-              auth: {
-                user: 'no-reply@metachessmind.com',
-                pass: 'IG;0zY@3E43bhf',
-              },
-              tls: {
-                rejectUnauthorized: false,
-              },
-
-              // service: 'localhost',
-            });
-
-            var mailOptions = {
-              from: 'no-reply@metachessmind.com',
-              to: req.body.email,
-              subject: 'Email Confirmation',
-              // text: 'That was easy!',
-              html: `
-                    
-                    <h4 >
-                    Complete your registration by clicking on the link below
-                    </h4>
-                    <br>
-                    <a href="${config.get('base')}/user/register/${dbPre.link}">
-                    ${config.get('base')}/user/register/${dbPre.link}
-                    <a>
-                  `,
-            };
-
-            transporter.sendMail(mailOptions, function (error, info) {
-              if (error) {
-                console.log(error);
-              } else {
-                console.log('Email sent: ' + info.response);
-              }
-            });
-          },
-        );
-
-        res.send(JSON.stringify(myRes));
+        };
+        sendMailMain(mailObj);
+        res.status(200).json(myRes);
       });
     }
   });

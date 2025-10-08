@@ -42,18 +42,28 @@
   function submitForm() {
     let mailUser = document.getElementById('mailUser').value;
     let password = document.getElementById('password').value;
+    //TODO: validate  inputs here
     let obj = { mailUser, password };
-    sendJSON(obj, '/user/login', ok);
+    // sendJSON(obj, '/user/login', ok);
+    fetch('/user/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        mailUser,
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => ok(data));
     function ok(res) {
-      // // //
-      let resObj = JSON.parse(res);
-
+      let resObj = res;
       if (!resObj.state) {
         let erElement = document.getElementById('formErrors');
         erElement.innerText = resObj.message;
         erElement.classList.remove('d-none');
       } else {
-        console.log(resObj);
         window.location.href = '/'; //
       }
     }

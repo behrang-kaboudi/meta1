@@ -36,17 +36,27 @@
   function submitForm() {
     let email = document.getElementById('email').value;
     let obj = { email };
-    sendJSON(obj, '/user/recovery', ok);
+
+    fetch('/user/recovery', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => ok(data));
     function ok(res) {
-      let resObj = JSON.parse(res);
+      let resObj = res;
+      console.log(resObj, 'resObj');
+
       if (!resObj.state) {
         let erElement = document.getElementById('formErrors');
-        console.log(resObj);
-        console.log(resObj.message);
         erElement.innerText = resObj.message;
         erElement.classList.remove('d-none');
       } else {
-        window.location.href = '/'; // window.location.replace(resObj.message); //
         window.location.href = resObj.message; // // window.location.href="http://www.w3schools.com" ;
       }
     }
