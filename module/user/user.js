@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const ut = require('../utility');
-
+const jwt = require('jsonwebtoken');
 const config = require('config');
 const { tour } = require('../swiss/data');
 const userSchema = new mongoose.Schema({

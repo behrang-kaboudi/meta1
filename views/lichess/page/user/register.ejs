@@ -104,12 +104,22 @@
       submitBtn.disabled = false;
       submitBtn.textContent = oldText;
     }
-
-    sendJSON(obj, '/user/register', ok);
+    fetch('/user/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        userName,
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => ok(data));
 
     function ok(res) {
-      let resObj = JSON.parse(res);
-
+      let resObj = res;
       if (!resObj.state) {
         erElement.innerText = resObj.message;
         erElement.classList.remove('d-none');
