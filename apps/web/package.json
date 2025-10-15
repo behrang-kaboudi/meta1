@@ -1,0 +1,34 @@
+{
+  "name": "@metachessmind/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "npm run build",
+    "lint": "eslint src --ext js,jsx,ts,tsx",
+    "lint:fix": "eslint src --ext js,jsx,ts,tsx --fix"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-chessboard": "^5.5.0",
+    "@mui/material": "^7.3.2",
+    "@mui/icons-material": "^7.3.2",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "bootstrap": "^5.3.8",
+    "jquery": "^3.7.1",
+    "clsx": "^2.1.1",
+    "throttle-debounce": "^5.0.2",
+     "@meta/enrich-pgn": "*"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.2",
+    "vite": "^7.1.3"
+  },
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ]
+}

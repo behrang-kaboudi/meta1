@@ -1,0 +1,15 @@
+{
+  "name": "@meta/enrich-pgn",
+  "version": "1.0.0",
+  "main": "./enrichPgn.js",
+  "type": "module",
+  "exports": {
+    ".": "./enrichPgn.js"
+  },
+  "files": [
+    "enrichPgn.js"
+  ],
+  "scripts": {
+    "start": ""
+  }
+}

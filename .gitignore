@@ -23,6 +23,9 @@ pids
 .env.*
 !.env.example   # فقط نمونهٔ env رو نگه داریم
 
+# Add apps/api/.env to ignore sensitive environment files
+apps/api/.env
+
 # === Build / Dist ===
 dist/
 build/
