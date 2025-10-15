@@ -20,4 +20,4 @@ if [ -n "$TOUCHED" ]; then
 fi
 
 # Run staged linters/formatters
-npx lint-staged
+# npx lint-staged

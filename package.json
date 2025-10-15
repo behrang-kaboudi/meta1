@@ -1,87 +1,26 @@
 {
-  "name": "metachessmind",
+  "name": "metachessmind-monorepo",
   "version": "1.0.0",
-  "description": "Improve at chess",
-  "repository": {
-    "private": true
-  },
-  "main": "index.js",
+  "description": "Improve at chess - Monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/**"
+  ],
   "scripts": {
-    "test": "NODE_ENV=test vitest",
-    "start": "NODE_ENV=production node index.js",
-    "prestart": "npm run build",
-    "dev": "concurrently -k -n VITE,API \"vite\" \"NODE_ENV=development nodemon index.js\"",
-    "build": "vite build",
-    "debug": "nodemon --inspect index.js",
-    "prepare": "node .husky/install.mjs",
-    "lint": "eslint --cache index.js app.js module/**/*.js rout/**/*.js",
-    "lint:fix": "eslint --cache --fix index.js app.js module/**/*.js rout/**/*.js",
-    "lint:ci": "eslint --cache --no-warn-ignored --quiet --rule 'no-undef:0' --rule 'no-unused-vars:0' --rule 'n/no-missing-require:0' index.js app.js module/**/*.js rout/**/*.js",
-    "format": "prettier -w .",
-    "format:check": "prettier -c .",
-    "format:check:ci": "prettier -c --ignore-unknown ."
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs}": [
-      "eslint --fix --quiet --no-warn-ignored",
-      "prettier -w"
-    ],
-    "*.{json,md,mdx,yml,yaml,css,scss,html}": [
-      "prettier --write"
-    ]
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^29.2.0",
-    "@ckeditor/ckeditor5-upload": "^29.2.0",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mliebelt/pgn-parser": "^1.4.18",
-    "@mliebelt/pgn-reader": "^1.2.30",
-    "@mliebelt/pgn-writer": "^1.0.5",
-    "@mui/icons-material": "^7.3.2",
-    "@mui/material": "^7.3.2",
-    "bcryptjs": "^3.0.2",
-    "bootstrap": "^5.3.8",
-    "chess.js": "^0.11.0",
-    "clsx": "^2.1.1",
-    "config": "^3.3.3",
-    "consolidate": "^0.16.0",
-    "dotenv": "^17.2.1",
-    "ejs": "^3.1.10",
-    "express": "^4.17.1",
-    "express-fileupload": "^1.5.2",
-    "express-rate-limit": "^8.0.1",
-    "joi": "^18.0.1",
-    "jquery": "^3.7.1",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^6.1.2",
-    "nodemailer": "^7.0.6",
-    "pgn-parser": "^2.1.1",
-    "public": "^0.1.5",
-    "react": "^19.1.1",
-    "react-chessboard": "^5.5.0",
-    "react-dom": "^19.1.1",
-    "sendmail": "^1.6.1",
-    "socket.io": "^4.8.1",
-    "stockfish": "^12.0.0",
-    "supertest": "^7.1.4",
-    "throttle-debounce": "^5.0.2",
-    "vitest": "^3.2.4"
+    "dev": "concurrently -k -n WEB,API \"npm run dev --workspace=apps/web\" \"npm run dev --workspace=apps/api\"",
+    "build": "npm run build --workspaces",
+    "start": "npm run start --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "lint:fix": "npm run lint:fix --workspaces",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.0.2",
     "concurrently": "^9.2.1",
-    "eslint": "^9.34.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-n": "^17.21.3",
-    "globals": "^16.3.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.1.5",
-    "prettier": "^3.6.2",
-    "vite": "^7.1.3"
+    "husky": "^9.1.7"
+  },
+  "dependencies": {
+    "cross-env": "^10.1.0"
   }
 }

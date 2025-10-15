@@ -1,0 +1,17 @@
+// تابع connectToMongo(); در تست‌ها میک/غیرفعال می‌شود
+const mongoose = require("mongoose");
+const { MONGO_URI, ENV } = require("../../../config/env");
+
+async function connectToMongo() {
+  // Set strictQuery to suppress deprecation warning
+  mongoose.set("strictQuery", false);
+  await mongoose.connect(MONGO_URI);
+  //TODO: check connection
+  //   mongoose
+  //   .connect(MONGO_URI)
+  //   .then(() => console.log(`[mongo] connected (${ENV})`))
+  //   .catch((err) => console.error('[mongo] connection error:', err.message));
+  console.log(`[mongo] connected (${ENV})`);
+}
+
+module.exports = { connectToMongo };

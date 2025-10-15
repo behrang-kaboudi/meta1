@@ -1,0 +1,40 @@
+{
+  "name": "@metachessmind/api",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "test": "cross-env NODE_ENV=test vitest",
+    "lint": "eslint src --ext js,ts",
+    "lint:fix": "eslint src --ext js,ts --fix"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.1.2",
+    "bcryptjs": "^3.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "joi": "^18.0.1",
+    "config": "^3.3.3",
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
+    "consolidate": "^0.16.0",
+    "express-fileupload": "^1.5.2",
+    "express-rate-limit": "^8.0.1",
+    "socket.io": "^4.8.1",
+    "nodemailer": "^7.0.6",
+    "sendmail": "^1.6.1",
+    "chess.js": "^0.11.0",
+    "@mliebelt/pgn-parser": "^1.4.18",
+    "@mliebelt/pgn-reader": "^1.2.30",
+    "@mliebelt/pgn-writer": "^1.0.5",
+    "pgn-parser": "^2.1.1",
+    "stockfish": "^12.0.0",
+    "supertest": "^7.1.4",
+    "vitest": "^3.2.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
