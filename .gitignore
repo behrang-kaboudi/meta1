@@ -6,7 +6,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 public/uploads
-MetaV1/apps/web/public/uploads/
+apps/web/public/uploads/
 
 # === Logs ===
 logs/
