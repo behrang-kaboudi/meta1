@@ -2,7 +2,8 @@ process.env.mainDir = __dirname;
 process.env.TemplateNumber = "25";
 // require('events').EventEmitter.prototype._maxListeners = 100;
 process.setMaxListeners(2000);
-
+let {Status} = require('./routes/test1');
+console.log("Status:", Status);
 require("events").EventEmitter.prototype._maxListeners = 100;
 (async () => {
   try {

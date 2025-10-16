@@ -17,8 +17,12 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@types/node": "^24.7.2",
     "concurrently": "^9.2.1",
-    "husky": "^9.1.7"
+    "copyfiles": "^2.4.1",
+    "husky": "^9.1.7",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "cross-env": "^10.1.0"
